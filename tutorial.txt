@@ -1,0 +1,39 @@
+1. Intall and run virtual environment
+
+    pip install virtualenv
+    virtualenv env
+
+2. Activate virtual environment
+
+    Ctrl+Shift+P ---> Search for an Interpretor ---> Click on Python Virtual Environment
+    Close terminal (or kill) and open again
+
+3. Download Django
+
+    pip install django
+
+4. Outputting all dependencies to the file
+
+    pip freeze > requirments.txt
+
+5. Creating a project that we will work in
+
+    django-admin startproject djticket .
+
+6. Creating .gitignore in the main branch (get the content from python github)
+
+7. Migrate changes (also creates the database) and run the server (using manage.py to execute commands in Django)
+
+    python manage.py migrate
+    python manage.py runserver
+
+8. asgi.py and wsgi.py are for deploying web-application asynchroniously
+
+9. settings.py
+
+    while developing the application DEBUG = True. In production DEBUG = False (very important)
+    ALLOWED_HOSTS = ['domain.name.com'] (without https)
+    if we will use our own folder with templates ---> TEMPLATES ---> 'DIRS': [list of directories]
+    if we will use another database we can configure it in DATABASES (sqlite3 by default)
+
+
