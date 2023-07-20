@@ -36,4 +36,23 @@
     if we will use our own folder with templates ---> TEMPLATES ---> 'DIRS': [list of directories]
     if we will use another database we can configure it in DATABASES (sqlite3 by default)
 
+10. Creating an app (conteinorized module for users, billing, payment (for each we will create a separate app file))
+
+    python manage.py startapp customers
+
+11. Inside the folder edit models.py by adding class for Customer (that will be shown in our database)
+
+12. After editing models.py
+
+    python manage.py makemigrations
+    python manage.py migrate
+
+    now the class that we created is applied to the database db.sqlite3
+
+REFERENCE FOR ADDING PICTURES IN THE FORM (1:00:00)
+
+13. Adding foreign key which links one table to another (models.py)
+
+14. In settings AUTH_USER_MODEL
+
 
