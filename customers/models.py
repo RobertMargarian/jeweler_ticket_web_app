@@ -33,11 +33,6 @@ class Company(models.Model):
 class User(AbstractUser):
     company_id = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     role_id = models.ForeignKey(("User_Role"), null=True, blank=True, on_delete=models.CASCADE)
-    user_login = models.CharField(max_length=50)
-    user_password = models.CharField(max_length=50)
-    user_first_name = models.CharField(max_length=50)
-    user_last_name = models.CharField(max_length=50)
-    user_email = models.EmailField(max_length=254)
     user_phone = models.CharField(max_length=20)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
