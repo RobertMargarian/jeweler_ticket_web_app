@@ -55,4 +55,26 @@ REFERENCE FOR ADDING PICTURES IN THE FORM (1:00:00)
 
 14. In settings AUTH_USER_MODEL
 
+15. Creating queries
 
+    enter the shell (in order to exit run exit()):
+    python manage.py shell
+
+    here we can import models into the shell
+    from customers.models import class_name
+
+    class_name.objects.all()
+
+    in order to see all users:
+
+    >>> from django.contrib.auth import get_user_model
+    >>> User = get_user_model()
+    >>> User.objects.all()
+
+16. Creating admin user
+
+    python manage.py createsuperuser
+
+    User RGTS was created
+
+    

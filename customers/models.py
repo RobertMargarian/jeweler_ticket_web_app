@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Company(models.Model):
-    company_current_plan_id = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
+    company_current_plan = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
     company_subscription_status = models.CharField(max_length=50)
     company_email = models.EmailField(max_length=254)
     company_phone = models.CharField(max_length=20)
@@ -31,8 +31,8 @@ class Company(models.Model):
 
 
 class User(AbstractUser):
-    company_id = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
-    role_id = models.ForeignKey(("User_Role"), null=True, blank=True, on_delete=models.CASCADE)
+    company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
+    role = models.ForeignKey(("User_Role"), null=True, blank=True, on_delete=models.CASCADE)
     user_phone = models.CharField(max_length=20)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -41,9 +41,9 @@ class User(AbstractUser):
 
 
 class Order(models.Model):
-    client_id = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
-    company_id = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
+    client = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
+    company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
     work_order_date = models.DateTimeField(auto_now_add=True)
     work_order_due_date = models.DateTimeField(auto_now_add=True)
     work_order_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -60,7 +60,7 @@ class Order(models.Model):
 
 
 class Client(models.Model):
-    company_id = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
+    company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     client_email = models.EmailField(max_length=254)
     client_phone = models.CharField(max_length=20)
     client_first_name = models.CharField(max_length=50)
@@ -81,10 +81,10 @@ class User_Role(models.Model):
 
 
 class User_Activity_Log(models.Model):
-    user_id = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
-    user_action_id = models.ForeignKey(("User_Action"), null=True, blank=True, on_delete=models.CASCADE)
-    work_order_id = models.ForeignKey(("Order"), null=True, blank=True, on_delete=models.CASCADE)
-    client_id = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
+    user_action = models.ForeignKey(("User_Action"), null=True, blank=True, on_delete=models.CASCADE)
+    work_order = models.ForeignKey(("Order"), null=True, blank=True, on_delete=models.CASCADE)
+    client = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
     user_activity_time = models.DateTimeField(auto_now_add=True)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -100,7 +100,7 @@ class User_Action(models.Model):
 
 
 class Billing_Log(models.Model):
-    plan_id = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
+    plan = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
     billing_date = models.DateTimeField(auto_now_add=True)
     billing_amount = models.DecimalField(max_digits=10, decimal_places=2)
     billing_status = models.CharField(max_length=50)
