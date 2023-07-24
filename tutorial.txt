@@ -71,10 +71,13 @@ REFERENCE FOR ADDING PICTURES IN THE FORM (1:00:00)
     >>> User = get_user_model()
     >>> User.objects.all()
 
+    after creating user we can modify him
+    user = User.objects.create(username="username")
+    user.first_name = "first_name"
+
 16. Creating admin user
 
     python manage.py createsuperuser
 
     User RGTS was created
 
-    

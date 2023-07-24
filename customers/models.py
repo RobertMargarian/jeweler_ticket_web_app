@@ -40,6 +40,9 @@ class User(AbstractUser):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
 
+    def __str__(self):
+        return self.username
+
 class Order(models.Model):
     client = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
