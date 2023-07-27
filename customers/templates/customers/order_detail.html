@@ -4,19 +4,25 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Order Details</title>
-    <style>
-        .order_detail {
-            padding-top: 10px;
-            padding-bottom: 10px;
-            padding-right: 6px;
-            padding-left: 6px;
-            margin-top: 10px;
-            background-color: #f6f6f6;
-            width: 100%;
-        }
-    </style>
 </head>
 <body>
-    <h1>This is the details of {{ client.client_first_name }} {{ client.client_last_name }}</h1>
+    <h1>New Work Order (Edit Action)</h1>
+    <div class="order_detail">
+        <h2>Customer Information</h2>
+        <p>Customer Full Name: {{ client.client_first_name }} {{ client.client_last_name }}</p>
+        <p>Customer Email: {{ client.client_email }}</p>
+        <p>Customer Phone: {{ client.client_phone }}</p>
+        <h2>Order Information</h2>
+        <h3>Dates</h3>
+        <p>Order Date: {{ order.work_order_date }}</p>
+        <p>Due Date: {{ order.work_order_due_date }}</p>
+        <h3>Financial Info</h3>
+        <p>Estimated Cost, $: {{ order.work_order_price }}</p>
+        <p>Quoted Price, $: {{ order.quoted_price }}</p>
+        <p>Security Deposit, $: {{ order.security_deposit }}</p>
+        <h3>Order Details</h3>
+        <p>Order Type: {{ order.work_order_type }}</p>
+        <p>Order Status: {{ order.work_order_status }}</p>
+        <p>Notes: {{ order.work_order_description }}</p>
 </body>
 </html>

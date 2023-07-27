@@ -13,8 +13,10 @@ def orders(request):
 
 def order_detail(request, pk):
     order = Order.objects.get(id=pk)
+    client = Client.objects.get(id=order.client_id)
     context = {
-        "order": order
+        "order": order,
+        "client": client
     }
     return render(request, "customers/order_detail.html", context)
 

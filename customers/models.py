@@ -53,6 +53,7 @@ class Order(models.Model):
     work_order_currency = models.CharField(choices=(('USD', 'USD'), ('EUR', 'EUR'), ('GBP', 'GBP')), max_length=10)
     quoted_price = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     quoted_currency = models.CharField(choices=(('USD', 'USD'), ('EUR', 'EUR'), ('GBP', 'GBP')), max_length=10)
+    security_deposit = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     work_order_type = models.CharField(choices=(('Sell','Sell'), ('Repair','Repair'), ('Other', 'Other')), max_length=30)
     work_order_status = models.CharField(choices=(('Canceled','Canceled'), ('In Progress','In Progress'), ('Completed', 'Completed')), max_length=30)
     work_order_description = models.TextField(max_length=200)
