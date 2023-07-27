@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Company, User, Order, Client, User_Role, Plan
+from .models import Company, User, Order, Client, Plan
 
 
 def orders(request):
