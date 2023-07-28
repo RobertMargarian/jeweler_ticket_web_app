@@ -19,7 +19,7 @@ def order_delete(request, pk):
 
 def order_detail(request, pk):
     order = Order.objects.get(id=pk)
-    client = Client.objects.get(id=pk)
+    client = Client.objects.get(id=order.client_id)
     context = {
         "order": order,
         "client": client

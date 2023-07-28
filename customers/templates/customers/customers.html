@@ -13,10 +13,9 @@
             Customer Name: {{ client.client_first_name }} {{ client.client_last_name }}|
             Customer Phone: {{ client.client_phone }}|
             Email: {{ client.client_email }}|
-            Total/Spent: {{  }}|
-            Last Order Date: {{  }}|
-            Action: <a href="/{{ client.pk }}/edit/">Edit</a>|
-            <a href="/{{ client.pk }}/delete/">Delete</a>
+            Total/Spent: |
+            Last Order Date: |
+            Action: <a href="/{{ client.pk }}/edit/">Edit</a>|<a href="/{{ client.pk }}/delete/">Delete</a>
         <div>
     {% endfor %}
 </body>
