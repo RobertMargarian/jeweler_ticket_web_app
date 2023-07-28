@@ -62,6 +62,11 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
+
+    def delete(self):
+        self.deleted_flag = True
+        self.save()
+
 """     def __str__(self):
         return self.pk """
     
@@ -70,6 +75,7 @@ class Client(models.Model):
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     client_email = models.EmailField(max_length=254)
     client_phone = models.CharField(max_length=20)
+    client_check_mobile_phone = models.BooleanField(default=False)
     client_first_name = models.CharField(max_length=50)
     client_last_name = models.CharField(max_length=50)
     deleted_flag = models.BooleanField(default=False)

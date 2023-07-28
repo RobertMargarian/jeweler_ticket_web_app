@@ -6,12 +6,15 @@
     <title>Order Details</title>
 </head>
 <body>
+    <a href="/">Go back to Orders</a>
+    </hr>
     <h1>New Work Order (Edit Action)</h1>
     <div class="order_detail">
         <h2>Customer Information</h2>
         <p>Customer Full Name: {{ client.client_first_name }} {{ client.client_last_name }}</p>
         <p>Customer Email: {{ client.client_email }}</p>
         <p>Customer Phone: {{ client.client_phone }}</p>
+        <p>Customer Phone: {{ client.client_check_mobile_phone }}</p>
         <h2>Order Information</h2>
         <h3>Dates</h3>
         <p>Order Date: {{ order.work_order_date }}</p>

@@ -9,13 +9,14 @@
     <h1>Orders page</h1>
     {% for orders in orders %}
         <div class="orders">
-            <a href="/{{ orders.pk }}/">{{ forloop.counter }}</a>|
+            #{{ forloop.counter }}|
             Customer: {{ orders.client }}|
             {{ orders.company }}|
             Assigned to: {{ orders.user }}|
             Order Price: {{ orders.work_order_price }}|
             Order Type: {{ orders.work_order_type }}|
             Order Status: {{ orders.work_order_status }}|
+            Action: <a href="/{{ orders.pk }}/">Edit</a>|<a href=" ">Delete</a>
         <div>
     {% endfor %}
 </body>

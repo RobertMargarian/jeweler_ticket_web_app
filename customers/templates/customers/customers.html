@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DJTICKET</title>
+</head>
+<body>
+    <h1>Customers</h1>
+    {% for client in client %}
+        <div class="client">
+            <a href="/{{ client.pk }}/">{{ forloop.counter }}</a>|
+            Customer Name: {{ client.client_first_name }} {{ client.client_last_name }}|
+            Customer Phone: {{ client.client_phone }}|
+            Email: {{ client.client_email }}|
+            Total/Spent: {{  }}|
+            Last Order Date: {{  }}|
+            Action: <a href="/{{ client.pk }}/edit/">Edit</a>|
+            <a href="/{{ client.pk }}/delete/">Delete</a>
+        <div>
+    {% endfor %}
+</body>
+</html>
