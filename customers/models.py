@@ -49,7 +49,7 @@ class Order(models.Model):
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
     work_order_date = models.DateTimeField(auto_now_add=True)
     work_order_due_date = models.DateTimeField(auto_now_add=True)
-    work_order_price = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
+    estimated_cost = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     work_order_currency = models.CharField(choices=(('USD', 'USD'), ('EUR', 'EUR'), ('GBP', 'GBP')), max_length=10)
     quoted_price = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     quoted_currency = models.CharField(choices=(('USD', 'USD'), ('EUR', 'EUR'), ('GBP', 'GBP')), max_length=10)
@@ -67,17 +67,15 @@ class Order(models.Model):
         self.deleted_flag = True
         self.save()
 
-"""     def __str__(self):
-        return self.pk """
-    
 
 class Client(models.Model):
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
+    new_client = models.BooleanField(default=False)
+    client_first_name = models.CharField(max_length=50)
+    client_last_name = models.CharField(max_length=50)
     client_email = models.EmailField(max_length=254)
     client_phone = models.CharField(max_length=20)
     client_check_mobile_phone = models.BooleanField(default=False)
-    client_first_name = models.CharField(max_length=50)
-    client_last_name = models.CharField(max_length=50)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
