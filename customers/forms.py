@@ -17,6 +17,7 @@ class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = (
+            'client',
             'estimated_cost', 
             'quoted_price', 
             'security_deposit', 
