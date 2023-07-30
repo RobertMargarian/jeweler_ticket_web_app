@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Company, User, Order, Client, Plan
-from .forms import OrderForm
+from .forms import OrderCreateForm, ClientCreateForm
 
 
 def orders(request):
@@ -29,12 +29,30 @@ def order_detail(request, pk):
 
 
 def order_create(request):
-    form = OrderForm()
+    form = OrderCreateForm()
     if request.method == "POST":
-        print('Receiving a post request')
-        form = OrderForm(request.POST)
+        form = OrderCreateForm(request.POST)
         if form.is_valid():
-            print('Form is valid')
+            print(form.cleaned_data)
+            Order.objects.create(
+                estimated_cost = form.cleaned_data['estimated_cost'],
+                quoted_price = form.cleaned_data['quoted_price'],
+                security_deposit = form.cleaned_data['security_deposit'],
+                work_order_type = form.cleaned_data['work_order_type'],
+                work_order_status = form.cleaned_data['work_order_status']
+            )
+            return redirect('/')
+    context = {
+        "form": form
+    }
+    return render(request, "customers/order_create.html", context)
+
+
+def customer_create(request):
+    form = ClientCreateForm()
+    if request.method == "POST":
+        form = ClientCreateForm(request.POST)
+        if form.is_valid():
             print(form.cleaned_data)
             Client.objects.create(
                 client_first_name = form.cleaned_data['client_first_name'],
@@ -43,20 +61,12 @@ def order_create(request):
                 client_phone = form.cleaned_data['client_phone'],
                 client_check_mobile_phone = form.cleaned_data['client_check_mobile_phone']
             )
-            Order.objects.create(
-                work_order_date = form.cleaned_data['work_order_date'],
-                work_order_due_date = form.cleaned_data['work_order_due_date'],
-                estimated_cost = form.cleaned_data['estimated_cost'],
-                quoted_price = form.cleaned_data['quoted_price'],
-                security_deposit = form.cleaned_data['security_deposit'],
-                work_order_type = form.cleaned_data['work_order_type'],
-                work_order_status = form.cleaned_data['work_order_status']
-            )
-            print('Order has been created')
+            return redirect('/')
     context = {
         "form": form
     }
     return render(request, "customers/order_create.html", context)
+
 
 
 def customers(request):
