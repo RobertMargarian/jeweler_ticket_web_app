@@ -7,19 +7,20 @@
 </head>
 <body>
     <h1>Orders page</h1>
+    <a href="/customer_create/">Create new client</a>
     <a href="/order_create/">Create new order</a>
     {% for orders in orders %}
-        <div class="orders">
-            #{{ forloop.counter }}|
-            Customer: {{ orders.client }}|
-            Order Status: {{ orders.work_order_status }}|
-            Order Type: {{ orders.work_order_type }}|
-            Customer Phone: {{ orders.client_phone }}|
-            Customer Email: {{ orders.client_email }}|
-            Assigned to: {{ orders.user }}|
-            Order Price: {{ orders.work_order_price }}|
-            Action: <a href="/{{ orders.pk }}/">Edit</a>|<a href=" ">Delete</a>
-        <div>
+        <div class="client">
+            <div class="orders">
+                    #{{ forloop.counter }}|
+                    Customer: {{ orders.client }}|
+                    Order Status: {{ orders.work_order_status }}|
+                    Order Type: {{ orders.work_order_type }}|
+                    Order Price: {{ orders.quoted_price }}|
+                    Action: <a href="/{{ orders.pk }}/">Edit</a>|<a href=" ">Delete</a>
+            </div>
+        </div>
     {% endfor %}
 </body>
 </html>
+

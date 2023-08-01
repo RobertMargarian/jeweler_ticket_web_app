@@ -48,7 +48,7 @@ class Order(models.Model):
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
     work_order_date = models.DateTimeField(auto_now_add=True)
-    work_order_due_date = models.DateTimeField(auto_now_add=True)
+    work_order_due_date = models.DateTimeField(max_length=50)
     estimated_cost = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     work_order_currency = models.CharField(choices=(('USD', 'USD'), ('EUR', 'EUR'), ('GBP', 'GBP')), max_length=10)
     quoted_price = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
@@ -70,7 +70,7 @@ class Order(models.Model):
 
 class Client(models.Model):
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
-    new_client = models.BooleanField(default=False)
+    client_already_exists = models.BooleanField(default=False)
     client_first_name = models.CharField(max_length=50)
     client_last_name = models.CharField(max_length=50)
     client_email = models.EmailField(max_length=254)

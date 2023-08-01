@@ -2,6 +2,14 @@ from django import forms
 from .models import Order, Client
 
 
+""" class ClientCheckForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = (
+            'client_already_exists',
+        ) """
+
+
 class ClientCreateForm(forms.ModelForm):
     class Meta:
         model = Client
@@ -10,7 +18,7 @@ class ClientCreateForm(forms.ModelForm):
             'client_last_name',
             'client_email',
             'client_phone',
-            'client_check_mobile_phone'
+            'client_check_mobile_phone',
         )
 
 class OrderCreateForm(forms.ModelForm):
@@ -18,11 +26,13 @@ class OrderCreateForm(forms.ModelForm):
         model = Order
         fields = (
             'client',
+            'work_order_type',
             'estimated_cost', 
             'quoted_price', 
             'security_deposit', 
-            'work_order_type', 
-            'work_order_status'
+            'work_order_due_date',
+            'work_order_status',
+            'work_order_description'
         )
 
 """ class OrderForm(forms.Form):
