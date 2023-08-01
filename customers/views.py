@@ -20,14 +20,58 @@ def order_delete(request, pk):
     return render(request, "customers/orders.html")
 
 
-def order_detail(request, pk):
+def order_update(request, pk):
     order = Order.objects.get(id=pk)
     client = Client.objects.get(id=order.client_id)
+    form1 = OrderCreateForm(instance=order)
+    form2 = ClientCreateForm(instance=client)
+    if request.method == "POST":
+        form1 = OrderCreateForm(request.POST, instance=order)
+        form2 = ClientCreateForm(request.POST, instance=client)
+        if form1.is_valid() and form2.is_valid():
+            form1.save()
+            form2.save()
+            return redirect('/')
     context = {
         "order": order,
-        "client": client
+        "client": client,
+        "form1": form1,
+        "form2": form2
     }
-    return render(request, "customers/order_detail.html", context)
+    return render(request, "customers/order_update.html", context)
+
+
+
+def order_create(request):
+    form_order_create = OrderCreateForm()
+    if request.method == "POST":
+        form_order_create = OrderCreateForm(request.POST)
+        if form_order_create.is_valid():
+            form_order_create.save()
+            return redirect('/')
+    context = {
+        "form_order": form_order_create
+    }
+    return render(request, "customers/order_create.html", context)
+
+
+def customer_create(request):
+    form_client_create = ClientCreateForm()
+    if request.method == "POST":
+        form_client_create = ClientCreateForm(request.POST)
+        if form_client_create.is_valid():
+            print(form_client_create.cleaned_data)
+            form_client_create.save()
+            return redirect('/')
+    context = {
+        "form_client_create": form_client_create
+    }
+    return render(request, "customers/customer_create.html", context)
+        
+
+
+
+
 
 """ 
 def customer_create(request):
@@ -102,34 +146,6 @@ def customer_create(request):
     }
     return render(request, "customers/order_create.html", context)
 """
-
-def order_create(request):
-    form_order_create = OrderCreateForm()
-    if request.method == "POST":
-        form_order_create = OrderCreateForm(request.POST)
-        if form_order_create.is_valid():
-            form_order_create.save()
-            return redirect('/')
-    context = {
-        "form_order": form_order_create
-    }
-    return render(request, "customers/order_create.html", context)
-
-
-def customer_create(request):
-    form_client_create = ClientCreateForm()
-    if request.method == "POST":
-        form_client_create = ClientCreateForm(request.POST)
-        if form_client_create.is_valid():
-            print(form_client_create.cleaned_data)
-            form_client_create.save()
-            return redirect('/')
-    context = {
-        "form_client_create": form_client_create
-    }
-    return render(request, "customers/customer_create.html", context)
-        
-
 
 
 """             Order.objects.create(
