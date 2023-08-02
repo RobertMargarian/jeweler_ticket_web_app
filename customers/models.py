@@ -63,9 +63,9 @@ class Order(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
 
-    def delete(self):
+"""     def delete(self):
         self.deleted_flag = True
-        self.save()
+        self.save() """
 
 
 class Client(models.Model):
@@ -76,6 +76,7 @@ class Client(models.Model):
     client_email = models.EmailField(max_length=254)
     client_phone = models.CharField(max_length=20)
     client_check_mobile_phone = models.BooleanField(default=False)
+    total_spent = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -152,4 +153,21 @@ class Plan(models.Model):
 
     def __str__(self):
         return self.plan_name
+
+
+""" class SoftDeleteModel(models.Model):
+
+    deleted_flag = models.BooleanField(default=False)
+
+    def soft_delete(self):
+        self.deleted_flag = True
+        self.save()
+
+    def restore(self):
+        self.deleted_flag = False
+        self.save()
+
+    class Meta:
+        abstract = True
+"""
 

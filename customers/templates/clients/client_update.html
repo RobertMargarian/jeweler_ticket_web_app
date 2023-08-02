@@ -3,16 +3,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create Order</title>
+    <title>Edit Order</title>
 </head>
 <body>
-    <a href="/">Go back to Orders</a>
+    <p>
+        <a href="/">Go back to Orders</a>
+    </p>
+    <p>
+        <a href="/clients/">Go back to Clients</a>
+    </p>
     </hr>
-    <h1>Create a new Order</h1>
     <form action="" method="post">
         {% csrf_token %}
-        {{ form_order.as_p }}
-        <button type="submit">Create new order</button>
+        {{ form_client_update.as_p }}
+        <button type="submit">Update</button>
     </form>
 </body>
 </html>

@@ -11,13 +11,20 @@ def orders(request):
         "orders": orders,
         "client": client
     }
-    return render(request, "customers/orders.html", context)
+    return render(request, "clients/orders.html", context)
 
 
-def order_delete(request, pk):
-    order = Order.objects.get(id=pk)
-    order.delete()
-    return redirect("/")
+def order_create(request):
+    form_order_create = OrderCreateForm()
+    if request.method == "POST":
+        form_order_create = OrderCreateForm(request.POST)
+        if form_order_create.is_valid():
+            form_order_create.save()
+            return redirect('/')
+    context = {
+        "form_order": form_order_create
+    }
+    return render(request, "clients/order_create.html", context)
 
 
 def order_update(request, pk):
@@ -38,24 +45,24 @@ def order_update(request, pk):
         "form_order": form_order,
         "form_client": form_client
     }
-    return render(request, "customers/order_update.html", context)
+    return render(request, "clients/order_update.html", context)
 
 
+def order_delete(request, pk):
+    order = Order.objects.get(id=pk)
+    order.delete()
+    return redirect("/")
 
-def order_create(request):
-    form_order_create = OrderCreateForm()
-    if request.method == "POST":
-        form_order_create = OrderCreateForm(request.POST)
-        if form_order_create.is_valid():
-            form_order_create.save()
-            return redirect('/')
+
+def clients(request):
+    clients = Client.objects.all()
     context = {
-        "form_order": form_order_create
+        "clients": clients
     }
-    return render(request, "customers/order_create.html", context)
+    return render(request, "clients/clients.html", context)
 
 
-def customer_create(request):
+def client_create(request):
     form_client_create = ClientCreateForm()
     if request.method == "POST":
         form_client_create = ClientCreateForm(request.POST)
@@ -66,15 +73,35 @@ def customer_create(request):
     context = {
         "form_client_create": form_client_create
     }
-    return render(request, "customers/customer_create.html", context)
-        
+    return render(request, "clients/client_create.html", context)
+
+
+def client_update(request, pk):
+    client = Client.objects.get(id=pk)
+    form_client_update = ClientCreateForm(instance=client)
+    if request.method == "POST":
+        form_client_update = ClientCreateForm(request.POST, instance=client)
+        if form_client_update.is_valid():
+            form_client_update.save()
+            return redirect('/clients/')
+    context = {
+        "client": client,
+        "form_client_update": form_client_update
+    }
+    return render(request, "clients/client_update.html", context)
+
+
+def client_delete(request, pk):
+    client = Client.objects.get(id=pk)
+    client.delete()
+    return redirect("/clients/")
 
 
 
 
 
 """ 
-def customer_create(request):
+def client_create(request):
     form = ClientCreateForm()
     if request.method == "POST":
         form = ClientCreateForm(request.POST)
@@ -92,7 +119,7 @@ def customer_create(request):
     context = {
         "form": form
     }
-    return render(request, "customers/customer_create.html", context)
+    return render(request, "clients/client_create.html", context)
 
 """
 
@@ -144,7 +171,7 @@ def customer_create(request):
         "form_client": form_client,
         "form_order": form_order
     }
-    return render(request, "customers/order_create.html", context)
+    return render(request, "clients/order_create.html", context)
 """
 
 
@@ -161,26 +188,6 @@ def customer_create(request):
 
 
 
-def customers(request):
-    customers = Client.objects.all()
-    context = {
-        "customers": customers
-    }
-    return render(request, "customers/customers.html", context)
-
-
-def customer_delete(request, pk):
-    client = Client.objects.get(id=pk)
-    client.delete()
-    return render(request, "customers/customers.html")
-
-
-def customer_detail(request, pk):
-    client = Client.objects.get(id=pk)
-    context = {
-        "client": client
-    }
-    return render(request, "customers/customer_detail.html", context)
 
 
 
