@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DJTICKET</title>
+</head>
+<body>
+    <h1>Orders page</h1>
+    <a href="{% url 'customers:client-list' %}">Clients</a>
+    <a href="{% url 'customers:client-create' %}">Create new client</a>
+    <a href="{% url 'customers:order-create' %}">Create new order</a>
+    {% for order_list in order_list %}
+        <div class="order_list">
+            #{{ forloop.counter }}|
+            Client: {{ order_list.client }}|
+            Order Status: {{ order_list.work_order_status }}|
+            Order Type: {{ order_list.work_order_type }}|
+            Order Price: {{ order_list.quoted_price }}|
+            Action: 
+            <a href="{% url 'customers:order-update' order_list.pk %}">Edit</a>|
+            <a href="{% url 'customers:order-delete' order_list.pk %}">Delete</a>
+        </div>
+    {% endfor %}
+</body>
+</html>
+

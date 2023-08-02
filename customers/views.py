@@ -4,14 +4,14 @@ from .models import Order, Client, Company, User, Plan
 from .forms import OrderCreateForm, ClientCreateForm
 
 
-def orders(request):
-    orders = Order.objects.all()
-    client = Client.objects.all()
+def order_list(request):
+    order_list = Order.objects.all()
+    client_list = Client.objects.all()
     context = {
-        "orders": orders,
-        "client": client
+        "order_list": order_list,
+        "client_list": client_list
     }
-    return render(request, "clients/orders.html", context)
+    return render(request, "customers/order_list.html", context)
 
 
 def order_create(request):
@@ -24,7 +24,7 @@ def order_create(request):
     context = {
         "form_order": form_order_create
     }
-    return render(request, "clients/order_create.html", context)
+    return render(request, "customers/order_create.html", context)
 
 
 def order_update(request, pk):
@@ -45,7 +45,7 @@ def order_update(request, pk):
         "form_order": form_order,
         "form_client": form_client
     }
-    return render(request, "clients/order_update.html", context)
+    return render(request, "customers/order_update.html", context)
 
 
 def order_delete(request, pk):
@@ -54,12 +54,12 @@ def order_delete(request, pk):
     return redirect("/")
 
 
-def clients(request):
-    clients = Client.objects.all()
+def client_list(request):
+    client_list = Client.objects.all()
     context = {
-        "clients": clients
+        "client_list": client_list
     }
-    return render(request, "clients/clients.html", context)
+    return render(request, "customers/client_list.html", context)
 
 
 def client_create(request):
@@ -73,7 +73,7 @@ def client_create(request):
     context = {
         "form_client_create": form_client_create
     }
-    return render(request, "clients/client_create.html", context)
+    return render(request, "customers/client_create.html", context)
 
 
 def client_update(request, pk):
@@ -83,18 +83,18 @@ def client_update(request, pk):
         form_client_update = ClientCreateForm(request.POST, instance=client)
         if form_client_update.is_valid():
             form_client_update.save()
-            return redirect('/clients/')
+            return redirect('/client_list/')
     context = {
         "client": client,
         "form_client_update": form_client_update
     }
-    return render(request, "clients/client_update.html", context)
+    return render(request, "customers/client_update.html", context)
 
 
 def client_delete(request, pk):
     client = Client.objects.get(id=pk)
     client.delete()
-    return redirect("/clients/")
+    return redirect("/client_list/")
 
 
 
@@ -119,7 +119,7 @@ def client_create(request):
     context = {
         "form": form
     }
-    return render(request, "clients/client_create.html", context)
+    return render(request, "customers/client_create.html", context)
 
 """
 
@@ -171,7 +171,7 @@ def client_create(request):
         "form_client": form_client,
         "form_order": form_order
     }
-    return render(request, "clients/order_create.html", context)
+    return render(request, "customers/order_create.html", context)
 """
 
 

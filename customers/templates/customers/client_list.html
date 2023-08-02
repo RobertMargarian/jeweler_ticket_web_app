@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DJTICKET</title>
+</head>
+<body>
+    <h1>Clients</h1>
+    <a href="{% url 'customers:order-list' %}">Go back to Orders</a>
+    {% for client_list in client_list %}
+        <div class="client_list">
+            #{{ forloop.counter }}
+            Client Name: {{ client_list.client_first_name }} {{ client_list.client_last_name }}|
+            Client Phone: {{ client_list.client_phone }}|
+            Email: {{ client_list.client_email }}|
+            Total/Spent: {{ client_list.total_spent }}|
+            Last Order Date: |
+            Action: 
+            <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a>|
+            <a href="{% url 'customers:client-delete' client_list.pk %}">Delete</a>
+        <div>
+    {% endfor %}
+</body>
+</html>
