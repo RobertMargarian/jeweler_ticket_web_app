@@ -24,6 +24,7 @@
 
 7. Migrate changes (also creates the database) and run the server (using manage.py to execute commands in Django)
 
+    python manage.py makemigrations
     python manage.py migrate
     python manage.py runserver
 
