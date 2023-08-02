@@ -17,7 +17,9 @@
                     Order Status: {{ orders.work_order_status }}|
                     Order Type: {{ orders.work_order_type }}|
                     Order Price: {{ orders.quoted_price }}|
-                    Action: <a href="/{{ orders.pk }}/">Edit</a>|<a href=" ">Delete</a>
+                    Action: 
+                    <a href="/{{ orders.pk }}/update/">Edit</a>|
+                    <a href="/{{ orders.pk }}/delete/">Delete</a>
             </div>
         </div>
     {% endfor %}

@@ -10,8 +10,8 @@
     </hr>
     <form action="" method="post">
         {% csrf_token %}
-        {{ form1.as_p }}
-        {{ form2.as_p }}
+        {{ form_client.as_p }}
+        {{ form_order.as_p }}
         <button type="submit">Update</button>
     </form>
 </body>

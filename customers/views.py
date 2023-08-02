@@ -17,26 +17,26 @@ def orders(request):
 def order_delete(request, pk):
     order = Order.objects.get(id=pk)
     order.delete()
-    return render(request, "customers/orders.html")
+    return redirect("/")
 
 
 def order_update(request, pk):
     order = Order.objects.get(id=pk)
     client = Client.objects.get(id=order.client_id)
-    form1 = OrderCreateForm(instance=order)
-    form2 = ClientCreateForm(instance=client)
+    form_order = OrderCreateForm(instance=order)
+    form_client = ClientCreateForm(instance=client)
     if request.method == "POST":
-        form1 = OrderCreateForm(request.POST, instance=order)
-        form2 = ClientCreateForm(request.POST, instance=client)
-        if form1.is_valid() and form2.is_valid():
-            form1.save()
-            form2.save()
+        form_order = OrderCreateForm(request.POST, instance=order)
+        form_client = ClientCreateForm(request.POST, instance=client)
+        if form_order.is_valid() and form_client.is_valid():
+            form_order.save()
+            form_client.save()
             return redirect('/')
     context = {
         "order": order,
         "client": client,
-        "form1": form1,
-        "form2": form2
+        "form_order": form_order,
+        "form_client": form_client
     }
     return render(request, "customers/order_update.html", context)
 
