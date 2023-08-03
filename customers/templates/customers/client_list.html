@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>DJTICKET</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
     <h1>Clients</h1>
     <a href="{% url 'customers:order-list' %}">Go back to Orders</a>
     {% for client_list in client_list %}
-        <div class="client_list">
+        <div class="customer">
             #{{ forloop.counter }}
             Client Name: {{ client_list.client_first_name }} {{ client_list.client_last_name }}|
             Client Phone: {{ client_list.client_phone }}|
@@ -21,5 +15,4 @@
             <a href="{% url 'customers:client-delete' client_list.pk %}">Delete</a>
         <div>
     {% endfor %}
-</body>
-</html>
+{% endblock content %}

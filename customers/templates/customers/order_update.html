@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Edit Order</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
     <p>
     <a href="{% url 'customers:order-list' %}">Go back to Orders</a>
     </p>
@@ -16,8 +10,8 @@
         {{ form_order.as_p }}
         <button type="submit">Update</button>
     </form>
-</body>
-</html>
+{% endblock content %}
+
 
 {% comment %} <!DOCTYPE html>
 <html>

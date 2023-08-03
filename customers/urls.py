@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import order_list, order_update, order_create, client_create, order_delete, client_list, client_update, client_delete
 
+app_name = "customers"
 
 urlpatterns = [
     path('', order_list, name='order-list'),

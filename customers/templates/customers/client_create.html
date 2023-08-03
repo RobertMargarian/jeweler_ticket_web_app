@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create Client</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
     <a href="{% url 'customers:order-list' %}">Go back to Orders</a>
     </hr>
     <h1>Create a new Client</h1>
@@ -14,6 +8,5 @@
         {{ form_client_create.as_p }}
         <button type="submit">Create new client</button>
     </form>
-</body>
-</html>
+{% endblock content %}
 
