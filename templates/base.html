@@ -1,30 +1,12 @@
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>DJTICKET BASE PAGE</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body>
-        <div class="">
-            {% include 'navbar.html' %}
-            {% block content %}
-            {% endblock content %}
-        </div>
-    </body>
-</html> {% endcomment %}
-
-{% comment %} <ul class="nav flex-column" id="navId" role="tablist"> {% endcomment %}
+{% load static %}
 
 
-
-
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <title>DJTICKET BASE PAGE</title>
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">

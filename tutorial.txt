@@ -36,6 +36,8 @@
     ALLOWED_HOSTS = ['domain.name.com'] (without https)
     if we will use our own folder with templates ---> TEMPLATES ---> 'DIRS': [list of directories]
     if we will use another database we can configure it in DATABASES (sqlite3 by default)
+    in production we also will store our css and js files somewhere else
+    in production we will change EMAIL_BACKEND from "console" to "smtp"
 
 10. Creating an app (conteinorized module for users, billing, payment (for each we will create a separate app file))
 

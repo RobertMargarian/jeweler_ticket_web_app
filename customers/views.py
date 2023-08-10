@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from typing import Any
 from django.db import models
 from django.shortcuts import render, redirect, reverse
@@ -31,6 +32,15 @@ class OrderCreateView(generic.CreateView):
     def get_success_url(self):
         return reverse("customers:order-list")
 
+    def form_valid(self, form):
+        # TODO send email
+        send_mail(
+            subject="New Order has been created", 
+            message="Go to the site to see the new order",
+            from_email="test@test.com",
+            recipient_list=["test2@test.com"]
+        )
+        return super(OrderCreateView, self).form_valid(form)
 
 """ def order_create(request):
     form_order_create = OrderCreateForm()
@@ -110,6 +120,15 @@ class ClientCreateView(generic.CreateView):
     def get_success_url(self):
         return reverse("customers:client-list")
 
+    def form_valid(self, form):
+        # TODO send email
+        send_mail(
+            subject="New Client has been created", 
+            message="Go to the site to see the new client",
+            from_email="test@test.com",
+            recipient_list=["test2@test.com"]
+        )
+        return super(ClientCreateView, self).form_valid(form)
 
 """ def client_create(request):
     form_client_create = ClientCreateForm()
