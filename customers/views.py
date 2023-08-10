@@ -1,20 +1,38 @@
-from django.shortcuts import render, redirect
+from typing import Any
+from django.db import models
+from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse
+from django.views import generic
 from .models import Order, Client, Company, User, Plan
 from .forms import OrderCreateForm, ClientCreateForm
 
 
-def order_list(request):
+
+class OrderListView(generic.ListView):
+    template_name = "customers/order_list.html"
+    queryset = Order.objects.all()
+    context_object_name = "order_list"
+
+    
+""" def order_list(request):
     order_list = Order.objects.all()
     client_list = Client.objects.all()
     context = {
         "order_list": order_list,
         "client_list": client_list
     }
-    return render(request, "customers/order_list.html", context)
+    return render(request, "customers/order_list.html", context) """
 
 
-def order_create(request):
+class OrderCreateView(generic.CreateView):
+    template_name = "customers/order_create.html"
+    form_class = OrderCreateForm
+
+    def get_success_url(self):
+        return reverse("customers:order-list")
+
+
+""" def order_create(request):
     form_order_create = OrderCreateForm()
     if request.method == "POST":
         form_order_create = OrderCreateForm(request.POST)
@@ -24,10 +42,18 @@ def order_create(request):
     context = {
         "form_order": form_order_create
     }
-    return render(request, "customers/order_create.html", context)
+    return render(request, "customers/order_create.html", context) """
 
+class OrderUpdateView(generic.UpdateView):
+    template_name = "customers/order_update.html"
+    form_class = OrderCreateForm
+    queryset = Order.objects.all()
+    context_object_name = "order-update"
 
-def order_update(request, pk):
+    def get_success_url(self):
+        return reverse("customers:order-list")
+
+""" def order_update(request, pk):
     order = Order.objects.get(id=pk)
     client = Client.objects.get(id=order.client_id)
     form_order = OrderCreateForm(instance=order)
@@ -45,24 +71,47 @@ def order_update(request, pk):
         "form_order": form_order,
         "form_client": form_client
     }
-    return render(request, "customers/order_update.html", context)
+    return render(request, "customers/order_update.html", context) """
 
 
-def order_delete(request, pk):
+class OrderDeleteView(generic.DeleteView):
+    template_name = "customers/order_delete.html"
+    queryset = Order.objects.all()
+    context_object_name = "order-delete"
+
+    def get_success_url(self):
+        return reverse("customers:order-list")
+
+
+""" def order_delete(request, pk):
     order = Order.objects.get(id=pk)
     order.delete()
-    return redirect("/")
+    return redirect("/") """
 
 
-def client_list(request):
+class ClientListView(generic.ListView):
+    template_name = "customers/client_list.html"
+    queryset = Client.objects.all()
+    context_object_name = "client_list"
+
+
+""" def client_list(request):
     client_list = Client.objects.all()
     context = {
         "client_list": client_list
     }
-    return render(request, "customers/client_list.html", context)
+    return render(request, "customers/client_list.html", context) """
 
 
-def client_create(request):
+class ClientCreateView(generic.CreateView):
+    template_name = "customers/client_create.html"
+    form_class = ClientCreateForm
+
+    def get_success_url(self):
+        return reverse("customers:client-list")
+
+
+""" def client_create(request):
     form_client_create = ClientCreateForm()
     if request.method == "POST":
         form_client_create = ClientCreateForm(request.POST)
@@ -73,10 +122,21 @@ def client_create(request):
     context = {
         "form_client_create": form_client_create
     }
-    return render(request, "customers/client_create.html", context)
+    return render(request, "customers/client_create.html", context) """
 
 
-def client_update(request, pk):
+
+class ClientUpdateView(generic.UpdateView):
+    template_name = "customers/client_update.html"
+    form_class = ClientCreateForm
+    queryset = Client.objects.all()
+    context_object_name = "client-update"
+
+    def get_success_url(self):
+        return reverse("customers:client-list")
+
+
+""" def client_update(request, pk):
     client = Client.objects.get(id=pk)
     form_client_update = ClientCreateForm(instance=client)
     if request.method == "POST":
@@ -88,13 +148,23 @@ def client_update(request, pk):
         "client": client,
         "form_client_update": form_client_update
     }
-    return render(request, "customers/client_update.html", context)
+    return render(request, "customers/client_update.html", context) """
 
 
-def client_delete(request, pk):
+
+class ClientDeleteView(generic.DeleteView):
+    template_name = "customers/client_delete.html"
+    queryset = Client.objects.all()
+    context_object_name = "client-delete"
+
+    def get_success_url(self):
+        return reverse("customers:client-list")
+
+
+""" def client_delete(request, pk):
     client = Client.objects.get(id=pk)
     client.delete()
-    return redirect("/client_list/")
+    return redirect("/client_list/") """
 
 
 

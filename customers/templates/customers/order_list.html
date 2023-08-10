@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Orders page</h1>
-    <a href="{% url 'customers:client-list' %}">Clients</a>
-    <a href="{% url 'customers:client-create' %}">Create new client</a>
-    <a href="{% url 'customers:order-create' %}">Create new order</a>
+    <hr>
     {% for order_list in order_list %}
         <div class="customer">
             #{{ forloop.counter }}|
@@ -16,5 +13,6 @@
             <a href="{% url 'customers:order-delete' order_list.pk %}">Delete</a>
         </div>
     {% endfor %}
+    <hr>
 {% endblock content %}
 

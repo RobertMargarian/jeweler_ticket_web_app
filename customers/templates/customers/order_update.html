@@ -1,13 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-    <p>
-    <a href="{% url 'customers:order-list' %}">Go back to Orders</a>
-    </p>
     </hr>
     <form action="" method="post">
         {% csrf_token %}
-        {{ form_client.as_p }}
-        {{ form_order.as_p }}
+        {{ form.as_p }}
         <button type="submit">Update</button>
     </form>
 {% endblock content %}

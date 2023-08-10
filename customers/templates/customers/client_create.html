@@ -1,11 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-    <a href="{% url 'customers:order-list' %}">Go back to Orders</a>
-    </hr>
-    <h1>Create a new Client</h1>
     <form action="" method="post">
         {% csrf_token %}
-        {{ form_client_create.as_p }}
+        {{ form.as_p }}
         <button type="submit">Create new client</button>
     </form>
 {% endblock content %}
