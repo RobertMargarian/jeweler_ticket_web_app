@@ -18,7 +18,6 @@ class SignupView(generic.CreateView):
 
 
 class OrderListView(LoginRequiredMixin, generic.ListView):
-    permission_required = ('customers.view_order', 'customers.view_client')
     template_name = "customers/order_list.html"
     queryset = Order.objects.all()
     context_object_name = "order_list"

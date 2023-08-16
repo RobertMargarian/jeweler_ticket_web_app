@@ -68,7 +68,7 @@ class User(AbstractUser):
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.username + "|" + self.user.first_name + " " + self.user.last_name"""
+        return self.user.username + "|" + self.user.first_name + " " + self.user.last_name """
 
 
 class Order(models.Model):
