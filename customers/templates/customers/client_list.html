@@ -11,7 +11,9 @@
             Last Order Date: |
             Action: 
             <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a>|
+            {% if user.user_role == 1 or user.user_role == 2 %}
             <a href="{% url 'customers:client-delete' client_list.pk %}">Delete</a>
+            {% endif %}
         <div>
     {% endfor %}
     <hr>

@@ -32,15 +32,43 @@ class Company(models.Model):
 
 
 class User(AbstractUser):
+    Owner = 1
+    MasterAdmin = 2
+    Employee = 3
+
+    ROLE_CHOICES = (
+        (Owner, 'Owner'),
+        (MasterAdmin, 'MasterAdmin'),
+        (Employee, 'Employee'),
+    )
+
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
+    user_role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
     user_phone = models.CharField(max_length=20)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
+
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.username + "|" + self.first_name + " " + self.last_name
+
+
+
+"""     class Meta:
+        permissions = (
+            ("can_view_all_orders", "Can view all orders"),
+            ("can_view_all_clients", "Can view all clients"),
+
+        )   """  
+
+
+""" class UserProfile(models.Model):
+    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username + "|" + self.user.first_name + " " + self.user.last_name"""
 
 
 class Order(models.Model):
@@ -86,8 +114,8 @@ class Client(models.Model):
         return self.client_first_name + " " + self.client_last_name
 
 
-""" class User_Role(models.Model):
-    user_role_name = models.CharField(choices=(('Owner','Owner'), ('Manager','Manager'), ('Employee', 'Employee')), max_length=30)
+""" class UserRole(models.Model):
+    user_role_name = models.CharField(choices=(('Owner','Owner'), ('Admin','Admin'), ('Employee', 'Employee')), max_length=30)
     user_role_description = models.TextField(max_length=200)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -95,10 +123,10 @@ class Client(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user_role_name
-"""
+        return self.user_role_name """
 
-""" class User_Activity_Log(models.Model):
+
+""" class UserActivityLog(models.Model):
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
     user_action = models.ForeignKey(("User_Action"), null=True, blank=True, on_delete=models.CASCADE)
     work_order = models.ForeignKey(("Order"), null=True, blank=True, on_delete=models.CASCADE)
@@ -113,7 +141,7 @@ class Client(models.Model):
         return self.user + " " + self.user_action + " " + self.user_activity_time
 """
 
-""" class User_Action(models.Model):
+""" class UserAction(models.Model):
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
     action_name = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -124,7 +152,7 @@ class Client(models.Model):
         return self.user + " " + self.action_name
 """
 
-class Billing_Log(models.Model):
+class BillingLog(models.Model):
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     plan = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
     billing_date = models.DateTimeField(auto_now_add=True)

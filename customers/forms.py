@@ -1,13 +1,9 @@
 from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm, UsernameField
 from .models import Order, Client
 
-
-""" class ClientCheckForm(forms.ModelForm):
-    class Meta:
-        model = Client
-        fields = (
-            'client_already_exists',
-        ) """
+User = get_user_model()
 
 
 class ClientCreateForm(forms.ModelForm):
@@ -20,6 +16,7 @@ class ClientCreateForm(forms.ModelForm):
             'client_phone',
             'client_check_mobile_phone',
         )
+
 
 class OrderCreateForm(forms.ModelForm):
     class Meta:
@@ -34,6 +31,36 @@ class OrderCreateForm(forms.ModelForm):
             'work_order_status',
             'work_order_description'
         )
+
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'user_phone',
+            'user_role',
+        )
+        field_classes = {
+            'username': UsernameField,
+            'first_name': forms.CharField,
+            'last_name': forms.CharField,
+            'email': forms.EmailField,
+            'user_phone': forms.CharField,
+            'user_role': forms.ChoiceField,
+        }
+
+
+""" class ClientCheckForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = (
+            'client_already_exists',
+        ) """
+
 
 """ class OrderForm(forms.Form):
     client_first_name = forms.CharField(max_length=100)
