@@ -17,49 +17,6 @@ class SignupView(generic.CreateView):
         return reverse("login")
 
 
-""" class OrderListView(LoginRequiredMixin, generic.ListView):
-    template_name = "customers/order_list.html"
-    queryset = Order.objects.all()
-    context_object_name = "order_list"
-
-    
-class OrderCreateView(LoginRequiredMixin, generic.CreateView):
-    template_name = "customers/order_create.html"
-    form_class = OrderCreateForm
-
-    def get_success_url(self):
-        return reverse("customers:order-list")
-
-    def form_valid(self, form):
-        # TODO send email
-        send_mail(
-            subject="New Order has been created", 
-            message="Go to the site to see the new order",
-            from_email="test@test.com",
-            recipient_list=["test2@test.com"]
-        )
-        return super(OrderCreateView, self).form_valid(form)
-
-
-class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
-    template_name = "customers/order_update.html"
-    form_class = OrderCreateForm
-    queryset = Order.objects.all()
-    context_object_name = "order-update"
-
-    def get_success_url(self):
-        return reverse("customers:order-list")
-
-
-class OrderDeleteView(LoginRequiredMixin, generic.DeleteView):
-    template_name = "customers/order_delete.html"
-    queryset = Order.objects.all()
-    context_object_name = "order-delete"
-
-    def get_success_url(self):
-        return reverse("customers:order-list") """
-
-
 class ClientListView(LoginRequiredMixin, generic.ListView):
     template_name = "customers/client_list.html"
     queryset = Client.objects.all()
