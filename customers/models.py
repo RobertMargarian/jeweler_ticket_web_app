@@ -149,8 +149,8 @@ class Client(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.user + " " + self.action_name
-"""
+        return self.user + " " + self.action_name """
+
 
 class BillingLog(models.Model):
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)

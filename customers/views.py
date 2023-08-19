@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, reverse
 from django.http import HttpResponse
 from django.views import generic
 from .models import Order, Client, Company, User, Plan
-from .forms import OrderCreateForm, ClientCreateForm, CustomUserCreationForm
+from .forms import ClientCreateForm, CustomUserCreationForm
 
 
 class SignupView(generic.CreateView):
@@ -17,7 +17,7 @@ class SignupView(generic.CreateView):
         return reverse("login")
 
 
-class OrderListView(LoginRequiredMixin, generic.ListView):
+""" class OrderListView(LoginRequiredMixin, generic.ListView):
     template_name = "customers/order_list.html"
     queryset = Order.objects.all()
     context_object_name = "order_list"
@@ -57,7 +57,7 @@ class OrderDeleteView(LoginRequiredMixin, generic.DeleteView):
     context_object_name = "order-delete"
 
     def get_success_url(self):
-        return reverse("customers:order-list")
+        return reverse("customers:order-list") """
 
 
 class ClientListView(LoginRequiredMixin, generic.ListView):

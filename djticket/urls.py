@@ -9,6 +9,7 @@ from customers.views import SignupView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(('customers.urls', 'customers'), namespace="customers")),
+    path('orders/', include(('orders.urls', 'orders'), namespace="orders")),
     path('signup/', SignupView.as_view(), name='signup'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),

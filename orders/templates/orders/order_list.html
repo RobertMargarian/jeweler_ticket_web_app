@@ -3,16 +3,16 @@
     <hr>
     {% if user.user_role == 1 or user.user_role == 2 or user.user_role == 3 %}
     {% for order_list in order_list %}
-        <div class="customer">
+        <div class="orders">
             #{{ forloop.counter }}|
             Client: {{ order_list.client }}|
             Order Status: {{ order_list.work_order_status }}|
             Order Type: {{ order_list.work_order_type }}|
             Order Price: {{ order_list.quoted_price }}|
             Action: 
-            <a href="{% url 'customers:order-update' order_list.pk %}">Edit</a>|
+            <a href="{% url 'orders:order-update' order_list.pk %}">Edit</a>|
             {% if user.user_role == 1 or user.user_role == 2 %}
-            <a href="{% url 'customers:order-delete' order_list.pk %}">Delete</a>
+            <a href="{% url 'orders:order-delete' order_list.pk %}">Delete</a>
             {% endif %}
         </div>
     {% endfor %}

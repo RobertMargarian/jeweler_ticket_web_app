@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UsernameField
-from .models import Order, Client
+from .models import Client
 
 User = get_user_model()
 
@@ -18,7 +18,7 @@ class ClientCreateForm(forms.ModelForm):
         )
 
 
-class OrderCreateForm(forms.ModelForm):
+""" class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = (
@@ -30,7 +30,7 @@ class OrderCreateForm(forms.ModelForm):
             'work_order_due_date',
             'work_order_status',
             'work_order_description'
-        )
+        ) """
 
 
 class CustomUserCreationForm(UserCreationForm):

@@ -22,7 +22,7 @@
         <!-- Nav tabs -->
         <ul class="nav" id="navId" role="tablist">
             <li class="nav-item">
-                <a href="{% url 'customers:order-list'%}" class="nav-link">Orders</a>
+                <a href="{% url 'orders:order-list'%}" class="nav-link">Orders</a>
             </li>
             <li class="nav-item" role="presentation">
                 <a href="{% url 'customers:client-list'%}" class="nav-link">Clients</a>
@@ -31,7 +31,7 @@
                 <a href="{% url 'customers:client-create'%}" class="nav-link">Create New Client</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a href="{% url 'customers:order-create'%}" class="nav-link">Create New Order</a>
+                <a href="{% url 'orders:order-create'%}" class="nav-link">Create New Order</a>
             </li>
             {% if user.user_role == 1 or user.user_role == 2 %}
             <li class="nav-item" role="presentation">
@@ -71,7 +71,9 @@
         </div>
     </main>
     <footer>
-        This is a footer
+        <div class="container">
+            <p>&copy; 2023 - DJTICKET</p>
+        </div>
     </footer>
     <!-- Bootstrap JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
