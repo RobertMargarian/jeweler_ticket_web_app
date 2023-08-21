@@ -32,13 +32,16 @@ class Company(models.Model):
 
 
 class User(AbstractUser):
-    Owner = 1
-    MasterAdmin = 2
-    Employee = 3
+    MasterAdmin = 1
+    CompanyOwner = 2
+    CompanyAdmin = 3
+    Employee = 4
 
     ROLE_CHOICES = (
-        (Owner, 'Owner'),
+
         (MasterAdmin, 'MasterAdmin'),
+        (CompanyOwner, 'CompanyOwner'),
+        (CompanyAdmin, 'CompanyAdmin'),
         (Employee, 'Employee'),
     )
 

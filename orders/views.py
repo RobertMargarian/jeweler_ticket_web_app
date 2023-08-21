@@ -14,6 +14,10 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
     queryset = Order.objects.all()
     context_object_name = "order_list"
 
+"""     def get_queryset(self):
+        company = self.request.user.company
+        return Order.objects.filter(company=company) """
+
     
 class OrderCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "orders/order_create.html"
@@ -35,12 +39,16 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
 
 class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = "orders/order_update.html"
-    form_class = OrderCreateForm
     queryset = Order.objects.all()
+    form_class = OrderCreateForm
     context_object_name = "order-update"
 
     def get_success_url(self):
         return reverse("orders:order-list")
+
+"""     def get_queryset(self):
+        company = self.request.user.company
+        return Order.objects.filter(company=company) """
 
 
 class OrderDeleteView(LoginRequiredMixin, generic.DeleteView):
@@ -50,3 +58,7 @@ class OrderDeleteView(LoginRequiredMixin, generic.DeleteView):
 
     def get_success_url(self):
         return reverse("orders:order-list")
+    
+"""     def get_queryset(self):
+        company = self.request.user.company
+        return Order.objects.filter(company=company) """

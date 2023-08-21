@@ -2,6 +2,7 @@
 {% block content %}
     <hr>
     {% for client_list in client_list %}
+    {% if user.company == client_list.company or user.user_role == 1 %}
         <div class="customer">
             #{{ forloop.counter }}
             Client Name: {{ client_list.client_first_name }} {{ client_list.client_last_name }}|
@@ -11,10 +12,11 @@
             Last Order Date: |
             Action: 
             <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a>|
-            {% if user.user_role == 1 or user.user_role == 2 %}
+            {% if user.user_role == 1 or user.user_role == 2 or user.user_role == 3 %}
             <a href="{% url 'customers:client-delete' client_list.pk %}">Delete</a>
             {% endif %}
         <div>
+    {% endif %}
     {% endfor %}
     <hr>
 {% endblock content %}

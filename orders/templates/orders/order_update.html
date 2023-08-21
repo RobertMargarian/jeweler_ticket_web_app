@@ -8,35 +8,3 @@
     </form>
 {% endblock content %}
 
-
-{% comment %} <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Order Details</title>
-</head>
-<body>
-    <a href="/">Go back to Orders</a>
-    </hr>
-    <h1>Edit Order</h1>
-    <div class="order_update">
-        <h2>Customer Information</h2>
-        <p>Customer Full Name: {{ client.client_first_name }} {{ client.client_last_name }}</p>
-        <p>Customer Email: {{ client.client_email }}</p>
-        <p>Customer Phone: {{ client.client_phone }}</p>
-        <p>Check if mobile phone: {{ client.client_check_mobile_phone }}</p>
-        <h2>Order Information</h2>
-        <h3>Dates</h3>
-        <p>Order Date: {{ order.work_order_date }}</p>
-        <p>Due Date: {{ order.work_order_due_date }}</p>
-        <h3>Financial Info</h3>
-        <p>Estimated Cost, $: {{ order.estimated_cost }}</p>
-        <p>Quoted Price, $: {{ order.quoted_price }}</p>
-        <p>Security Deposit, $: {{ order.security_deposit }}</p>
-        <h3>Order Details</h3>
-        <p>Order Type: {{ order.work_order_type }}</p>
-        <p>Order Status: {{ order.work_order_status }}</p>
-        <p>Notes: {{ order.work_order_description }}</p>
-</body>
-</html> {% endcomment %}

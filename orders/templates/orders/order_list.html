@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
     <hr>
-    {% if user.user_role == 1 or user.user_role == 2 or user.user_role == 3 %}
     {% for order_list in order_list %}
+    {% if user.user_role == 1 or user.company == order_list.company %}
         <div class="orders">
             #{{ forloop.counter }}|
             Client: {{ order_list.client }}|
@@ -11,12 +11,12 @@
             Order Price: {{ order_list.quoted_price }}|
             Action: 
             <a href="{% url 'orders:order-update' order_list.pk %}">Edit</a>|
-            {% if user.user_role == 1 or user.user_role == 2 %}
+            {% if user.user_role == 1 or user.user_role == 2 or user.user_role == 3 %}
             <a href="{% url 'orders:order-delete' order_list.pk %}">Delete</a>
             {% endif %}
         </div>
-    {% endfor %}
     {% endif %}
+    {% endfor %}
     </hr>
 {% endblock content %}
 

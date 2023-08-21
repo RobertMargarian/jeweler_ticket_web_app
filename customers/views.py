@@ -22,6 +22,10 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
     queryset = Client.objects.all()
     context_object_name = "client_list"
 
+"""     def get_queryset(self):
+        company = self.request.user.company
+        return Client.objects.filter(company=company) """
+
 
 class ClientCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "customers/client_create.html"
@@ -43,12 +47,16 @@ class ClientCreateView(LoginRequiredMixin, generic.CreateView):
 
 class ClientUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = "customers/client_update.html"
-    form_class = ClientCreateForm
     queryset = Client.objects.all()
+    form_class = ClientCreateForm
     context_object_name = "client-update"
 
     def get_success_url(self):
         return reverse("customers:client-list")
+    
+"""     def get_queryset(self):
+        company = self.request.user.company
+        return Client.objects.filter(company=company) """
 
 
 class ClientDeleteView(LoginRequiredMixin, generic.DeleteView):
@@ -58,6 +66,10 @@ class ClientDeleteView(LoginRequiredMixin, generic.DeleteView):
 
     def get_success_url(self):
         return reverse("customers:client-list")
+    
+"""     def get_queryset(self):
+        company = self.request.user.company
+        return Client.objects.filter(company=company) """
 
 
 
