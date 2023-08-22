@@ -33,7 +33,7 @@
             <li class="nav-item" role="presentation">
                 <a href="{% url 'orders:order-create'%}" class="nav-link">Create New Order</a>
             </li>
-            {% if user.user_role == 1 or user.user_role == 2 or user.user_role == 3 %}
+            {% if user.user_role == 1 or user.user_role == 2 %}
             <li class="nav-item" role="presentation">
                 <a href="{% url 'signup' %}" class="nav-link">Sign Up</a>
             </li>

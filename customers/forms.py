@@ -1,6 +1,10 @@
+from typing import Any, Dict, Mapping, Optional, Type, Union
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UsernameField
+from django.core.files.base import File
+from django.db.models.base import Model
+from django.forms.utils import ErrorList
 from .models import Client
 
 User = get_user_model()
@@ -15,7 +19,9 @@ class ClientCreateForm(forms.ModelForm):
             'client_email',
             'client_phone',
             'client_check_mobile_phone',
+            'company',
         )
+
 
 
 class CustomUserCreationForm(UserCreationForm):

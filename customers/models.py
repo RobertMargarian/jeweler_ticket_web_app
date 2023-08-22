@@ -32,14 +32,11 @@ class Company(models.Model):
 
 
 class User(AbstractUser):
-    MasterAdmin = 1
-    CompanyOwner = 2
-    CompanyAdmin = 3
-    Employee = 4
+    CompanyOwner = 1
+    CompanyAdmin = 2
+    Employee = 3
 
     ROLE_CHOICES = (
-
-        (MasterAdmin, 'MasterAdmin'),
         (CompanyOwner, 'CompanyOwner'),
         (CompanyAdmin, 'CompanyAdmin'),
         (Employee, 'Employee'),
@@ -55,7 +52,7 @@ class User(AbstractUser):
 
 
     def __str__(self):
-        return self.username + "|" + self.first_name + " " + self.last_name
+        return self.username + " | " + self.first_name + " " + self.last_name + " | " + self.user_role.__str__()
 
 
 
@@ -71,7 +68,7 @@ class User(AbstractUser):
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.username + "|" + self.user.first_name + " " + self.user.last_name """
+        return self.user.username + " | " + self.user.first_name + " " + self.user.last_name """
 
 
 class Order(models.Model):
@@ -93,6 +90,8 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.company.company_name + " | " + self.client.client_first_name + " " + self.client.client_last_name
 
 """     def delete(self):
         self.deleted_flag = True
@@ -114,7 +113,7 @@ class Client(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.client_first_name + " " + self.client_last_name
+        return self.company.company_name + " | " + self.client_first_name + " " + self.client_last_name + " " 
 
 
 """ class UserRole(models.Model):

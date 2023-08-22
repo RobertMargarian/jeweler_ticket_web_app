@@ -2,17 +2,16 @@
 {% block content %}
     <hr>
     {% for client_list in client_list %}
-    {% if user.company == client_list.company or user.user_role == 1 %}
+    {% if user.company == client_list.company %}
         <div class="customer">
-            #{{ forloop.counter }}
-            Client Name: {{ client_list.client_first_name }} {{ client_list.client_last_name }}|
-            Client Phone: {{ client_list.client_phone }}|
-            Email: {{ client_list.client_email }}|
-            Total/Spent: {{ client_list.total_spent }}|
-            Last Order Date: |
+            #{{ forloop.counter }} |
+            Client Name: {{ client_list.client_first_name }} {{ client_list.client_last_name }} |
+            Client Phone: {{ client_list.client_phone }} |
+            Email: {{ client_list.client_email }} |
+            Total/Spent: {{ client_list.total_spent }} |
             Action: 
-            <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a>|
-            {% if user.user_role == 1 or user.user_role == 2 or user.user_role == 3 %}
+            <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a> |
+            {% if user.user_role == 1 or user.user_role == 2 %}
             <a href="{% url 'customers:client-delete' client_list.pk %}">Delete</a>
             {% endif %}
         <div>
