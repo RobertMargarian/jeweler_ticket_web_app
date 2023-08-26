@@ -113,7 +113,7 @@ class Client(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.company.company_name + " | " + self.client_first_name + " " + self.client_last_name + " " 
+        return self.client_first_name + " " + self.client_last_name + " " 
 
 
 

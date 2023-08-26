@@ -6,7 +6,8 @@
 
 <head>
     <title>DJTICKET BASE PAGE</title>
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    <!-- Custom styles for this template -->
+    <link href={% static 'css/sidebar.css' %} rel="stylesheet">
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -14,12 +15,12 @@
     <!-- Bootstrap CSS v5.2.1 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-
 </head>
 
 <body>
-    {% include 'navbar.html' %}
+    {% include 'sidebar-svg.html' %}
     <main>
+        {% include 'sidebar.html' %}
         <div class="container">
             {% block content %}
             {% endblock content %}
