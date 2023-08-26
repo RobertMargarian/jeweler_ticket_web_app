@@ -18,52 +18,7 @@
 </head>
 
 <body>
-    <header>
-        <!-- Nav tabs -->
-        <ul class="nav" id="navId" role="tablist">
-            <li class="nav-item">
-                <a href="{% url 'orders:order-list'%}" class="nav-link">Orders</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a href="{% url 'customers:client-list'%}" class="nav-link">Clients</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a href="{% url 'customers:client-create'%}" class="nav-link">Create New Client</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a href="{% url 'orders:order-create'%}" class="nav-link">Create New Order</a>
-            </li>
-            {% if user.user_role == 1 or user.user_role == 2 %}
-            <li class="nav-item" role="presentation">
-                <a href="{% url 'signup' %}" class="nav-link">Sign Up</a>
-            </li>
-            {% endif %}
-            {% if request.user.is_authenticated %}
-            Logged in as {{ request.user.username }}
-            <a href="{% url 'logout' %}" class="nav-link">Logout</a>
-            {% else %}
-            <li class="nav-item" role="presentation">
-                <a href="{% url 'login' %}" class="nav-link">Login</a>
-            </li>
-            {% endif %}
-        </ul>
-        
-        <!-- Tab panes (Not Used) -->
-        <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="tab1Id" role="tabpanel"></div>
-            <div class="tab-pane fade" id="tab2Id" role="tabpanel"></div>
-            <div class="tab-pane fade" id="tab3Id" role="tabpanel"></div>
-            <div class="tab-pane fade" id="tab4Id" role="tabpanel"></div>
-            <div class="tab-pane fade" id="tab5Id" role="tabpanel"></div>
-        </div>
-        
-        <!-- (Not Used / Optional) - Place this js code after initializing bootstrap.min.js or bootstrap.bundle.min.js -->
-        <script>
-            var triggerEl = document.querySelector('#navId a')
-            bootstrap.Tab.getInstance(triggerEl).show() // Select tab by name
-        </script>
-        
-    </header>
+    {% include 'navbar.html' %}
     <main>
         <div class="container">
             {% block content %}

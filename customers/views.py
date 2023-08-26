@@ -10,7 +10,7 @@ from .forms import ClientCreateForm, CustomUserCreationForm
 from .mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin, EmployeeRequiredMixin 
 """ should use this mixin for all views that require login and role """
 
-class SignupView(LoginRequiredMixin, generic.CreateView):
+class SignupView(generic.CreateView):
     template_name = "registration/signup.html"
     form_class = CustomUserCreationForm
 
@@ -22,6 +22,15 @@ class SignupView(LoginRequiredMixin, generic.CreateView):
         user.company = self.request.user.company
         user.save()
         return super(SignupView, self).form_valid(form)
+    
+
+class LandingPageView(generic.TemplateView):
+    template_name = "landing.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["plan_list"] = Plan.objects.all()
+        return context
 
 
 class ClientListView(LoginRequiredMixin, generic.ListView):

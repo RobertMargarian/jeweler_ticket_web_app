@@ -3,12 +3,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path, include
-from customers.views import SignupView
+from customers.views import SignupView, LandingPageView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(('orders.urls', 'orders'), namespace="orders")),
+    path ('', LandingPageView.as_view(), name="landing-page"),
+    path('orders', include(('orders.urls', 'orders'), namespace="orders")),
     path('', include(('customers.urls', 'customers'), namespace="customers")),
     path('signup/', SignupView.as_view(), name='signup'),
     path('login/', LoginView.as_view(), name='login'),
