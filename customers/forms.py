@@ -19,9 +19,7 @@ class ClientCreateForm(forms.ModelForm):
             'client_email',
             'client_phone',
             'client_check_mobile_phone',
-            'company',
         )
-
 
 
 class CustomUserCreationForm(UserCreationForm):

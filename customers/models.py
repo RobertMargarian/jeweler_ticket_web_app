@@ -52,7 +52,7 @@ class User(AbstractUser):
 
 
     def __str__(self):
-        return self.username + " | " + self.first_name + " " + self.last_name + " | " + self.user_role.__str__()
+        return self.first_name + " " + self.last_name + " | " + self.user_role.__str__()
 
 
 
@@ -74,7 +74,7 @@ class User(AbstractUser):
 class Order(models.Model):
     client = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
-    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.SET_NULL)
     work_order_date = models.DateTimeField(auto_now_add=True)
     work_order_due_date = models.DateTimeField(max_length=50)
     estimated_cost = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
@@ -115,17 +115,6 @@ class Client(models.Model):
     def __str__(self):
         return self.company.company_name + " | " + self.client_first_name + " " + self.client_last_name + " " 
 
-
-""" class UserRole(models.Model):
-    user_role_name = models.CharField(choices=(('Owner','Owner'), ('Admin','Admin'), ('Employee', 'Employee')), max_length=30)
-    user_role_description = models.TextField(max_length=200)
-    deleted_flag = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    ingestion_timestamp = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.user_role_name """
 
 
 """ class UserActivityLog(models.Model):

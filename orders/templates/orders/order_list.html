@@ -5,7 +5,7 @@
     {% if user.company == order_list.company %}
         <div class="orders">
             #{{ forloop.counter }} |
-            Client: {{ order_list.client }} |
+            Client: {{ order_list.client.client_first_name }} {{ order_list.client.client_last_name }} |
             Order Status: {{ order_list.work_order_status }} |
             Order Type: {{ order_list.work_order_type }} |
             Order Price: {{ order_list.quoted_price }} |

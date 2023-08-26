@@ -5,6 +5,7 @@ from customers.models import Order
 
 User = get_user_model()
 
+
 class OrderCreateForm(forms.ModelForm):
     class Meta:
         model = Order
@@ -18,3 +19,4 @@ class OrderCreateForm(forms.ModelForm):
             'work_order_status',
             'work_order_description'
         )
+

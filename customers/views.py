@@ -7,24 +7,35 @@ from django.http import HttpResponse
 from django.views import generic
 from .models import Order, Client, Company, User, Plan
 from .forms import ClientCreateForm, CustomUserCreationForm
+from .mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin, EmployeeRequiredMixin 
+""" should use this mixin for all views that require login and role """
 
-
-class SignupView(generic.CreateView):
+class SignupView(LoginRequiredMixin, generic.CreateView):
     template_name = "registration/signup.html"
     form_class = CustomUserCreationForm
 
     def get_success_url(self):
         return reverse("login")
+    
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.company = self.request.user.company
+        user.save()
+        return super(SignupView, self).form_valid(form)
 
 
 class ClientListView(LoginRequiredMixin, generic.ListView):
     template_name = "customers/client_list.html"
-    queryset = Client.objects.all()
     context_object_name = "client_list"
 
-"""     def get_queryset(self):
-        company = self.request.user.company
-        return Client.objects.filter(company=company) """
+    def get_queryset(self):
+        user = self.request.user
+        if user.user_role == 1 or user.user_role == 2 or user.user_role == 3:
+            queryset = Client.objects.filter(company=user.company)
+            queryset = queryset.filter(company=self.request.user.company)
+        else:
+            return KeyError("User does not have permission to view orders")
+        return queryset
 
 
 class ClientCreateView(LoginRequiredMixin, generic.CreateView):
@@ -34,7 +45,20 @@ class ClientCreateView(LoginRequiredMixin, generic.CreateView):
     def get_success_url(self):
         return reverse("customers:client-list")
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.user_role == 1 or user.user_role == 2 or user.user_role == 3:
+            queryset = Client.objects.filter(company=user.company)
+            queryset = queryset.filter(company=self.request.user.company)
+        else:
+            return KeyError("User does not have permission to view orders")
+        return queryset
+
+
     def form_valid(self, form):
+        client = form.save(commit=False)
+        client.company = self.request.user.company
+        client.save()
         # TODO send email
         send_mail(
             subject="New Client has been created", 
@@ -47,29 +71,39 @@ class ClientCreateView(LoginRequiredMixin, generic.CreateView):
 
 class ClientUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = "customers/client_update.html"
-    queryset = Client.objects.all()
     form_class = ClientCreateForm
     context_object_name = "client-update"
 
     def get_success_url(self):
         return reverse("customers:client-list")
     
-"""     def get_queryset(self):
-        company = self.request.user.company
-        return Client.objects.filter(company=company) """
+    def get_queryset(self):
+        user = self.request.user
+        if user.user_role == 1 or user.user_role == 2 or user.user_role == 3:
+            queryset = Client.objects.filter(company=user.company)
+            queryset = queryset.filter(company=self.request.user.company)
+        else:
+            return KeyError("User does not have permission to view orders")
+        return queryset
 
 
-class ClientDeleteView(LoginRequiredMixin, generic.DeleteView):
+
+class ClientDeleteView(CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin, generic.DeleteView):
     template_name = "customers/client_delete.html"
-    queryset = Client.objects.all()
     context_object_name = "client-delete"
 
     def get_success_url(self):
         return reverse("customers:client-list")
     
-"""     def get_queryset(self):
-        company = self.request.user.company
-        return Client.objects.filter(company=company) """
+    def get_queryset(self):
+        user = self.request.user
+        if user.user_role == 1 or user.user_role == 2 or user.user_role == 3:
+            queryset = Client.objects.filter(company=user.company)
+            queryset = queryset.filter(company=self.request.user.company)
+        else:
+            return KeyError("User does not have permission to view orders")
+        return queryset
+
 
 
 
