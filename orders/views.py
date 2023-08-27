@@ -34,7 +34,7 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.user_role == 1 or user.user_role == 2 or user.user_role == 3:
+        if user.user_role in [1, 2, 3]:
             queryset = Order.objects.filter(company=user.company)
             queryset = queryset.filter(client__company=user.company)
             form.fields['client'].queryset = queryset
@@ -69,7 +69,7 @@ class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.user_role == 1 or user.user_role == 2 or user.user_role == 3:
+        if user.user_role in [1, 2, 3]:
             queryset = Order.objects.filter(company=user.company)
             queryset = queryset.filter(client__company=user.company)
         else:
@@ -86,7 +86,7 @@ class OrderDeleteView(CompanyAdminRequiredMixin, CompanyOwnerRequiredMixin, gene
     
     def get_queryset(self):
         user = self.request.user
-        if user.user_role == 1 or user.user_role == 2 or user.user_role == 3:
+        if user.user_role in [1, 2, 3]:
             queryset = Order.objects.filter(company=user.company)
             queryset = queryset.filter(client__company=user.company)
         else:
