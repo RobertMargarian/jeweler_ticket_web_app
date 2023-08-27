@@ -1,0 +1,18 @@
+.status-div { 
+  color: white; 
+  border-radius: 4px; 
+  padding: 4px 10px;
+  font-weight: bold;
+}
+
+.status-completed {
+  background-color: green;
+}
+
+.status-cancelled {
+  background-color: darkred;  
+}
+
+.status-in-progress { 
+  background-color: darkgoldenrod;
+}

@@ -1,25 +1,27 @@
-from django.shortcuts import render
 from django.core.mail import send_mail
-from typing import Any
-from django.db import models
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.shortcuts import render, redirect, reverse
-from django.http import HttpResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import reverse
 from django.views import generic
 from customers.models import Order
 from .forms import OrderCreateForm
-from customers.mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin, EmployeeRequiredMixin
+from customers.mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin
 
 
 class OrderListView(LoginRequiredMixin, generic.ListView):
     template_name = "orders/order_list.html"
     context_object_name = "order_list"
 
+    def get_paginate_by(self, queryset):
+        # Get the page_size from the query parameters, default to 10 if not provided
+        return self.request.GET.get('page_size', 10)
+    
     def get_queryset(self):
         user = self.request.user
-        if user.user_role == 1 or user.user_role == 2 or user.user_role == 3:
-            queryset = Order.objects.filter(company=user.company)
-            queryset = queryset.filter(client__company=user.company)
+        if user.user_role in [1, 2, 3]:
+            queryset = Order.objects \
+                .filter(company=user.company) \
+                .filter(client__company=user.company) \
+                .order_by('-created_at')
         else:
             return KeyError("User does not have permission to view orders")
         return queryset

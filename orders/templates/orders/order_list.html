@@ -1,36 +1,105 @@
 {% extends "base.html" %}
 {% block content %}
-    <hr>
-        <table class="table">
-            <thead>
-                <th scope="col">#</th>
-                <th scope="col">Client Name</th>
-                <th scope="col">Order Status</th>
-                <th scope="col">Order Type</th>
-                <th scope="col">Order Price</th>
-                <th scope="col">Actions</th>
-            </thead>
-            <tbody>
-                {% for order_list in order_list %}
-                {% if user.company == order_list.company %}
-                <tr>
-                    <th scope="row">{{ forloop.counter }}</th> 
-                    <td>{{ order_list.client.client_first_name }} {{ order_list.client.client_last_name }}</td>
-                    <td>{{ order_list.work_order_status }}</td>
-                    <td>{{ order_list.work_order_type }}</td>
-                    <td>{{ order_list.quoted_price }}</td>
-                    <td>
-                        <a href="{% url 'orders:order-update' order_list.pk %}">Edit</a> |
-                        {% if user.user_role == 1 or user.user_role == 2 %}
-                        <a href="{% url 'orders:order-delete' order_list.pk %}">Delete</a>
-                        {% endif %}
-                    </td>
+    {% comment %} Orders Per Page Form {% endcomment %}
+    <form method="get" class="mb-4">
+        <label for="page-size">Orders per page:</label>
+        <select name="page_size" id="page-size" onchange="this.form.submit()">
+            <option value="10"  {% if request.GET.page_size == "10" %}  selected{% endif %}>10</option>
+            <option value="25"  {% if request.GET.page_size == "25" %}  selected{% endif %}>25</option>
+            <option value="50"  {% if request.GET.page_size == "50" %}  selected{% endif %}>50</option>
+            <option value="100" {% if request.GET.page_size == "100" %} selected{% endif %}>100</option>
+        </select>        
+    </form>
 
-                </tr>
+    <table class="table">
+        <thead>
+            <th scope="col">#</th>
+            <th scope="col">Client Name</th>
+            <th class="text-center" scope="col">Order Status</th>
+            <th scope="col">Order Type</th>
+            <th scope="col">Order Price</th>
+            <th scope="col">Actions</th>
+        </thead>
+        <tbody>
+            {% for order_list in order_list %}
+            {% if user.company == order_list.company %}
+            <tr style="vertical-align: middle">
+                <th scope="row">{{ forloop.counter }}</th> 
+                <td>{{ order_list.client.client_first_name }} {{ order_list.client.client_last_name }}</td>
+
+                <td class="text-center">
+                    {% if order_list.work_order_status == 'Canceled' %}
+                        <div class="status-div status-cancelled">
+                            {{ order_list.work_order_status }}
+                        </div>
+                    {% endif %}
+                    {% if order_list.work_order_status == 'In Progress' %}
+                        <div class="status-div status-in-progress">
+                            {{ order_list.work_order_status }}
+                        </div>
+                    {% endif %}
+                    {% if order_list.work_order_status == 'Completed' %}
+                        <div class="status-div status-completed">
+                            {{ order_list.work_order_status }}
+                        </div>
+                    {% endif %}
+                </td>
+
+                <td>{{ order_list.work_order_type }}</td>
+                <td>{{ order_list.quoted_price }}</td>
+                <td>
+                    <a href="{% url 'orders:order-update' order_list.pk %}">Edit</a> |
+                    {% if user.user_role == 1 or user.user_role == 2 %}
+                    <a href="{% url 'orders:order-delete' order_list.pk %}">Delete</a>
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% comment %} Pagination Controls {% endcomment %}
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Order List Pagination">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1" aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
                 {% endif %}
+        
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
                 {% endfor %}
-            </tbody>
-        </table>
-    </hr>
+        
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
 {% endblock content %}
 
