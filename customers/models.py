@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 
 class Company(models.Model):
     company_current_plan = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
-    company_subscription_status = models.CharField(choices=(('Active','Active'), ('Inactive','Inactive'), ('Canceled', 'Canceled')), max_length=30)
+    company_subscription_status = models.CharField(choices=(('Active','Active'), ('Inactive','Inactive'), ('Cancelled', 'Cancelled')), max_length=30)
     company_email = models.EmailField(max_length=254)
     company_phone = models.CharField(max_length=20)
     company_name = models.CharField(max_length=50)
@@ -83,7 +83,7 @@ class Order(models.Model):
     quoted_currency = models.CharField(choices=(('USD', 'USD'), ('EUR', 'EUR'), ('GBP', 'GBP')), max_length=10)
     security_deposit = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     work_order_type = models.CharField(choices=(('Sell','Sell'), ('Repair','Repair'), ('Other', 'Other')), max_length=30)
-    work_order_status = models.CharField(choices=(('Canceled','Canceled'), ('In Progress','In Progress'), ('Completed', 'Completed')), max_length=30)
+    work_order_status = models.CharField(choices=(('Cancelled','Cancelled'), ('In Progress','In Progress'), ('Completed', 'Completed')), max_length=30)
     work_order_description = models.TextField(max_length=200)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

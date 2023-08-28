@@ -30,7 +30,7 @@ class SignupView(FormView):
 
     def form_valid(self, form, second_form):
         company = second_form.save(commit=False)
-        company.company_current_plan = Plan.objects.get(id=1)
+        company.company_current_plan = Plan.objects.get(id=3)
         company.company_subscription_status = "Active"
         company.save()  # Save Company form data
         user = form.save(commit=False)
