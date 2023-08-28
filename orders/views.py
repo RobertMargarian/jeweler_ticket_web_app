@@ -36,10 +36,11 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
         form = OrderCreateForm()
         user = self.request.user
         if user.user_role in [1, 2, 3]:
-            form.fields['client'].queryset = form.fields['client'].queryset.filter(company=user.company)
+            queryset = Order.objects \
+                .filter(client__company=user.company)
         else:
             return KeyError("User does not have permission to create orders")
-        return form
+        return queryset
 
     def get_success_url(self):
         return reverse("orders:order-list")
