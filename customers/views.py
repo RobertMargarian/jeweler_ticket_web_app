@@ -29,9 +29,16 @@ class SignupView(FormView):
             return self.form_invalid(form, second_form)
 
     def form_valid(self, form, second_form):
-        form.save()  # Save User form data
-        second_form.save()  # Save Company form data
+        company = second_form.save(commit=False)
+        company.company_current_plan = Plan.objects.get(id=1)
+        company.company_subscription_status = "Active"
+        company.save()  # Save Company form data
+        user = form.save(commit=False)
+        user.user_role = 1
+        user.company = company
+        user.save()  # Save User form data
         return super().form_valid(form)
+    
 
 class LandingPageView(generic.TemplateView):
     template_name = "landing.html"
