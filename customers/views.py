@@ -119,7 +119,7 @@ class ClientUpdateView(LoginRequiredMixin, generic.UpdateView):
 
 
 
-class ClientDeleteView(CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin, generic.DeleteView):
+class ClientDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = "customers/client_delete.html"
     context_object_name = "client-delete"
 

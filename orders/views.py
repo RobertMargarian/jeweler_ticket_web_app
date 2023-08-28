@@ -47,6 +47,7 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
     def form_valid(self, form):
         order = form.save(commit=False)
         order.company = self.request.user.company
+        order.work_order_status = 'In Progress'
         order.save()
         # TODO send email
         send_mail(
@@ -76,7 +77,7 @@ class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
         return queryset
 
 
-class OrderDeleteView(CompanyAdminRequiredMixin, CompanyOwnerRequiredMixin, generic.DeleteView):
+class OrderDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = "orders/order_delete.html"
     context_object_name = "order-delete"
 

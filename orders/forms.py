@@ -16,7 +16,6 @@ class OrderCreateForm(forms.ModelForm):
             'quoted_price', 
             'security_deposit', 
             'work_order_due_date',
-            'work_order_status',
             'work_order_description'
         )
 
