@@ -6,23 +6,35 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.http import HttpResponse
 from django.views import generic
 from .models import Order, Client, Company, User, Plan
-from .forms import ClientCreateForm, CustomUserCreationForm
+from django.views.generic.edit import FormView
+from .forms import ClientCreateForm, CustomUserCreationForm, CompanyCreateForm
 from .mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin, EmployeeRequiredMixin 
 """ should use this mixin for all views that require login and role """
 
-class SignupView(generic.CreateView):
-    template_name = "registration/signup.html"
+class SignupView(FormView):
+    template_name = 'registration/signup.html'
     form_class = CustomUserCreationForm
+    second_form_class = CompanyCreateForm
+    success_url = '/login/'  # Redirect URL after successful form submission
 
-    def get_success_url(self):
-        return reverse("login")
-    
-    def form_valid(self, form):
-        user = form.save(commit=False)
-        user.company = self.request.user.company
-        user.save()
-        return super(SignupView, self).form_valid(form)
-    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['second_form'] = self.second_form_class()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        second_form = self.second_form_class(request.POST)
+
+        if form.is_valid() and second_form.is_valid():
+            return self.form_valid(form, second_form)
+        else:
+            return self.form_invalid(form, second_form)
+
+    def form_valid(self, form, second_form):
+        form.save()  # Save User form data
+        second_form.save()  # Save Company form data
+        return super().form_valid(form)
 
 class LandingPageView(generic.TemplateView):
     template_name = "landing.html"
@@ -43,7 +55,7 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
             queryset = Client.objects.filter(company=user.company)
             queryset = queryset.filter(company=self.request.user.company)
         else:
-            return KeyError("User does not have permission to view orders")
+            return KeyError("User does not have permission to view clients")
         return queryset
 
 
@@ -60,7 +72,7 @@ class ClientCreateView(LoginRequiredMixin, generic.CreateView):
             queryset = Client.objects.filter(company=user.company)
             queryset = queryset.filter(company=self.request.user.company)
         else:
-            return KeyError("User does not have permission to view orders")
+            return KeyError("User does not have permission to create clients")
         return queryset
 
 
@@ -92,7 +104,7 @@ class ClientUpdateView(LoginRequiredMixin, generic.UpdateView):
             queryset = Client.objects.filter(company=user.company)
             queryset = queryset.filter(company=self.request.user.company)
         else:
-            return KeyError("User does not have permission to view orders")
+            return KeyError("User does not have permission to edit clients")
         return queryset
 
 
@@ -110,7 +122,7 @@ class ClientDeleteView(CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin, gen
             queryset = Client.objects.filter(company=user.company)
             queryset = queryset.filter(company=self.request.user.company)
         else:
-            return KeyError("User does not have permission to view orders")
+            return KeyError("User does not have permission to delete clients")
         return queryset
 
 

@@ -5,10 +5,19 @@
 
 
 <form method="post">
+    <hr>
+    Company Information
+    </hr>
     {% csrf_token %}
+    {{ second_form.as_p }}
+    <hr>
+    User Information
+    <hr>
     {{ form.as_p }}
+    </hr>
     <button type="submit">SignUp</button>
 </form>
+
 
 <body>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"

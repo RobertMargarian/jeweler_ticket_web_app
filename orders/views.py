@@ -37,7 +37,7 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
             queryset = queryset.filter(client__company=user.company)
             form.fields['client'].queryset = queryset
         else:
-            return KeyError("User does not have permission to view orders")
+            return KeyError("User does not have permission to create orders")
         return queryset
 
     def get_success_url(self):
@@ -71,7 +71,7 @@ class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
             queryset = Order.objects.filter(company=user.company)
             queryset = queryset.filter(client__company=user.company)
         else:
-            return KeyError("User does not have permission to view orders")
+            return KeyError("User does not have permission to edit orders")
         return queryset
 
 
@@ -88,5 +88,5 @@ class OrderDeleteView(CompanyAdminRequiredMixin, CompanyOwnerRequiredMixin, gene
             queryset = Order.objects.filter(company=user.company)
             queryset = queryset.filter(client__company=user.company)
         else:
-            return KeyError("User does not have permission to view orders")
+            return KeyError("User does not have permission to delete orders")
         return queryset

@@ -1,21 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
     <hr>
-    {% for client_list in client_list %}
-    {% if user.company == client_list.company %}
-        <div class="customer">
-            #{{ forloop.counter }} |
-            Client Name: {{ client_list.client_first_name }} {{ client_list.client_last_name }} |
-            Client Phone: {{ client_list.client_phone }} |
-            Email: {{ client_list.client_email }} |
-            Total/Spent: {{ client_list.total_spent }} |
-            Action: 
-            <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a> |
-            {% if user.user_role == 1 or user.user_role == 2 %}
-            <a href="{% url 'customers:client-delete' client_list.pk %}">Delete</a>
+    <table class="table">
+        <thead>
+            <th scope="col">#</th>
+            <th scope="col">Client Name</th>
+            <th scope="col">Client Phone</th>
+            <th scope="col">Email</th>
+            <th scope="col">Total/Spent</th>
+            <th scope="col">Actions</th>
+        </thead>
+        <tbody>
+            {% for client_list in client_list %}
+            {% if user.company == client_list.company %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ client_list.client_first_name }} {{client_list.client_last_name}} </td>
+                <td>{{ client_list.client_phone }} </td>
+                <td>{{ client_list.client_email }} </td>
+                <td>{{ client_list.total_spent }} </td>
+                <td>
+                    <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a> | 
+                    {% if user.user_role == 1 or user.user_role == 2 %}
+                    <a href="{% url 'customers:client-delete' client_list.pk %}">Delete</a> 
+                    {% endif %} 
+                </td>
+
+            </tr>
             {% endif %}
-        <div>
-    {% endif %}
-    {% endfor %}
+            {% endfor %}
+        </tbody>
+    <table>
     <hr>
 {% endblock content %}
