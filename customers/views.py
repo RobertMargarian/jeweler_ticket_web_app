@@ -1,6 +1,9 @@
+from typing import Any
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import reverse
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import reverse, render, redirect
+from django.db.models import Sum
 from django.views import generic
 from .models import Order, Client, Company, User, Plan
 from django.views.generic.edit import FormView
@@ -50,6 +53,7 @@ class LandingPageView(generic.TemplateView):
 
 
 class ClientListView(LoginRequiredMixin, generic.ListView):
+    model = Client
     template_name = "customers/client_list.html"
     context_object_name = "client_list"
 
@@ -67,7 +71,15 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
         else:
             return KeyError("User does not have permission to view clients")
         return queryset
-
+    
+"""     def get(self, request, *args, **kwargs):
+        user = self.request.user
+        client = Client.objects.filter(company=user.company)
+        client.total_spent = Order.objects.filter(client=client).aggregate(Sum('quoted_price'))
+        context = {
+            "client": client
+        }
+        return render(request, self.template_name, context) """
 
 class ClientCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "customers/client_create.html"
