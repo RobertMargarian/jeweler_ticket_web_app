@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse, render, redirect
 from django.views import generic
 from customers.models import Order, Company, Client, User
-from .forms import OrderCreateForm
+from .forms import OrderCreateForm, PaginationForm
 from customers.mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin
 from django.contrib.auth.decorators import login_required
 
@@ -16,6 +16,13 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         # Get the page_size from the query parameters, default to 10 if not provided
         return self.request.user.pref_orders_per_page
         # return self.request.GET.get('page_size', 10)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Initialize the form with the user's preference
+        context['pagination_form'] = PaginationForm(initial={'page_size': self.request.user.pref_orders_per_page})
+        return context
+
     
     def get_queryset(self):
         user = self.request.user
