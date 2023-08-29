@@ -63,22 +63,6 @@ class User(AbstractUser):
         return self.first_name + " " + self.last_name + " | " + self.user_role.__str__()
 
 
-
-"""     class Meta:
-        permissions = (
-            ("can_view_all_orders", "Can view all orders"),
-            ("can_view_all_clients", "Can view all clients"),
-
-        )   """  
-
-
-""" class UserProfile(models.Model):
-    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.user.username + " | " + self.user.first_name + " " + self.user.last_name """
-
-
 class Order(models.Model):
     WORK_ORDER_STATUS_CHOICES = (
         ('Cancelled','Cancelled'),
@@ -145,30 +129,30 @@ class Client(models.Model):
 
 
 
-""" class UserActivityLog(models.Model):
-    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
-    user_action = models.ForeignKey(("User_Action"), null=True, blank=True, on_delete=models.CASCADE)
-    work_order = models.ForeignKey(("Order"), null=True, blank=True, on_delete=models.CASCADE)
-    client = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
-    user_activity_time = models.DateTimeField(auto_now_add=True)
-    deleted_flag = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    ingestion_timestamp = models.DateTimeField(auto_now=True)
+# class UserActivityLog(models.Model):
+#     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
+#     user_action = models.ForeignKey(("User_Action"), null=True, blank=True, on_delete=models.CASCADE)
+#     work_order = models.ForeignKey(("Order"), null=True, blank=True, on_delete=models.CASCADE)
+#     client = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
+#     user_activity_time = models.DateTimeField(auto_now_add=True)
+#     deleted_flag = models.BooleanField(default=False)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.user + " " + self.user_action + " " + self.user_activity_time
-"""
+#     def __str__(self):
+#         return self.user + " " + self.user_action + " " + self.user_activity_time
 
-""" class UserAction(models.Model):
-    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
-    action_name = models.CharField(max_length=50)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    ingestion_timestamp = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.user + " " + self.action_name """
+# class UserAction(models.Model):
+#     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
+#     action_name = models.CharField(max_length=50)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     ingestion_timestamp = models.DateTimeField(auto_now=True)
+
+#     def __str__(self):
+#         return self.user + " " + self.action_name
 
 
 class BillingLog(models.Model):
@@ -225,19 +209,19 @@ class Plan(models.Model):
         return self.plan_name
 
 
-""" class SoftDeleteModel(models.Model):
+# class SoftDeleteModel(models.Model):
 
-    deleted_flag = models.BooleanField(default=False)
+#     deleted_flag = models.BooleanField(default=False)
 
-    def soft_delete(self):
-        self.deleted_flag = True
-        self.save()
+#     def soft_delete(self):
+#         self.deleted_flag = True
+#         self.save()
 
-    def restore(self):
-        self.deleted_flag = False
-        self.save()
+#     def restore(self):
+#         self.deleted_flag = False
+#         self.save()
 
-    class Meta:
-        abstract = True
-"""
+#     class Meta:
+#         abstract = True
+
 

@@ -47,25 +47,24 @@ class OrderCreateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['client'].queryset = Client.objects.filter(company=user.company)
 
-"""     def clean_order_due_date(self):
-        work_order_due_date = self.cleaned_data.get('work_order_due_date')
-        created_at = self.instance.created_at
-        if work_order_due_date < created_at:
-            raise ValidationError("Due date cannot be in the past")
-        return work_order_due_date 
+    # def clean_order_due_date(self):
+    #     work_order_due_date = self.cleaned_data.get('work_order_due_date')
+    #     created_at = self.instance.created_at
+    #     if work_order_due_date < created_at:
+    #         raise ValidationError("Due date cannot be in the past")
+    #     return work_order_due_date 
 
-        def clean_quoted_price(self):
-        quoted_price = self.cleaned_data.get('quoted_price')
-        estimated_cost = self.cleaned_data.get('estimated_cost')
-        if quoted_price < estimated_cost:
-            raise ValidationError("Quoted price cannot be less than estimated cost")
-        return quoted_price
+    #     def clean_quoted_price(self):
+    #     quoted_price = self.cleaned_data.get('quoted_price')
+    #     estimated_cost = self.cleaned_data.get('estimated_cost')
+    #     if quoted_price < estimated_cost:
+    #         raise ValidationError("Quoted price cannot be less than estimated cost")
+    #     return quoted_price
     
-    def clean_security_deposit(self):
-        security_deposit = self.cleaned_data.get('security_deposit')
-        quoted_price = self.cleaned_data.get('quoted_price')
-        if security_deposit > quoted_price:
-            raise ValidationError("Security deposit cannot be greater than quoted price")
-        return security_deposit
-    """
+    # def clean_security_deposit(self):
+    #     security_deposit = self.cleaned_data.get('security_deposit')
+    #     quoted_price = self.cleaned_data.get('quoted_price')
+    #     if security_deposit > quoted_price:
+    #         raise ValidationError("Security deposit cannot be greater than quoted price")
+    #     return security_deposit
     
