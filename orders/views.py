@@ -1,6 +1,6 @@
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import reverse, render
+from django.shortcuts import reverse, render, redirect
 from django.views import generic
 from customers.models import Order, Company, Client, User
 from .forms import OrderCreateForm
@@ -14,7 +14,8 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
 
     def get_paginate_by(self, queryset):
         # Get the page_size from the query parameters, default to 10 if not provided
-        return self.request.GET.get('page_size', 10)
+        return self.request.user.pref_orders_per_page
+        # return self.request.GET.get('page_size', 10)
     
     def get_queryset(self):
         user = self.request.user
@@ -26,6 +27,19 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         else:
             return KeyError("User does not have permission to view orders")
         return queryset
+
+    
+    def get(self, request, *args, **kwargs):
+        # Check if page_size is being updated
+        if 'page_size' in request.GET:
+            try:
+                page_size = request.GET.get('page_size')
+                # Update the user's preference in the model
+                request.user.pref_orders_per_page = page_size
+                request.user.save()
+            except ValueError:
+                pass
+        return super().get(request, *args, **kwargs)
 
     
 class OrderCreateView(LoginRequiredMixin, generic.CreateView):
