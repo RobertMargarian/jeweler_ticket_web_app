@@ -30,7 +30,7 @@
                 <td>{{ order_list.client.client_first_name }} {{ order_list.client.client_last_name }}</td>
 
                 <td class="text-center">
-                    {% if order_list.work_order_status == 'Canceled' %}
+                    {% if order_list.work_order_status == 'Cancelled' %}
                         <div class="status-div status-cancelled">
                             {{ order_list.work_order_status }}
                         </div>

@@ -73,21 +73,14 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
             queryset = Client.objects \
                 .filter(company=user.company) \
                 .filter(company=self.request.user.company) \
-                .order_by('-created_at')
+                .order_by('-created_at') \
+                .filter(company=self.request.user.company).annotate(
+                    total_spent_column=Sum('order__quoted_price')
+                )
         else:
             return KeyError("User does not have permission to view clients")
         return queryset
     
-
-    # def get(self, request, *args, **kwargs):
-    #     user = self.request.user
-    #     client = Client.objects.filter(company=user.company)
-    #     client.total_spent = Order.objects.filter(client=client).aggregate(Sum('quoted_price'))
-    #     context = {
-    #         "client": client
-    #     }
-    #     return render(request, self.template_name, context) 
-
     def get(self, request, *args, **kwargs):
         # Check if page_size is being updated
         if 'page_size' in request.GET:
