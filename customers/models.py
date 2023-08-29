@@ -55,6 +55,8 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     ingestion_timestamp = models.DateTimeField(auto_now=True)
+    pref_clients_per_page = models.PositiveSmallIntegerField(default=10)
+    pref_orders_per_page = models.PositiveSmallIntegerField(default=2)
 
 
     def __str__(self):

@@ -8,6 +8,20 @@ from customers.models import Order, Company, Client, User
 User = get_user_model()
 
 
+class PaginationForm(forms.Form):
+    page_size_choices = [
+        (1, '1'),
+        (2, '2'),
+        (5, '5'),
+        (100, '100')
+    ]
+
+    page_size = forms.ChoiceField(
+        choices=page_size_choices,
+        widget=forms.Select(attrs={'id': 'pagination'}),
+        label="Orders per page"
+    )
+
 class OrderCreateForm(forms.ModelForm):
     client = forms.ModelChoiceField(queryset=Client.objects.all(), required=True)
     estimated_cost = forms.DecimalField(min_value=0.00, max_digits=10, decimal_places=2, required=True)
