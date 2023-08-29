@@ -29,7 +29,7 @@
                 <td>{{ client_list.client_first_name }} {{client_list.client_last_name}} </td>
                 <td>{{ client_list.client_phone }} </td>
                 <td>{{ client_list.client_email }} </td>
-                <td>{{ client_list.total_spent }} </td>
+                <td>{{ client_list.total_spent | default:0 }} </td>
                 <td>
                     <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a> | 
                     {% if user.user_role == 1 or user.user_role == 2 %}
