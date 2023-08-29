@@ -4,8 +4,14 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Company(models.Model):
+    COMPANY_SUBSCRIPTION_STATUS_CHOICES = (
+        ('Active','Active'),
+        ('Inactive','Inactive'),
+        ('Cancelled', 'Cancelled'),
+    )
+
     company_current_plan = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
-    company_subscription_status = models.CharField(choices=(('Active','Active'), ('Inactive','Inactive'), ('Cancelled', 'Cancelled')), max_length=30)
+    company_subscription_status = models.CharField(choices=COMPANY_SUBSCRIPTION_STATUS_CHOICES, max_length=30)
     company_email = models.EmailField(max_length=254)
     company_phone = models.CharField(max_length=20)
     company_name = models.CharField(max_length=50)
@@ -32,14 +38,14 @@ class Company(models.Model):
 
 
 class User(AbstractUser):
-    CompanyOwner = 1
-    CompanyAdmin = 2
-    Employee = 3
+    is_owner = 1
+    is_admin = 2
+    is_employee = 3
 
     ROLE_CHOICES = (
-        (CompanyOwner, 'CompanyOwner'),
-        (CompanyAdmin, 'CompanyAdmin'),
-        (Employee, 'Employee'),
+        (is_owner, 'is_owner'),
+        (is_admin, 'is_admin'),
+        (is_employee, 'is_employee'),
     )
 
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
@@ -72,18 +78,37 @@ class User(AbstractUser):
 
 
 class Order(models.Model):
+    WORK_ORDER_STATUS_CHOICES = (
+        ('Cancelled','Cancelled'),
+        ('In Progress','In Progress'),
+        ('Completed', 'Completed'),
+    )
+
+    WORK_ORDER_TYPE_CHOICES = (
+        ('Sell','Sell'),
+        ('Repair','Repair'),
+        ('Other', 'Other'),
+    )
+
+    WORK_ORDER_CURRENCY_CHOICES = (
+        ('USD', 'USD'),
+        ('EUR', 'EUR'),
+        ('GBP', 'GBP'),
+    )
+
+
     client = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.SET_NULL)
     work_order_date = models.DateTimeField(auto_now_add=True)
-    work_order_due_date = models.DateTimeField(max_length=50)
+    work_order_due_date = models.DateTimeField(max_length=50, default=None, null=True, blank=True)
     estimated_cost = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
-    work_order_currency = models.CharField(choices=(('USD', 'USD'), ('EUR', 'EUR'), ('GBP', 'GBP')), max_length=10)
+    work_order_currency = models.CharField(choices=WORK_ORDER_CURRENCY_CHOICES, max_length=10)
     quoted_price = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
-    quoted_currency = models.CharField(choices=(('USD', 'USD'), ('EUR', 'EUR'), ('GBP', 'GBP')), max_length=10)
+    quoted_currency = models.CharField(choices=WORK_ORDER_CURRENCY_CHOICES, max_length=10)
     security_deposit = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
-    work_order_type = models.CharField(choices=(('Sell','Sell'), ('Repair','Repair'), ('Other', 'Other')), max_length=30)
-    work_order_status = models.CharField(choices=(('Cancelled','Cancelled'), ('In Progress','In Progress'), ('Completed', 'Completed')), max_length=30)
+    work_order_type = models.CharField(choices=WORK_ORDER_TYPE_CHOICES, max_length=30)
+    work_order_status = models.CharField(choices=WORK_ORDER_STATUS_CHOICES, max_length=30)
     work_order_description = models.TextField(max_length=200)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -100,6 +125,7 @@ class Order(models.Model):
 
 class Client(models.Model):
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.SET_NULL)
     client_already_exists = models.BooleanField(default=False)
     client_first_name = models.CharField(max_length=50)
     client_last_name = models.CharField(max_length=50)
@@ -144,11 +170,17 @@ class Client(models.Model):
 
 
 class BillingLog(models.Model):
+    BILLING_STATUS_CHOICES = (
+        ('Paid','Paid'),
+        ('Unpaid','Unpaid'),
+        ('Cancelled', 'Cancelled'),
+    )
+
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     plan = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
     billing_date = models.DateTimeField(auto_now_add=True)
     billing_amount = models.DecimalField(max_digits=100000000000, decimal_places=2)
-    billing_status = models.CharField(choices=(('Paid','Paid'), ('Unpaid','Unpaid'), ('Canceled', 'Canceled')), max_length=30)
+    billing_status = models.CharField(choices=BILLING_STATUS_CHOICES, max_length=30)
     billing_period_start_date = models.DateTimeField(auto_now_add=True)
     billing_period_end_date = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -160,12 +192,29 @@ class BillingLog(models.Model):
 
 
 class Plan(models.Model):
-    plan_name = models.CharField(choices=(('Basic','Basic'), ('Standard','Standard'), ('Premium', 'Premium')), max_length=30)
+    PLAN_NAME_CHOICES = (
+        ('Basic','Basic'),
+        ('Standard','Standard'),
+        ('Premium', 'Premium'),
+    )
+
+    PLAN_CURRENCY_CHOICES = (
+        ('USD', 'USD'),
+        ('EUR', 'EUR'),
+        ('GBP', 'GBP'),
+    )
+
+    PLAN_TRIAL_PERIOD_CHOICES = (
+        ('Yes','Yes'),
+        ('No','No'),
+    )
+
+    plan_name = models.CharField(choices=PLAN_NAME_CHOICES, max_length=30)
     plan_frequency = models.CharField(max_length=50)
     plan_price = models.DecimalField(max_digits=100000000000, decimal_places=2)
-    plan_currency = models.CharField(choices=(('USD', 'USD'), ('EUR', 'EUR'), ('GBP', 'GBP')), max_length=10)
+    plan_currency = models.CharField(choices=PLAN_CURRENCY_CHOICES, max_length=10)
     plan_description = models.TextField(max_length=200)
-    plan_trial_period = models.CharField(choices=(('Yes','Yes'), ('No','No')), max_length=10)
+    plan_trial_period = models.CharField(choices=PLAN_TRIAL_PERIOD_CHOICES, max_length=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     ingestion_timestamp = models.DateTimeField(auto_now=True)

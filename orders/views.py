@@ -1,10 +1,11 @@
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import reverse
+from django.shortcuts import reverse, render
 from django.views import generic
-from customers.models import Order
+from customers.models import Order, Company, Client, User
 from .forms import OrderCreateForm
 from customers.mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
 class OrderListView(LoginRequiredMixin, generic.ListView):
@@ -29,35 +30,35 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
     
 class OrderCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "orders/order_create.html"
-    form = OrderCreateForm() 
     form_class = OrderCreateForm
-
-    def get_queryset(self):
-        form = OrderCreateForm()
-        user = self.request.user
-        if user.user_role in [1, 2, 3]:
-            queryset = Order.objects \
-                .filter(client__company=user.company)
-        else:
-            return KeyError("User does not have permission to create orders")
-        return queryset
+    context_object_name = "order-create"
 
     def get_success_url(self):
         return reverse("orders:order-list")
+    
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        form = self.form_class(user=user)
+        context = {'form': form}
+        return render(request, self.template_name, context)
 
-    def form_valid(self, form):
-        order = form.save(commit=False)
-        order.company = self.request.user.company
-        order.work_order_status = 'In Progress'
-        order.save()
-        # TODO send email
-        send_mail(
-            subject="New Order has been created", 
-            message="Go to the site to see the new order",
-            from_email="test@test.com",
-            recipient_list=["test2@test.com"]
-        )
-        return super(OrderCreateView, self).form_valid(form)
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        form = self.form_class(user=user, data=request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.company = self.request.user.company
+            order.work_order_status = "In Progress"
+            order.save()
+            # TODO send email
+            send_mail(
+                subject="New Order has been created", 
+                message="Go to the site to see the new order",
+                from_email="test@test.com",
+                recipient_list=["test2@test.com"]
+            )
+        context = {'form': form}
+        return render(request, self.template_name, context)
 
 
 class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
