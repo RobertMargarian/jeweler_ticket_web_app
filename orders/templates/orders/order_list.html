@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
     {% comment %} Orders Per Page Form {% endcomment %}
-    <form id="pagination_form" method="get" action="{% url 'orders:order-list' %}" class="mb-4">
+    <form id="pagination_form_orders" method="get" action="{% url 'orders:order-list' %}" class="mb-4">
         <p>User preference from model: {{ request.user.pref_orders_per_page }}</p>
-        {{ pagination_form.page_size.label }}: {{ pagination_form.page_size }}
+        {{ pagination_form_orders.page_size.label }}: {{ pagination_form_orders.page_size }}
         {% comment %} <input type="submit" value="Update"> {% endcomment %}
     </form>
     <script>
-        document.getElementById('pagination').addEventListener('change', function() {
-            document.getElementById('pagination_form').submit();
+        document.getElementById('pagination_orders').addEventListener('change', function() {
+            document.getElementById('pagination_form_orders').submit();
         });
     </script>
     

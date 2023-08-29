@@ -9,6 +9,20 @@ from .models import Client, Company, User
 
 User = get_user_model()
 
+class PaginationForm(forms.Form):
+    page_size_choices = [
+        (1, '1'),
+        (2, '2'),
+        (5, '5'),
+        (100, '100')
+    ]
+
+    page_size = forms.ChoiceField(
+        choices=page_size_choices,
+        widget=forms.Select(attrs={'id': 'pagination_clients'}),
+        label="Orders per page"
+    )
+
 
 class ClientCreateForm(forms.ModelForm):
     client_first_name = forms.CharField(max_length=50, required=True)
