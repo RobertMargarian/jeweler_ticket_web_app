@@ -16,14 +16,13 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
     context_object_name = "order_list"
 
     def get_paginate_by(self, queryset):
-        # Get the page_size from the query parameters, default to 10 if not provided
         return self.request.user.pref_orders_per_page
-        # return self.request.GET.get('page_size', 10)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Initialize the form with the user's preference
-        context['pagination_form'] = PaginationForm(initial={'page_size': self.request.user.pref_orders_per_page})
+        context['pagination_form_orders'] = \
+            PaginationForm(initial={'page_size': self.request.user.pref_orders_per_page})
         return context
 
     

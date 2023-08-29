@@ -7,7 +7,7 @@ from django.db.models import Sum
 from django.views import generic
 from .models import Order, Client, Company, User, Plan
 from django.views.generic.edit import FormView
-from .forms import ClientCreateForm, CustomUserCreationForm, CompanyCreateForm
+from .forms import ClientCreateForm, CustomUserCreationForm, CompanyCreateForm, PaginationForm
 from .mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin, EmployeeRequiredMixin 
 """ should use this mixin for all views that require login and role """
 
@@ -58,8 +58,14 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
     context_object_name = "client_list"
 
     def get_paginate_by(self, queryset):
-        # Get the page_size from the query parameters, default to 10 if not provided
-        return self.request.GET.get('page_size', 10)
+        return self.request.user.pref_clients_per_page
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Initialize the form with the user's preference
+        context['pagination_form_clients'] = \
+            PaginationForm(initial={'page_size': self.request.user.pref_clients_per_page})
+        return context
 
     def get_queryset(self):
         user = self.request.user
@@ -72,14 +78,27 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
             return KeyError("User does not have permission to view clients")
         return queryset
     
-"""     def get(self, request, *args, **kwargs):
-        user = self.request.user
-        client = Client.objects.filter(company=user.company)
-        client.total_spent = Order.objects.filter(client=client).aggregate(Sum('quoted_price'))
-        context = {
-            "client": client
-        }
-        return render(request, self.template_name, context) """
+
+    # def get(self, request, *args, **kwargs):
+    #     user = self.request.user
+    #     client = Client.objects.filter(company=user.company)
+    #     client.total_spent = Order.objects.filter(client=client).aggregate(Sum('quoted_price'))
+    #     context = {
+    #         "client": client
+    #     }
+    #     return render(request, self.template_name, context) 
+
+    def get(self, request, *args, **kwargs):
+        # Check if page_size is being updated
+        if 'page_size' in request.GET:
+            try:
+                page_size = request.GET.get('page_size')
+                # Update the user's preference in the model
+                request.user.pref_clients_per_page = page_size
+                request.user.save()
+            except ValueError:
+                pass
+        return super().get(request, *args, **kwargs)
 
 class ClientCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "customers/client_create.html"
