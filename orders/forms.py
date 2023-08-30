@@ -70,7 +70,7 @@ class OrderCreateForm(forms.ModelForm):
         self.fields['client'].queryset = Client.objects.filter(company=user.company)
 
     def clean(self):
-        clean_data = super().clean()        
+        cleaned_data = super().clean()        
         quoted_price = self.cleaned_data.get('quoted_price')
         estimated_cost = self.cleaned_data.get('estimated_cost')
         security_deposit = self.cleaned_data.get('security_deposit')
