@@ -37,10 +37,17 @@ class PaginationForm(forms.Form):
     )
 
 class OrderCreateForm(forms.ModelForm):
+    order_status_choices = [
+        ('Cancelled','Cancelled'),
+        ('In Progress','In Progress'),
+        ('Completed', 'Completed')
+    ]
+
     client = forms.ModelChoiceField(queryset=Client.objects.all(), required=True)
-    estimated_cost = forms.DecimalField(min_value=0.00, max_digits=10, decimal_places=2, required=True)
-    quoted_price = forms.DecimalField(min_value=0.00, max_digits=10, decimal_places=2, required=True)
-    security_deposit = forms.DecimalField(min_value=0.00, max_digits=10, decimal_places=2, required=True)
+    estimated_cost = forms.DecimalField(min_value=0.00, max_digits=10, decimal_places=2, initial=0, required=True)
+    work_order_status = forms.ChoiceField(choices=order_status_choices, initial='In Progress', required=True)
+    quoted_price = forms.DecimalField(min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=True)
+    security_deposit = forms.DecimalField(min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=False)
     work_order_due_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
     work_order_description = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
 
@@ -50,6 +57,7 @@ class OrderCreateForm(forms.ModelForm):
         fields = (
             'client',
             'work_order_type',
+            'work_order_status',
             'estimated_cost', 
             'quoted_price', 
             'security_deposit', 
@@ -61,24 +69,14 @@ class OrderCreateForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['client'].queryset = Client.objects.filter(company=user.company)
 
-    # def clean_order_due_date(self):
-    #     work_order_due_date = self.cleaned_data.get('work_order_due_date')
-    #     created_at = self.instance.created_at
-    #     if work_order_due_date < created_at:
-    #         raise ValidationError("Due date cannot be in the past")
-    #     return work_order_due_date 
+    def clean(self):
+        clean_data = super().clean()        
+        quoted_price = self.cleaned_data.get('quoted_price')
+        estimated_cost = self.cleaned_data.get('estimated_cost')
+        security_deposit = self.cleaned_data.get('security_deposit')
+        if quoted_price is not None and estimated_cost is not None and quoted_price < estimated_cost:
+            self.add_error('quoted_price', "Quoted price cannot be less than estimated cost")
 
-    #     def clean_quoted_price(self):
-    #     quoted_price = self.cleaned_data.get('quoted_price')
-    #     estimated_cost = self.cleaned_data.get('estimated_cost')
-    #     if quoted_price < estimated_cost:
-    #         raise ValidationError("Quoted price cannot be less than estimated cost")
-    #     return quoted_price
-    
-    # def clean_security_deposit(self):
-    #     security_deposit = self.cleaned_data.get('security_deposit')
-    #     quoted_price = self.cleaned_data.get('quoted_price')
-    #     if security_deposit > quoted_price:
-    #         raise ValidationError("Security deposit cannot be greater than quoted price")
-    #     return security_deposit
-    
+        if quoted_price is not None and security_deposit is not None and security_deposit > quoted_price:
+            self.add_error('security_deposit', "Security deposit cannot be greater than quoted price")
+
