@@ -79,6 +79,7 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
         if form.is_valid():
             order = form.save(commit=False)
             order.company = self.request.user.company
+            order.user = self.request.user
             order.work_order_status = "In Progress"
             order.work_order_currency = "USD"
             order.quoted_currency = "USD"
