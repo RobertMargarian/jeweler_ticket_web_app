@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import reverse, render, redirect
 from django.views import generic
 from customers.models import Order, Company, Client, User
-from .forms import OrderCreateForm, PaginationForm
+from .forms import OrderCreateForm, PaginationForm, OrderStatusFilterForm
 from customers.mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin
 from django.contrib.auth.decorators import login_required
 
@@ -23,16 +23,26 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         # Initialize the form with the user's preference
         context['pagination_form_orders'] = \
             PaginationForm(initial={'page_size': self.request.user.pref_orders_per_page})
+        
+        context['filter_form'] = OrderStatusFilterForm(self.request.GET)
+        context['selected_statuses'] = self.request.GET.getlist('order_status')
+        context['orders_per_page'] = self.request.user.pref_orders_per_page
         return context
 
     
     def get_queryset(self):
         user = self.request.user
+        statuses = self.request.GET.getlist('order_status')
+
         if user.user_role in [1, 2, 3]:
             queryset = Order.objects \
                 .filter(company=user.company) \
-                .filter(client__company=user.company) \
-                .order_by('-created_at')
+                .filter(client__company=user.company)
+            
+            if statuses:
+                queryset = queryset.filter(work_order_status__in = statuses)
+
+            queryset = queryset.order_by('-created_at')
         else:
             return KeyError("User does not have permission to view orders")
         return queryset

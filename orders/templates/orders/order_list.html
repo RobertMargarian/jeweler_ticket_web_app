@@ -2,15 +2,36 @@
 {% block content %}
     {% comment %} Orders Per Page Form {% endcomment %}
     <form id="pagination_form_orders" method="get" action="{% url 'orders:order-list' %}" class="mb-4">
-        <p>User preference from model: {{ request.user.pref_orders_per_page }}</p>
         {{ pagination_form_orders.page_size.label }}: {{ pagination_form_orders.page_size }}
-        {% comment %} <input type="submit" value="Update"> {% endcomment %}
+
+            <!-- Hidden input fields for the current filters -->
+        {% for status in selected_statuses %}
+            <input type="hidden" name="order_status" value="{{ status }}">
+        {% endfor %}
     </form>
     <script>
         document.getElementById('pagination_orders').addEventListener('change', function() {
             document.getElementById('pagination_form_orders').submit();
         });
     </script>
+
+    <form method="get" action="{% url 'orders:order-list' %}">
+        {{ filter_form.order_status.label }}:
+        <ul>
+            {% for choice in filter_form.order_status %}
+                <li>{{ choice }}</li>
+            {% endfor %}
+        </ul>
+    </form>
+    <script>
+        const statusCheckboxes = document.querySelectorAll("input[name='order_status']");
+        statusCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                this.form.submit();
+            });
+        });
+    </script>
+    
     
 
     <table class="table">
@@ -68,33 +89,51 @@
             <ul class="pagination">
                 {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page=1&page_size={{ request.GET.page_size}}" aria-label="First">
+                        <a class="page-link" 
+                           href="?page=1&page_size={{ orders_per_page }}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}" 
+                           aria-label="First">
                             <span aria-hidden="true">&laquo;&laquo;</span>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&page_size={{ request.GET.page_size}}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
+                        <a class="page-link" 
+                           href="?page={{ page_obj.previous_page_number }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}"
+                           aria-label="Previous">
+                           <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
                 {% endif %}
         
                 {% for num in page_obj.paginator.page_range %}
                     {% if page_obj.number == num %}
-                        <li class="page-item active"><a class="page-link" href="?page={{ num }}&page_size={{ request.GET.page_size}}">{{ num }}</a></li>
+                        <li class="page-item active">
+                            <a class="page-link" 
+                               href="?page={{ num }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}"
+                                      >{{ num }}
+                            </a>
+                        </li>
                     {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
-                        <li class="page-item"><a class="page-link" href="?page={{ num }}&page_size={{ request.GET.page_size}}">{{ num }}</a></li>
+                        <li class="page-item">
+                            <a class="page-link" 
+                               href="?page={{ num }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}"
+                                    >{{ num }}
+                            </a>
+                        </li>
                     {% endif %}
                 {% endfor %}
         
                 {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&page_size={{ request.GET.page_size}}" aria-label="Next">
+                        <a class="page-link" 
+                           href="?page={{ page_obj.next_page_number }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}" 
+                           aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&page_size={{ request.GET.page_size}}" aria-label="Last">
+                        <a class="page-link" 
+                           href="?page={{ page_obj.paginator.num_pages }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}" 
+                           aria-label="Last">
                             <span aria-hidden="true">&raquo;&raquo;</span>
                         </a>
                     </li>

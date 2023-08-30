@@ -8,6 +8,20 @@ from customers.models import Order, Company, Client, User
 User = get_user_model()
 
 
+class OrderStatusFilterForm(forms.Form):
+    order_status_choices = [
+        ('Cancelled','Cancelled'),
+        ('In Progress','In Progress'),
+        ('Completed', 'Completed')
+    ]
+
+    order_status = forms.MultipleChoiceField(
+        choices=order_status_choices,
+        required=False,
+        widget=forms.CheckboxSelectMultiple(),
+        label="Order Status"
+    )
+
 class PaginationForm(forms.Form):
     page_size_choices = [
         (1, '1'),
