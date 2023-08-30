@@ -34,7 +34,7 @@ class Company(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.company_name
+        return self.company_name + " | " + self.company_email + " | " + self.company_phone
 
 
 class User(AbstractUser):
@@ -62,7 +62,7 @@ class User(AbstractUser):
 
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        return self.first_name + " " + self.last_name + " | " + self.username
     
 
 class Employee(models.Model):
@@ -70,7 +70,15 @@ class Employee(models.Model):
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.first_name + " " + self.user.last_name
+        return self.user.first_name + " " + self.user.last_name + " | " + self.company.company_name
+
+
+class Owner(models.Model):
+    user = models.OneToOneField(("User"), null=True, blank=True, on_delete=models.CASCADE)
+    company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.first_name + " " + self.user.last_name + " | " + self.company.company_name
 
 
 class Order(models.Model):
@@ -112,7 +120,7 @@ class Order(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.company.company_name + " | " + self.client.client_first_name + " " + self.client.client_last_name
+        return self.client.client_first_name + " " + self.client.client_last_name + " | " + self.company.company_name + " | " + self.work_order_status + " | " + self.work_order_type
 
 """     def delete(self):
         self.deleted_flag = True
@@ -135,7 +143,7 @@ class Client(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.client_first_name + " " + self.client_last_name + " " 
+        return self.client_first_name + " " + self.client_last_name + " | " + self.client_email + " | " + self.client_phone + " | " + self.company.company_name
 
 
 

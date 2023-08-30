@@ -5,7 +5,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import reverse, render, redirect
 from django.db.models import Sum
 from django.views import generic
-from .models import Order, Client, Company, User, Plan
+from .models import Order, Client, Company, User, Plan, Owner
 from django.views.generic.edit import FormView
 from .forms import ClientCreateForm, CustomUserCreationForm, CompanyCreateForm, PaginationForm
 from .mixins import  CompanyOwnerRequiredMixin, EmployeeRequiredMixin 
@@ -37,8 +37,14 @@ class SignupView(FormView):
         company.company_subscription_status = "Active"
         company.save()  # Save Company form data
         user = form.save(commit=False)
+        user.is_owner = True
+        user.is_employee = False
         user.company = company
         user.save()  # Save User form data
+        Owner.objects.create(
+            user=user,
+            company=company
+        )
         return super().form_valid(form)
     
 

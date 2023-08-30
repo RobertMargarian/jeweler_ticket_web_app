@@ -80,6 +80,8 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
             order = form.save(commit=False)
             order.company = self.request.user.company
             order.work_order_status = "In Progress"
+            order.work_order_currency = "USD"
+            order.quoted_currency = "USD"
             order.save()
             # TODO send email
             send_mail(

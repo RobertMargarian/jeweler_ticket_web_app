@@ -22,7 +22,7 @@
             <th scope="col">Actions</th>
         </thead>
         <tbody>
-            {% for employee in employee_list %}
+            {% for employee_list in employee_list %}
             {% if user.company == employee_list.company %}
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>

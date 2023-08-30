@@ -11,7 +11,7 @@ from customers.models import Client, Company, Employee, User
 class EmployeeListView(LoginRequiredMixin, generic.ListView):
     model = Employee
     template_name = 'employees/employee_list.html'
-    context_object_name = 'employees'
+    context_object_name = 'employee_list'
 
     def get_queryset(self):
         company = self.request.user.company
@@ -29,6 +29,7 @@ class EmployeeCreateView(LoginRequiredMixin, generic.CreateView):
         user = form.save(commit=False)
         user.is_employee = True
         user.is_owner = False
+        user.company = self.request.user.company
         user.save()
         Employee.objects.create(
             user=user,
