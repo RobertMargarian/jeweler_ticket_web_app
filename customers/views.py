@@ -8,7 +8,7 @@ from django.views import generic
 from .models import Order, Client, Company, User, Plan
 from django.views.generic.edit import FormView
 from .forms import ClientCreateForm, CustomUserCreationForm, CompanyCreateForm, PaginationForm
-from .mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin, EmployeeRequiredMixin 
+from .mixins import  CompanyOwnerRequiredMixin, EmployeeRequiredMixin 
 # should use this mixin for all views that require login and role
 
 class SignupView(FormView):
@@ -37,7 +37,6 @@ class SignupView(FormView):
         company.company_subscription_status = "Active"
         company.save()  # Save Company form data
         user = form.save(commit=False)
-        user.user_role = 1
         user.company = company
         user.save()  # Save User form data
         return super().form_valid(form)
@@ -69,7 +68,7 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.user_role in [1, 2, 3]:
+        if user.is_owner or user.is_employee: 
             queryset = Client.objects \
                 .filter(company=user.company) \
                 .filter(company=self.request.user.company) \
@@ -102,7 +101,7 @@ class ClientCreateView(LoginRequiredMixin, generic.CreateView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.user_role in [1, 2, 3]:
+        if user.is_owner or user.is_employee:
             queryset = Client.objects.filter(company=user.company)
             queryset = queryset.filter(company=self.request.user.company)
         else:
@@ -134,7 +133,7 @@ class ClientUpdateView(LoginRequiredMixin, generic.UpdateView):
     
     def get_queryset(self):
         user = self.request.user
-        if user.user_role in [1, 2, 3]:
+        if user.is_owner or user.is_employee:
             queryset = Client.objects.filter(company=user.company)
             queryset = queryset.filter(company=self.request.user.company)
         else:
@@ -152,7 +151,7 @@ class ClientDeleteView(LoginRequiredMixin, generic.DeleteView):
     
     def get_queryset(self):
         user = self.request.user
-        if user.user_role in [1, 2, 3]:
+        if user.is_owner:
             queryset = Client.objects.filter(company=user.company)
             queryset = queryset.filter(company=self.request.user.company)
         else:

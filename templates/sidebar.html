@@ -17,6 +17,14 @@
         Clients
       </a>
     </li>
+    {% if user.is_owner %}
+    <li>
+      <a href="{% url 'employees:employee-list'%}" class="nav-link text-white">
+        <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
+        Employees
+      </a>
+    </li>
+    {% endif %}
     <li>
       <a href={% url 'orders:order-create'%} class="nav-link active text-white">
         <svg class="bi me-2" width="16" height="16"><use xlink:href="#plus-circle"/></svg>
@@ -29,6 +37,14 @@
         Create New Client
       </a>
     </li>
+    {% if user.is_owner %}
+    <li>
+      <a href={% url 'employees:employee-create'%} class="nav-link active text-white">
+        <svg class="bi me-2" width="16" height="16"><use xlink:href="#plus-circle"/></svg>
+        Create New Employee
+      </a>
+    </li>
+    {% endif %}
   </ul>
   <hr>
   <div class="dropdown">

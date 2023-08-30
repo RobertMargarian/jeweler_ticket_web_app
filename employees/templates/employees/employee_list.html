@@ -1,66 +1,45 @@
 {% extends "base.html" %}
 {% block content %}
-    {% comment %} Orders Per Page Form {% endcomment %}
-    <form id="pagination_form_orders" method="get" action="{% url 'orders:order-list' %}" class="mb-4">
-        <p>User preference from model: {{ request.user.pref_orders_per_page }}</p>
-        {{ pagination_form_orders.page_size.label }}: {{ pagination_form_orders.page_size }}
+    {% comment %} Employees Per Page Form {% endcomment %}
+    <form id="pagination_form_employees" method="get" action="{% url 'employees:employee-list' %}" class="mb-4">
+        <p>User preference from model: {{ request.user.pref_employees_per_page }}</p>
+        {{ pagination_form_employees.page_size.label }}: {{ pagination_form_employees.page_size }}
         {% comment %} <input type="submit" value="Update"> {% endcomment %}
     </form>
     <script>
-        document.getElementById('pagination_orders').addEventListener('change', function() {
-            document.getElementById('pagination_form_orders').submit();
+        document.getElementById('pagination_employees').addEventListener('change', function() {
+            document.getElementById('pagination_form_employees').submit();
         });
     </script>
-    
+
 
     <table class="table">
         <thead>
             <th scope="col">#</th>
-            <th scope="col">Client Name</th>
-            <th class="text-center" scope="col">Order Status</th>
-            <th scope="col">Order Type</th>
-            <th scope="col">Order Price</th>
+            <th scope="col">Employee Name</th>
+            <th scope="col">Employee Phone</th>
+            <th scope="col">Email</th>
             <th scope="col">Actions</th>
         </thead>
         <tbody>
-            {% for order_list in order_list %}
-            {% if user.company == order_list.company %}
-            <tr style="vertical-align: middle">
-                <th scope="row">{{ forloop.counter }}</th> 
-                <td>{{ order_list.client.client_first_name }} {{ order_list.client.client_last_name }}</td>
-
-                <td class="text-center">
-                    {% if order_list.work_order_status == 'Cancelled' %}
-                        <div class="status-div status-cancelled">
-                            {{ order_list.work_order_status }}
-                        </div>
-                    {% endif %}
-                    {% if order_list.work_order_status == 'In Progress' %}
-                        <div class="status-div status-in-progress">
-                            {{ order_list.work_order_status }}
-                        </div>
-                    {% endif %}
-                    {% if order_list.work_order_status == 'Completed' %}
-                        <div class="status-div status-completed">
-                            {{ order_list.work_order_status }}
-                        </div>
-                    {% endif %}
-                </td>
-
-                <td>{{ order_list.work_order_type }}</td>
-                <td>{{ order_list.quoted_price }}</td>
+            {% for employee in employee_list %}
+            {% if user.company == employee_list.company %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ employee_list.first_name }} {{employee_list.last_name}} </td>
+                <td>{{ employee_list.user_phone }} </td>
+                <td>{{ employee_list.email }} </td>
                 <td>
-                    <a href="{% url 'orders:order-update' order_list.pk %}">Edit</a> |
+                    <a href="{% url 'employees:employee-update' employee_list.pk %}">Edit</a> | 
                     {% if user.is_owner or user.is_employee %}
-                    <a href="{% url 'orders:order-delete' order_list.pk %}">Delete</a>
-                    {% endif %}
+                    <a href="{% url 'employees:employee-delete' employee_list.pk %}">Delete</a> 
+                    {% endif %} 
                 </td>
-
             </tr>
             {% endif %}
             {% endfor %}
         </tbody>
-    </table>
+    <table>
 
     {% comment %} Pagination Controls {% endcomment %}
     <div class="d-flex justify-content-center">
@@ -102,6 +81,4 @@
             </ul>
         </nav>
     </div>
-
 {% endblock content %}
-

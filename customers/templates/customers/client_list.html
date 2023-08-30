@@ -33,7 +33,7 @@
                 <td>{{ client_list.total_spent_column | default:0 }} </td>
                 <td>
                     <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a> | 
-                    {% if user.user_role == 1 or user.user_role == 2 %}
+                    {% if user.is_owner or user.is_employee %}
                     <a href="{% url 'customers:client-delete' client_list.pk %}">Delete</a> 
                     {% endif %} 
                 </td>

@@ -7,7 +7,7 @@ from django.shortcuts import reverse, render, redirect
 from django.views import generic
 from customers.models import Order, Company, Client, User
 from .forms import OrderCreateForm, PaginationForm
-from customers.mixins import  CompanyOwnerRequiredMixin, CompanyAdminRequiredMixin
+from customers.mixins import  CompanyOwnerRequiredMixin, EmployeeRequiredMixin
 from django.contrib.auth.decorators import login_required
 
 
@@ -28,7 +28,7 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
     
     def get_queryset(self):
         user = self.request.user
-        if user.user_role in [1, 2, 3]:
+        if user.is_owner or user.is_employee:
             queryset = Order.objects \
                 .filter(company=user.company) \
                 .filter(client__company=user.company) \
@@ -117,7 +117,7 @@ class OrderDeleteView(LoginRequiredMixin, generic.DeleteView):
     
     def get_queryset(self):
         user = self.request.user
-        if user.user_role in [1, 2, 3]:
+        if user.is_owner:
             queryset = Order.objects.filter(company=user.company)
             queryset = queryset.filter(client__company=user.company)
         else:

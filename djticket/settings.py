@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'customers',
     'orders',
+    'employees',
     'bootstrap5',
 ]
 

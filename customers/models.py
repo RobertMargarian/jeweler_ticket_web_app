@@ -38,18 +38,20 @@ class Company(models.Model):
 
 
 class User(AbstractUser):
-    is_owner = 1
-    is_admin = 2
-    is_employee = 3
+    # is_owner = 1
+    # is_admin = 2
+    # is_employee = 3
 
-    ROLE_CHOICES = (
-        (is_owner, 'is_owner'),
-        (is_admin, 'is_admin'),
-        (is_employee, 'is_employee'),
-    )
+    # ROLE_CHOICES = (
+    #     (is_owner, 'is_owner'),
+    #     (is_admin, 'is_admin'),
+    #     (is_employee, 'is_employee'),
+    # )
 
+    is_owner = models.BooleanField(default=True)
+    is_employee = models.BooleanField(default=False)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
-    user_role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
+    # user_role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
     user_phone = models.CharField(max_length=20)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -60,7 +62,15 @@ class User(AbstractUser):
 
 
     def __str__(self):
-        return self.first_name + " " + self.last_name + " | " + self.user_role.__str__()
+        return self.first_name + " " + self.last_name
+    
+
+class Employee(models.Model):
+    user = models.OneToOneField(("User"), null=True, blank=True, on_delete=models.CASCADE)
+    company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.first_name + " " + self.user.last_name
 
 
 class Order(models.Model):
