@@ -30,7 +30,10 @@ class EmployeeCreateView(LoginRequiredMixin, generic.CreateView):
         user.is_employee = True
         user.is_owner = False
         user.company = self.request.user.company
+        user.set_password(form.cleaned_data['password'])
+
         user.save()
+        
         Employee.objects.create(
             user=user,
             company=self.request.user.company
