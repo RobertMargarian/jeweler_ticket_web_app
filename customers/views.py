@@ -1,7 +1,7 @@
 from typing import Any
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import reverse, render, redirect
 from django.db.models import Sum
 from django.views import generic
@@ -78,6 +78,7 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
             queryset = Client.objects \
                 .filter(company=user.company) \
                 .filter(company=self.request.user.company) \
+                .filter(deleted_flag=False) \
                 .order_by('-created_at') \
                 .filter(company=self.request.user.company).annotate(
                     total_spent_column=Sum('order__quoted_price')
@@ -118,6 +119,7 @@ class ClientCreateView(LoginRequiredMixin, generic.CreateView):
     def form_valid(self, form):
         client = form.save(commit=False)
         client.company = self.request.user.company
+        client.user = self.request.user
         client.save()
         # TODO send email
         send_mail(
@@ -163,6 +165,11 @@ class ClientDeleteView(LoginRequiredMixin, generic.DeleteView):
         else:
             return KeyError("User does not have permission to delete clients")
         return queryset
+
+    def delete(self, request, *args, **kwargs):
+        client = self.get_object()
+        client.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 

@@ -37,6 +37,7 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         if user.is_owner or user.is_employee:
             queryset = Order.objects \
                 .filter(company=user.company) \
+                .filter(deleted_flag=False) \
                 .filter(client__company=user.company)
             
             if statuses:

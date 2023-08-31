@@ -53,24 +53,28 @@ class User(AbstractUser):
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     # user_role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
     user_phone = models.CharField(max_length=20)
-    deleted_flag = models.BooleanField(default=False)
+    # deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     ingestion_timestamp = models.DateTimeField(auto_now=True)
     pref_clients_per_page = models.PositiveSmallIntegerField(default=10)
     pref_orders_per_page = models.PositiveSmallIntegerField(default=2)
-
+    pref_employees_per_page = models.PositiveSmallIntegerField(default=10)
 
     def __str__(self):
         return self.first_name + " " + self.last_name + " | " + self.username
     
 
 class Employee(models.Model):
-    user = models.OneToOneField(("User"), null=True, blank=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name + " | " + self.company.company_name
+
+    def delete(self, using=None, keep_parents=False):
+        self.user.is_active = False
+        self.user.save()
 
 
 class Owner(models.Model):
@@ -79,6 +83,10 @@ class Owner(models.Model):
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name + " | " + self.company.company_name
+
+    def delete(self, using=None, keep_parents=False):
+        self.user.is_active = False
+        self.user.save()
 
 
 class Order(models.Model):
@@ -122,9 +130,9 @@ class Order(models.Model):
     def __str__(self):
         return self.client.client_first_name + " " + self.client.client_last_name + " | " + self.company.company_name + " | " + self.work_order_status + " | " + self.work_order_type
 
-"""     def delete(self):
+    def delete(self, using=None, keep_parents=False):
         self.deleted_flag = True
-        self.save() """
+        self.save()
 
 
 class Client(models.Model):
@@ -145,6 +153,11 @@ class Client(models.Model):
     def __str__(self):
         return self.client_first_name + " " + self.client_last_name + " | " + self.client_email + " | " + self.client_phone + " | " + self.company.company_name
 
+    def delete(self):
+        self.deleted_flag = True
+        self.save()
+
+        self.order_set.all().update(deleted_flag=True)
 
 
 # class UserActivityLog(models.Model):
@@ -198,7 +211,7 @@ class BillingLog(models.Model):
 class Plan(models.Model):
     PLAN_NAME_CHOICES = (
         ('Basic','Basic'),
-        ('Standard','Standard'),
+        ('Standart','Standart'),
         ('Premium', 'Premium'),
     )
 

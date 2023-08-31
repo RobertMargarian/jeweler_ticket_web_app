@@ -9,6 +9,7 @@ from .models import Client, Company, User
 
 User = get_user_model()
 
+
 class PaginationForm(forms.Form):
     page_size_choices = [
         (1, '1'),

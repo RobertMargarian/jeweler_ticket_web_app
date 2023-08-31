@@ -31,7 +31,7 @@
                 <td>{{ employee_list.email }} </td>
                 <td>
                     <a href="{% url 'employees:employee-update' employee_list.pk %}">Edit</a> | 
-                    {% if user.is_owner or user.is_employee %}
+                    {% if user.is_owner %}
                     <a href="{% url 'employees:employee-delete' employee_list.pk %}">Delete</a> 
                     {% endif %} 
                 </td>
