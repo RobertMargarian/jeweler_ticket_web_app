@@ -63,7 +63,6 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
     
 class OrderCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "orders/order_create.html"
-    redirect_template_name = "orders/order_list.html"
     form_class = OrderCreateForm
     context_object_name = "order-create"
     
@@ -93,7 +92,7 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
             )
             return redirect(self.get_success_url())
         context = {'form': form}
-        return render(request, self.redirect_template_name, context)
+        return render(request, self.template_name, context)
     
     def get_success_url(self):
         return reverse("orders:order-list")

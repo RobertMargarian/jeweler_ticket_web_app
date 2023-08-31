@@ -68,15 +68,34 @@ class OrderCreateForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['client'].queryset = Client.objects.filter(company=user.company)
-
+        
     def clean(self):
         cleaned_data = super().clean()        
         quoted_price = self.cleaned_data.get('quoted_price')
         estimated_cost = self.cleaned_data.get('estimated_cost')
         security_deposit = self.cleaned_data.get('security_deposit')
+        
         if quoted_price is not None and estimated_cost is not None and quoted_price < estimated_cost:
             self.add_error('quoted_price', "Quoted price cannot be less than estimated cost")
 
         if quoted_price is not None and security_deposit is not None and security_deposit > quoted_price:
             self.add_error('security_deposit', "Security deposit cannot be greater than quoted price")
+
+        return cleaned_data
+
+
+    # def clean_quoted_price(self):
+    #     quoted_price = self.cleaned_data.get('quoted_price')
+    #     estimated_cost = self.cleaned_data.get('estimated_cost')
+    #     if quoted_price < estimated_cost:
+    #         raise forms.ValidationError("Quoted price cannot be less than estimated cost")
+    #     return quoted_price
+
+    # def clean_security_deposit(self):
+    #     security_deposit = self.cleaned_data.get('security_deposit')
+    #     quoted_price = self.cleaned_data.get('quoted_price')
+    #     if security_deposit is not None and quoted_price is not None and security_deposit > quoted_price:
+    #         raise forms.ValidationError("Security deposit cannot be greater than quoted price")
+    #     return security_deposit
+    
 
