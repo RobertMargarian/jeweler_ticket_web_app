@@ -3,7 +3,7 @@
     {% comment %} Employees Per Page Form {% endcomment %}
     <form id="pagination_form_employees" method="get" action="{% url 'employees:employee-list' %}" class="mb-4">
         <p>User preference from model: {{ request.user.pref_employees_per_page }}</p>
-        {{ pagination_form_employees.page_size.label }}: {{ pagination_form_employees.page_size }}
+        {{ pagination_form_employee.page_size.label }}: {{ pagination_form_employee.page_size }}
         {% comment %} <input type="submit" value="Update"> {% endcomment %}
     </form>
     <script>
@@ -26,12 +26,12 @@
             {% if user.company == employee_list.company %}
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ employee_list.first_name }} {{employee_list.last_name}} </td>
-                <td>{{ employee_list.user_phone }} </td>
-                <td>{{ employee_list.email }} </td>
+                <td>{{ employee_list.user.first_name }} {{employee_list.user.last_name}} </td>
+                <td>{{ employee_list.user.user_phone }} </td>
+                <td>{{ employee_list.user.email }} </td>
                 <td>
-                    <a href="{% url 'employees:employee-update' employee_list.pk %}">Edit</a> | 
                     {% if user.is_owner %}
+                    <a href="{% url 'employees:employee-update' employee_list.pk %}">Edit</a> | 
                     <a href="{% url 'employees:employee-delete' employee_list.pk %}">Delete</a> 
                     {% endif %} 
                 </td>

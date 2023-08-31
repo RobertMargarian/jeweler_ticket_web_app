@@ -121,7 +121,7 @@ class Order(models.Model):
     security_deposit = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     work_order_type = models.CharField(choices=WORK_ORDER_TYPE_CHOICES, max_length=30)
     work_order_status = models.CharField(choices=WORK_ORDER_STATUS_CHOICES, max_length=30)
-    work_order_description = models.TextField(max_length=200)
+    work_order_description = models.TextField(max_length=200, default=None, null=True, blank=True)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

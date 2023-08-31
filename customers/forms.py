@@ -7,6 +7,7 @@ from django.db.models.base import Model
 from django.forms.utils import ErrorList
 from .models import Client, Company, User
 
+
 User = get_user_model()
 
 
@@ -21,7 +22,7 @@ class PaginationForm(forms.Form):
     page_size = forms.ChoiceField(
         choices=page_size_choices,
         widget=forms.Select(attrs={'id': 'pagination_clients'}),
-        label="Orders per page"
+        label="Clients per page"
     )
 
 

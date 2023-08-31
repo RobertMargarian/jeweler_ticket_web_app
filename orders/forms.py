@@ -67,7 +67,9 @@ class OrderCreateForm(forms.ModelForm):
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['client'].queryset = Client.objects.filter(company=user.company)
+        self.fields['client'].queryset = Client.objects \
+        .filter(company=user.company) \
+        .filter(deleted_flag=False) 
         
     def clean(self):
         cleaned_data = super().clean()        

@@ -100,12 +100,19 @@ class EmployeeUpdateView(LoginRequiredMixin, generic.UpdateView):
         company = self.request.user.company
         user = self.request.user
         if user.is_owner:
-            queryset = Employee.objects.filter(company=company)
+            queryset = Employee.objects \
+                .filter(user__is_active=True) \
+                .filter(company=company)
             queryset = queryset.filter(company=self.request.user.company)
         else:
             return KeyError("User does not have permission to view employees")
         return queryset
     
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        employee = self.get_object()
+        kwargs['instance'] = employee.user
+        return kwargs
 
 class EmployeeDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = 'employees/employee_delete.html'
