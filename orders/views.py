@@ -27,6 +27,7 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         context['filter_form'] = OrderStatusFilterForm(self.request.GET)
         context['selected_statuses'] = self.request.GET.getlist('order_status')
         context['orders_per_page'] = self.request.user.pref_orders_per_page
+        context['all_possible_statuses'] = ['Completed', 'Cancelled', 'In Progress']
         return context
 
     
@@ -80,7 +81,6 @@ class OrderCreateView(LoginRequiredMixin, generic.CreateView):
             order = form.save(commit=False)
             order.company = self.request.user.company
             order.user = self.request.user
-            order.work_order_status = "In Progress"
             order.work_order_currency = "USD"
             order.quoted_currency = "USD"
             order.save()

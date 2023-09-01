@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+
 {% block content %}
     {% comment %} Orders Per Page Form {% endcomment %}
     <form id="pagination_form_orders" method="get" action="{% url 'orders:order-list' %}" class="mb-4">
         {{ pagination_form_orders.page_size.label }}: {{ pagination_form_orders.page_size }}
 
-            <!-- Hidden input fields for the current filters -->
+        <!-- Hidden input fields for the current filters -->
         {% for status in selected_statuses %}
             <input type="hidden" name="order_status" value="{{ status }}">
         {% endfor %}
@@ -16,18 +17,21 @@
     </script>
 
     <form method="get" action="{% url 'orders:order-list' %}">
-        {{ filter_form.order_status.label }}:
-        <ul>
-            {% for choice in filter_form.order_status %}
-                <li>{{ choice }}</li>
+        <select class="js-status-select" name="order_status" multiple="multiple" style="width: 200px;">
+            {% for status_option in all_possible_statuses %}
+                <option value="{{status_option}}" {% if status_option in selected_statuses %}selected{% endif %}>
+                    {{status_option}}
+                </option>
             {% endfor %}
-        </ul>
+        </select>
     </form>
     <script>
-        const statusCheckboxes = document.querySelectorAll("input[name='order_status']");
-        statusCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                this.form.submit();
+        $(document).ready(function() {
+            $('.js-status-select').select2({
+                placeholder: "Select order statuses",
+                allowClear: true
+            }).on('change', function() {
+                $(this).closest('form').submit();
             });
         });
     </script>
