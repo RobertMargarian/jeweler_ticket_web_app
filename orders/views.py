@@ -27,6 +27,7 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         context['filter_form'] = OrderStatusFilterForm(self.request.GET)
         context['selected_statuses'] = self.request.GET.getlist('order_status')
         context['orders_per_page'] = self.request.user.pref_orders_per_page
+        context['all_possible_statuses'] = ['Completed', 'Cancelled', 'In Progress']
         return context
 
     
