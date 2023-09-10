@@ -5,10 +5,16 @@ from django.forms.models import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import reverse, render, redirect
 from django.views import generic
+from django.views.generic.edit import FormView
 from customers.models import Order, Company, Client, User
+from django.forms import modelformset_factory, formset_factory
 from .forms import OrderCreateForm, PaginationForm, OrderStatusFilterForm
+from customers.forms import ClientCreateForm
 from customers.mixins import  CompanyOwnerRequiredMixin, EmployeeRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.db import IntegrityError
+from django.db.transaction import atomic
 
 
 class OrderListView(LoginRequiredMixin, generic.ListView):
@@ -61,42 +67,121 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
                 pass
         return super().get(request, *args, **kwargs)
 
-    
-class OrderCreateView(LoginRequiredMixin, generic.CreateView):
+
+
+
+class OrderCreateView(LoginRequiredMixin, FormView):
     template_name = "orders/order_create.html"
     form_class = OrderCreateForm
     context_object_name = "order-create"
-    
-    def get(self, request, *args, **kwargs):
-        user = self.request.user
-        form = self.form_class(user=user)
-        context = {'form': form}
-        return render(request, self.template_name, context)
 
-    def post(self, request, *args, **kwargs):
-        user = self.request.user
-        form = self.form_class(user=user, data=request.POST)
-        if form.is_valid():
-            order = form.save(commit=False)
-            order.company = self.request.user.company
-            order.user = self.request.user
-            order.work_order_status = "In Progress"
-            order.work_order_currency = "USD"
-            order.quoted_currency = "USD"
-            order.save()
-            # TODO send email
-            send_mail(
-                subject="New Order has been created", 
-                message="Go to the site to see the new order",
-                from_email="test@test.com",
-                recipient_list=["test2@test.com"]
-            )
-            return redirect(self.get_success_url())
-        context = {'form': form}
-        return render(request, self.template_name, context)
-    
     def get_success_url(self):
         return reverse("orders:order-list")
+
+    def form_valid(self, form):   
+        client_already_exists = self.request.POST.get('client_already_exists')
+        client_form = ClientCreateForm(self.request.POST)
+        
+        if form.is_valid() and client_form.is_valid():
+            user = self.request.user
+            order = form.save(commit=False)
+            order.company = user.company
+            order.user = user
+
+
+            if client_already_exists == 'True':
+                if 'client' in form.cleaned_data and form.cleaned_data['client']:
+                    order.client = form.cleaned_data['client']
+                    order.work_order_status = "In Progress"
+                    order.work_order_currency = "USD"
+                    order.quoted_currency = "USD"
+                    order.save() 
+                else:
+                    form.add_error('client', "Client must be selected when Client Already Exists is checked.")
+
+            elif client_already_exists == 'False':
+
+                if (client_form.cleaned_data.get('client_first_name') != ''
+                    and client_form.cleaned_data.get('client_last_name') != ''
+                    and client_form.cleaned_data.get('client_phone') != ''
+                    ):
+                    client = Client.objects.create(
+                        company=user.company,
+                        user = user,
+                        client_first_name=client_form.cleaned_data['client_first_name'],
+                        client_last_name=client_form.cleaned_data['client_last_name'],
+                        client_email=client_form.cleaned_data['client_email'],
+                        client_phone=client_form.cleaned_data['client_phone'],
+                        client_check_mobile_phone=client_form.cleaned_data['client_check_mobile_phone'],
+                    )
+                    order.client = client
+                    client.save()
+                    order.work_order_status = "In Progress"
+                    order.work_order_currency = "USD"
+                    order.quoted_currency = "USD"
+                    order.save()
+
+                else:
+                    form.add_error('client', "Create a new client or check the box.")
+
+
+            if not form.is_valid() or not client_form.is_valid() or (not form.is_valid() and not client_form.is_valid()):
+                return self.form_invalid(form)
+        
+            return redirect(self.get_success_url())
+        
+        return self.form_invalid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['client_form'] = kwargs.get('client_form', ClientCreateForm())
+        return context
+
+
+
+                # if 'client' in form.cleaned_data and form.cleaned_data['client']:
+                #     form.add_error('client', "Client Already Exists should be checked when selecting an existing client.")
+
+                # elif 'client' not in form.cleaned_data and (
+                #     client_form.cleaned_data.get('client_first_name') is None
+                #     or client_form.cleaned_data.get('client_last_name') is None 
+                #     or client_form.cleaned_data.get('client_phone') is None
+                #     ):
+                #     client_form.add_error('client_first_name', "This field is required.")
+                #     client_form.add_error('client_last_name', "This field is required.")
+                #     client_form.add_error('client_phone', "This field is required.")
+
+
+    # def get(self, request, *args, **kwargs):
+    #     user = self.request.user
+    #     form = self.form_class(user=user)
+    #     context = {'form': form}
+    #     return render(request, self.template_name, context)
+
+    # def post(self, request, *args, **kwargs):
+    #     user = self.request.user
+    #     form = self.form_class(user=user, data=request.POST)
+    #     if form.is_valid():
+    #         order = form.save(commit=False)
+    #         order.company = self.request.user.company
+    #         order.user = self.request.user
+    #         order.work_order_status = "In Progress"
+    #         order.work_order_currency = "USD"
+    #         order.quoted_currency = "USD"
+    #         order.save()
+    #         # TODO send email
+    #         send_mail(
+    #             subject="New Order has been created", 
+    #             message="Go to the site to see the new order",
+    #             from_email="test@test.com",
+    #             recipient_list=["test2@test.com"]
+    #         )
+    #         return redirect(self.get_success_url())
+    #     context = {'form': form}
+    #     return render(request, self.template_name, context)
+    
+    # def get_success_url(self):
+    #     return reverse("orders:order-list")
 
 
 class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):

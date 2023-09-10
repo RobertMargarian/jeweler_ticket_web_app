@@ -1,3 +1,6 @@
+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
+AIzaSyDrIV7g0IIY472qOGtNLGVspG7sftMnfkM
+
 1. Intall and run virtual environment
 
     pip install virtualenv

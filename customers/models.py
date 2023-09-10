@@ -128,7 +128,7 @@ class Order(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.client.client_first_name + " " + self.client.client_last_name + " | " + self.company.company_name + " | " + self.work_order_status + " | " + self.work_order_type
+        return str(self.id) + " | " + self.company.company_name + " | " + self.work_order_status + " | " + self.work_order_type
 
     def delete(self, using=None, keep_parents=False):
         self.deleted_flag = True
@@ -139,11 +139,11 @@ class Client(models.Model):
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.SET_NULL)
     client_already_exists = models.BooleanField(default=False)
-    client_first_name = models.CharField(max_length=50)
-    client_last_name = models.CharField(max_length=50)
-    client_email = models.EmailField(max_length=254)
-    client_phone = models.CharField(max_length=20)
-    client_check_mobile_phone = models.BooleanField(default=False)
+    client_first_name = models.CharField(max_length=50, default=None, null=True, blank=True)
+    client_last_name = models.CharField(max_length=50, default=None, null=True, blank=True)
+    client_email = models.EmailField(max_length=254, default=None, null=True, blank=True)
+    client_phone = models.CharField(max_length=20, default=None, null=True, blank=True)
+    client_check_mobile_phone = models.BooleanField(default=False, null=True, blank=True)
     total_spent = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -151,7 +151,7 @@ class Client(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.client_first_name + " " + self.client_last_name + " | " + self.client_email + " | " + self.client_phone + " | " + self.company.company_name
+        return self.client_first_name + " " + self.client_last_name
 
     def delete(self):
         self.deleted_flag = True

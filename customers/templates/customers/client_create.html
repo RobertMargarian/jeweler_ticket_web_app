@@ -1,9 +1,45 @@
 {% extends "base.html" %}
 {% block content %}
-    <form action="" method="post">
+    <form action="" method="post" class="bootstrap5">
+        {% csrf_token %}
+        <h2>Client Information</h2>
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="floatingTextarea" name="client_first_name" placeholder="First Name">
+                    <label for="floatingTextarea">First Name</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="floatingTextarea" name="client_last_name" placeholder="Last Name">
+                    <label for="floatingTextarea">Last Name</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="floatingTextarea" name="client_email" placeholder="name@example.com">
+                    <label for="floatingInputGrid">Email Address</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <input type="phone" class="form-control" id="floatingTextarea" name="client_phone" placeholder="">
+                    <label for="floatingInputGrid">Phone Number</label>
+                </div>
+            </div>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary w-25">Submit</button>
+        
+        
+
+
+    </form>
+    {% comment %} <form action="" method="post" class="bootstrap5">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Create new client</button>
-    </form>
+    </form> {% endcomment %}
 {% endblock content %}
 

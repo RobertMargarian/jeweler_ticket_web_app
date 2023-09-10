@@ -1,8 +1,131 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load bootstrap5 %}
+{% load crispy_forms_field %}
+
 {% block content %}
-    <form action="" method="post">
+
+    <form action="" method="post" class="bootstrap5">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Create new order</button>
+        <h3>Client Information</h3>
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-check">
+                    {{ client_form.client_already_exists|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ client_form.client_first_name|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ client_form.client_last_name|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ client_form.client_email|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ client_form.client_phone|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ client_form.client_check_mobile_phone|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+
+        <h3>Order Information</h3>
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.client|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.work_order_type|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.work_order_due_date|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.work_order_status|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.estimated_cost|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.quoted_price|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.security_deposit|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.work_order_description|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+        
+
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+
+        <script>
+            // Get the checkbox and the fields to be disabled
+            const select = document.querySelector('#id_client_already_exists');
+            const fieldsToDisable = [
+                document.querySelector('#id_client_first_name'),
+                document.querySelector('#id_client_last_name'),
+                document.querySelector('#id_client_email'),
+                document.querySelector('#id_client_phone'),
+                document.querySelector('#id_client_check_mobile_phone')
+            ];
+        
+            // Function to toggle the disabled attribute on fields
+            function toggleFieldsDisabled() {
+                const isClientExists = select.value === 'True';
+        
+                fieldsToDisable.forEach(field => {
+                    field.disabled = isClientExists;
+                });
+            }
+        
+            // Initially set the field states and add an event listener
+            toggleFieldsDisabled();
+            select.addEventListener('change', toggleFieldsDisabled);
+        </script>
+
     </form>
+
 {% endblock content %}

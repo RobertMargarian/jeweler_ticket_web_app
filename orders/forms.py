@@ -2,6 +2,10 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UsernameField
 from django.core.exceptions import ValidationError
+from django.db.models.base import Model
+from django.forms.utils import ErrorList
+from django.forms.widgets import CheckboxSelectMultiple, Select
+from django.forms import ModelForm
 from django.core.validators import MinValueValidator
 from customers.models import Order, Company, Client, User
 
@@ -43,15 +47,22 @@ class OrderCreateForm(forms.ModelForm):
         ('Completed', 'Completed')
     ]
 
-    client = forms.ModelChoiceField(queryset=Client.objects.all(), required=True)
-    estimated_cost = forms.DecimalField(min_value=0.00, max_digits=10, decimal_places=2, initial=0, required=True)
-    work_order_status = forms.ChoiceField(choices=order_status_choices, initial='In Progress', required=True)
-    quoted_price = forms.DecimalField(min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=True)
-    security_deposit = forms.DecimalField(min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=False)
+    order_type_choices = [
+        ('Sell','Sell'),
+        ('Repair','Repair'),
+        ('Other', 'Other')
+    ]
+
+    client = forms.ModelChoiceField(queryset=Client.objects.all(), required=False, initial=None, widget=forms.Select(attrs={'class': 'form-control'}))
+    estimated_cost = forms.DecimalField(min_value=0.00, max_digits=10, decimal_places=2, initial=0, required=True, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    work_order_type = forms.ChoiceField(choices=order_type_choices, required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    work_order_status = forms.ChoiceField(choices=order_status_choices, initial='In Progress', required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    quoted_price = forms.DecimalField(min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=True, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    security_deposit = forms.DecimalField(min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
     work_order_due_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
-    work_order_description = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    work_order_description = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}), required=False)
 
-
+    
     class Meta:
         model = Order
         fields = (
@@ -65,14 +76,23 @@ class OrderCreateForm(forms.ModelForm):
             'work_order_description'
         )
 
-    def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(OrderCreateForm, self).__init__(*args, **kwargs)
+        # self.fields['client'].queryset = Client.objects \
+        # .filter(company=self.user.company) \
+        # .filter(deleted_flag=False) 
+
+    def get_queryset(self):
+        user = self.user
         self.fields['client'].queryset = Client.objects \
         .filter(company=user.company) \
-        .filter(deleted_flag=False) 
-        
+        .filter(deleted_flag=False)
+        return self.fields['client'].queryset
+
+
     def clean(self):
-        cleaned_data = super().clean()        
+        cleaned_data = super().clean()
         quoted_price = self.cleaned_data.get('quoted_price')
         estimated_cost = self.cleaned_data.get('estimated_cost')
         security_deposit = self.cleaned_data.get('security_deposit')
@@ -84,20 +104,4 @@ class OrderCreateForm(forms.ModelForm):
             self.add_error('security_deposit', "Security deposit cannot be greater than quoted price")
 
         return cleaned_data
-
-
-    # def clean_quoted_price(self):
-    #     quoted_price = self.cleaned_data.get('quoted_price')
-    #     estimated_cost = self.cleaned_data.get('estimated_cost')
-    #     if quoted_price < estimated_cost:
-    #         raise forms.ValidationError("Quoted price cannot be less than estimated cost")
-    #     return quoted_price
-
-    # def clean_security_deposit(self):
-    #     security_deposit = self.cleaned_data.get('security_deposit')
-    #     quoted_price = self.cleaned_data.get('quoted_price')
-    #     if security_deposit is not None and quoted_price is not None and security_deposit > quoted_price:
-    #         raise forms.ValidationError("Security deposit cannot be greater than quoted price")
-    #     return security_deposit
-    
 

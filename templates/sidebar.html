@@ -17,21 +17,21 @@
         Clients
       </a>
     </li>
-    {% if user.is_owner %}
+    {% comment %} {% if user.is_owner %}
     <li>
       <a href="{% url 'employees:employee-list'%}" class="nav-link text-white">
         <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
         Employees
       </a>
     </li>
-    {% endif %}
+    {% endif %} {% endcomment %}
     <li>
       <a href={% url 'orders:order-create'%} class="nav-link active text-white">
         <svg class="bi me-2" width="16" height="16"><use xlink:href="#plus-circle"/></svg>
         Create New Order
       </a>
     </li>
-    <li>
+    {% comment %} <li>
       <a href={% url 'customers:client-create'%} class="nav-link active text-white">
         <svg class="bi me-2" width="16" height="16"><use xlink:href="#plus-circle"/></svg>
         Create New Client
@@ -45,7 +45,7 @@
       </a>
     </li>
     {% endif %}
-  </ul>
+  </ul> {% endcomment %}
   <hr>
   <div class="dropdown">
     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">

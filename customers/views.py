@@ -99,36 +99,36 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
                 pass
         return super().get(request, *args, **kwargs)
 
-class ClientCreateView(LoginRequiredMixin, generic.CreateView):
-    template_name = "customers/client_create.html"
-    form_class = ClientCreateForm
+# class ClientCreateView(LoginRequiredMixin, generic.CreateView):
+#     template_name = "customers/client_create.html"
+#     form_class = ClientCreateForm
 
-    def get_success_url(self):
-        return reverse("customers:client-list")
+#     def get_success_url(self):
+#         return reverse("customers:client-list")
 
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_owner or user.is_employee:
-            queryset = Client.objects.filter(company=user.company)
-            queryset = queryset.filter(company=self.request.user.company)
-        else:
-            return KeyError("User does not have permission to create clients")
-        return queryset
+#     def get_queryset(self):
+#         user = self.request.user
+#         if user.is_owner or user.is_employee:
+#             queryset = Client.objects.filter(company=user.company)
+#             queryset = queryset.filter(company=self.request.user.company)
+#         else:
+#             return KeyError("User does not have permission to create clients")
+#         return queryset
 
 
-    def form_valid(self, form):
-        client = form.save(commit=False)
-        client.company = self.request.user.company
-        client.user = self.request.user
-        client.save()
-        # TODO send email
-        send_mail(
-            subject="New Client has been created", 
-            message="Go to the site to see the new client",
-            from_email="test@test.com",
-            recipient_list=["test2@test.com"]
-        )
-        return super(ClientCreateView, self).form_valid(form)
+#     def form_valid(self, form):
+#         client = form.save(commit=False)
+#         client.company = self.request.user.company
+#         client.user = self.request.user
+#         client.save()
+#         # TODO send email
+#         send_mail(
+#             subject="New Client has been created", 
+#             message="Go to the site to see the new client",
+#             from_email="test@test.com",
+#             recipient_list=["test2@test.com"]
+#         )
+#         return super(ClientCreateView, self).form_valid(form)
 
 
 class ClientUpdateView(LoginRequiredMixin, generic.UpdateView):
