@@ -22,7 +22,7 @@ class OrderStatusFilterForm(forms.Form):
     order_status = forms.MultipleChoiceField(
         choices=order_status_choices,
         required=False,
-        widget=forms.CheckboxSelectMultiple(),
+        widget=forms.SelectMultiple(),  # Display 3 options at once
         label="Order Status"
     )
 
