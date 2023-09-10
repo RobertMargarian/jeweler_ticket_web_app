@@ -9,6 +9,7 @@ from .models import Order, Client, Company, User, Plan, Owner
 from django.views.generic.edit import FormView
 from .forms import ClientCreateForm, CustomUserCreationForm, CompanyCreateForm, PaginationForm
 from .mixins import  CompanyOwnerRequiredMixin, EmployeeRequiredMixin 
+from django.db.models import Case, When, DecimalField
 # should use this mixin for all views that require login and role
 
 class SignupView(FormView):
@@ -72,6 +73,7 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
             PaginationForm(initial={'page_size': self.request.user.pref_clients_per_page})
         return context
 
+
     def get_queryset(self):
         user = self.request.user
         if user.is_owner or user.is_employee: 
@@ -80,9 +82,17 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
                 .filter(company=self.request.user.company) \
                 .filter(deleted_flag=False) \
                 .order_by('-created_at') \
-                .filter(company=self.request.user.company).annotate(
-                    total_spent_column=Sum('order__quoted_price')
+                .filter(company=self.request.user.company)
+            
+            queryset = queryset.annotate(
+                total_spent_column=Sum(
+                    Case(
+                        When(order__work_order_status__in=['Completed', 'In Progress'], order__deleted_flag=False, then='order__quoted_price'),
+                        default=0,
+                        output_field=DecimalField()
+                    )
                 )
+            )
         else:
             return KeyError("User does not have permission to view clients")
         return queryset
@@ -147,6 +157,21 @@ class ClientUpdateView(LoginRequiredMixin, generic.UpdateView):
         else:
             return KeyError("User does not have permission to edit clients")
         return queryset
+    
+    def form_valid(self, form):
+        client_first_name = form.cleaned_data.get('client_first_name')
+        client_last_name = form.cleaned_data.get('client_last_name')
+        client_phone = form.cleaned_data.get('client_phone')
+
+        if client_first_name == '' or client_last_name == '' or client_phone == '':
+            form.add_error('client_first_name', "This field is required.")
+            form.add_error('client_last_name', "This field is required.")
+            form.add_error('client_phone', "This field is required.")
+            return self.form_invalid(form)
+        
+        
+        return super().form_valid(form)
+    
 
 
 

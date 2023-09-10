@@ -1,9 +1,45 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load bootstrap5 %}
+{% load crispy_forms_field %}
+
 {% block content %}
-    <form action="" method="post">
+    <form action="" method="post" class="bootstrap5">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="row g-2 w-50">
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.client_first_name|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.client_last_name|as_crispy_field }}
+                </div>
+            </div>
+        </div>
         <br>
-        <button type="submit">Update</button>
+        <div class="row g-2 w-50">
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.client_email|as_crispy_field }}
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.client_phone|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+        <div class="row g-2">
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.client_check_mobile_phone|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
     </form>
 {% endblock content %}

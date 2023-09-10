@@ -139,52 +139,6 @@ class OrderCreateView(LoginRequiredMixin, FormView):
         return context
 
 
-
-                # if 'client' in form.cleaned_data and form.cleaned_data['client']:
-                #     form.add_error('client', "Client Already Exists should be checked when selecting an existing client.")
-
-                # elif 'client' not in form.cleaned_data and (
-                #     client_form.cleaned_data.get('client_first_name') is None
-                #     or client_form.cleaned_data.get('client_last_name') is None 
-                #     or client_form.cleaned_data.get('client_phone') is None
-                #     ):
-                #     client_form.add_error('client_first_name', "This field is required.")
-                #     client_form.add_error('client_last_name', "This field is required.")
-                #     client_form.add_error('client_phone', "This field is required.")
-
-
-    # def get(self, request, *args, **kwargs):
-    #     user = self.request.user
-    #     form = self.form_class(user=user)
-    #     context = {'form': form}
-    #     return render(request, self.template_name, context)
-
-    # def post(self, request, *args, **kwargs):
-    #     user = self.request.user
-    #     form = self.form_class(user=user, data=request.POST)
-    #     if form.is_valid():
-    #         order = form.save(commit=False)
-    #         order.company = self.request.user.company
-    #         order.user = self.request.user
-    #         order.work_order_status = "In Progress"
-    #         order.work_order_currency = "USD"
-    #         order.quoted_currency = "USD"
-    #         order.save()
-    #         # TODO send email
-    #         send_mail(
-    #             subject="New Order has been created", 
-    #             message="Go to the site to see the new order",
-    #             from_email="test@test.com",
-    #             recipient_list=["test2@test.com"]
-    #         )
-    #         return redirect(self.get_success_url())
-    #     context = {'form': form}
-    #     return render(request, self.template_name, context)
-    
-    # def get_success_url(self):
-    #     return reverse("orders:order-list")
-
-
 class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Order
     template_name = "orders/order_update.html"
