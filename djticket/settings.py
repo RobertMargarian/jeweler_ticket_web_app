@@ -46,11 +46,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
 ]
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
-CRISPY_TEMPLATE_PACK = "bootstrap5"
-
-USE_TZ = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -146,3 +142,12 @@ LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/order_list'
 LOGOUT_URL = '/logout'
 LOGOUT_REDIRECT_URL = '/'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+USE_TZ = True
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB 

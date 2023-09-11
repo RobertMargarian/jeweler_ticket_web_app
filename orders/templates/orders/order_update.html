@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <form action="" method="post" class="bootstrap5">
+    <form action="" method="post" class="bootstrap5" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="row g-2">
@@ -53,6 +53,11 @@
         
         
         <div class="row g-2">
+            <div class="col-md">
+                <div class="form-group">
+                    {{ form.order_photo|as_crispy_field }}
+                </div>
+            </div>
             <div class="col-md">
                 <div class="form-floating">
                     {{ form.work_order_description|as_crispy_field }}

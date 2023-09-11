@@ -61,6 +61,7 @@ class OrderCreateForm(forms.ModelForm):
     security_deposit = forms.DecimalField(min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
     work_order_due_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
     work_order_description = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}), required=False)
+    order_photo = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
 
     
     class Meta:
@@ -73,15 +74,13 @@ class OrderCreateForm(forms.ModelForm):
             'quoted_price', 
             'security_deposit', 
             'work_order_due_date',
-            'work_order_description'
+            'work_order_description',
+            'order_photo',
         )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
         super(OrderCreateForm, self).__init__(*args, **kwargs)
-        # self.fields['client'].queryset = Client.objects \
-        # .filter(company=self.user.company) \
-        # .filter(deleted_flag=False) 
 
     def get_queryset(self):
         user = self.user

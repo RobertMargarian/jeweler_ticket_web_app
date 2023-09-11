@@ -89,13 +89,13 @@ class OrderCreateView(LoginRequiredMixin, FormView):
             order.company = user.company
             order.user = user
 
-
             if client_already_exists == 'True':
                 if 'client' in form.cleaned_data and form.cleaned_data['client']:
                     order.client = form.cleaned_data['client']
                     order.work_order_status = "In Progress"
                     order.work_order_currency = "USD"
                     order.quoted_currency = "USD"
+                    order.order_photo = self.request.FILES.get('order_photo')
                     order.save() 
                 else:
                     form.add_error('client', "Client must be selected when Client Already Exists is checked.")
@@ -120,6 +120,7 @@ class OrderCreateView(LoginRequiredMixin, FormView):
                     order.work_order_status = "In Progress"
                     order.work_order_currency = "USD"
                     order.quoted_currency = "USD"
+                    order.order_photo = self.request.FILES.get('order_photo')
                     order.save()
 
                 else:
@@ -137,6 +138,7 @@ class OrderCreateView(LoginRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         context['client_form'] = kwargs.get('client_form', ClientCreateForm())
         return context
+
 
 
 class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):

@@ -122,6 +122,7 @@ class Order(models.Model):
     work_order_type = models.CharField(choices=WORK_ORDER_TYPE_CHOICES, max_length=30)
     work_order_status = models.CharField(choices=WORK_ORDER_STATUS_CHOICES, max_length=30)
     work_order_description = models.TextField(max_length=200, default=None, null=True, blank=True)
+    order_photo = models.ImageField(upload_to='order_photos/', blank=True, null=True)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
