@@ -1,21 +1,126 @@
 {% load static %}
+{% load crispy_forms_tags %}
+{% load bootstrap5 %}
+{% load crispy_forms_field %}
 
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Add your other CSS imports here -->
+</head>
 
-<form method="post">
-    <hr>
-    Company Information
-    </hr>
+<style>
+    .centered-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 50vh; /* Adjust the height to center vertically */
+    }
+
+    .form-field {
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top: 20px;
+    }
+</style>
+
+<form action="" method="post" class="bootstrap5 form-field">
     {% csrf_token %}
-    {{ second_form.as_p }}
-    <hr>
-    User Information
-    <hr>
-    {{ form.as_p }}
-    </hr>
-    <button type="submit">SignUp</button>
+
+    <h3>Company Information</h3>
+
+    <div class="row g-2 w-50">
+        <div class="col-md">
+            <div class="form-floating">
+                {{ second_form.company_name|as_crispy_field }}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
+                {{ second_form.company_address_lines|as_crispy_field }}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
+                {{ second_form.company_city|as_crispy_field }}
+            </div>
+        </div>
+    </div>
+    <div class="row g-2 w-50">
+        <div class="col-md">
+            <div class="form-floating">
+                {{ second_form.company_state|as_crispy_field }}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
+                {{ second_form.company_country|as_crispy_field }}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
+                {{ second_form.company_zip_code|as_crispy_field }}
+            </div>
+        </div>
+    </div>
+
+    <h3>User Information</h3>
+    <div class="row g-2 w-25">
+        <div class="col-md">
+            <div class="form-floating">
+                {{ form.username|as_crispy_field }}
+            </div>
+        </div>
+    </div>
+    <div class="row g-2 w-50">
+        <div class="col-md">
+            <div class="form-floating">
+                {{ form.first_name|as_crispy_field }}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
+                {{ form.last_name|as_crispy_field }}
+            </div>
+        </div>
+    </div>
+    <div class="row g-2 w-50">
+        <div class="col-md">
+            <div class="form-floating">
+                {{ form.email|as_crispy_field }}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
+                {{ form.user_phone|as_crispy_field }}
+            </div>
+        </div>
+    </div>
+    <div class="row g-2 w-50">
+        <div class="col-md">
+            <div class="form-floating">
+                {{ form.password1|as_crispy_field }}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating">
+                {{ form.password2|as_crispy_field }}
+            </div>
+        </div>
+    </div>
+    <div class="row g-2 ">
+        <div class="col-md">
+            <div class="form-floating">
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </div>
+        </div>
+    </div>
 </form>
 
 

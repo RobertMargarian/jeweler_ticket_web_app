@@ -20,7 +20,12 @@
 
 .rounded-image {
   border-radius: 100%; /* Makes the image round */
-  width: 100px; /* Adjust the width as needed */
-  height: 100px; /* Adjust the height as needed */
+  width: 50px; /* Adjust the width as needed */
+  height: 50px; /* Adjust the height as needed */
   object-fit: cover; /* Scales the image to cover the entire container */
+}
+
+.scrollable-table {
+  max-height: 400px; /* Adjust the max height as needed */
+  overflow-y: auto;
 }

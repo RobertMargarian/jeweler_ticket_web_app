@@ -5,41 +5,43 @@
 {% load crispy_forms_field %}
 
 {% block content %}
-    <form action="" method="post" class="bootstrap5">
-        {% csrf_token %}
-        <div class="row g-2 w-50">
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.client_first_name|as_crispy_field }}
+    <div style="height: 100vh; overflow-y: scroll;">
+        <form action="" method="post" class="bootstrap5">
+            {% csrf_token %}
+            <div class="row g-2 w-50">
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.client_first_name|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.client_last_name|as_crispy_field }}
+                    </div>
                 </div>
             </div>
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.client_last_name|as_crispy_field }}
+            <br>
+            <div class="row g-2 w-50">
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.client_email|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.client_phone|as_crispy_field }}
+                    </div>
                 </div>
             </div>
-        </div>
-        <br>
-        <div class="row g-2 w-50">
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.client_email|as_crispy_field }}
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.client_check_mobile_phone|as_crispy_field }}
+                    </div>
                 </div>
             </div>
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.client_phone|as_crispy_field }}
-                </div>
-            </div>
-        </div>
-        <div class="row g-2">
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.client_check_mobile_phone|as_crispy_field }}
-                </div>
-            </div>
-        </div>
 
-        <button type="submit" class="btn btn-primary">Update</button>
-    </form>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+    </div>
 {% endblock content %}

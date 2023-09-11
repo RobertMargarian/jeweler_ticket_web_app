@@ -1,86 +1,88 @@
 {% extends "base.html" %}
 {% block content %}
-    {% comment %} Clients Per Page Form {% endcomment %}
-    <form id="pagination_form_clients" method="get" action="{% url 'customers:client-list' %}" class="mb-4">
-        <p>User preference from model: {{ request.user.pref_clients_per_page }}</p>
-        {{ pagination_form_clients.page_size.label }}: {{ pagination_form_clients.page_size }}
-        {% comment %} <input type="submit" value="Update"> {% endcomment %}
-    </form>
-    <script>
-        document.getElementById('pagination_clients').addEventListener('change', function() {
-            document.getElementById('pagination_form_clients').submit();
-        });
-    </script>
+    <div style="height: 100vh; overflow-y: scroll;">
+        {% comment %} Clients Per Page Form {% endcomment %}
+        <form id="pagination_form_clients" method="get" action="{% url 'customers:client-list' %}" class="mb-4">
+            <p>User preference from model: {{ request.user.pref_clients_per_page }}</p>
+            {{ pagination_form_clients.page_size.label }}: {{ pagination_form_clients.page_size }}
+            {% comment %} <input type="submit" value="Update"> {% endcomment %}
+        </form>
+        <script>
+            document.getElementById('pagination_clients').addEventListener('change', function() {
+                document.getElementById('pagination_form_clients').submit();
+            });
+        </script>
 
 
-    <table class="table">
-        <thead>
-            <th scope="col">#</th>
-            <th scope="col">Client Name</th>
-            <th scope="col">Client Phone</th>
-            <th scope="col">Email</th>
-            <th scope="col">Total/Spent</th>
-            <th scope="col">Actions</th>
-        </thead>
-        <tbody>
-            {% for client_list in client_list %}
-            {% if user.company == client_list.company %}
-            <tr>
-                <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ client_list.client_first_name }} {{client_list.client_last_name}} </td>
-                <td>{{ client_list.client_phone }} </td>
-                <td>{{ client_list.client_email }} </td>
-                <td>{{ client_list.total_spent_column | default:0 }} </td>
-                <td>
-                    <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a> | 
-                    {% if user.is_owner or user.is_employee %}
-                    <a href="{% url 'customers:client-delete' client_list.pk %}">Delete</a> 
-                    {% endif %} 
-                </td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-        </tbody>
-    <table>
-
-    {% comment %} Pagination Controls {% endcomment %}
-    <div class="d-flex justify-content-center">
-        <nav aria-label="Order List Pagination">
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1&page_size={{ request.GET.page_size}}" aria-label="First">
-                            <span aria-hidden="true">&laquo;&laquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&page_size={{ request.GET.page_size}}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
+        <table class="table">
+            <thead>
+                <th scope="col">#</th>
+                <th scope="col">Client Name</th>
+                <th scope="col">Client Phone</th>
+                <th scope="col">Email</th>
+                <th scope="col">Total/Spent</th>
+                <th scope="col">Actions</th>
+            </thead>
+            <tbody>
+                {% for client_list in client_list %}
+                {% if user.company == client_list.company %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ client_list.client_first_name }} {{client_list.client_last_name}} </td>
+                    <td>{{ client_list.client_phone }} </td>
+                    <td>{{ client_list.client_email }} </td>
+                    <td>{{ client_list.total_spent_column | default:0 }} </td>
+                    <td>
+                        <a href="{% url 'customers:client-update' client_list.pk %}">Edit</a> | 
+                        {% if user.is_owner or user.is_employee %}
+                        <a href="{% url 'customers:client-delete' client_list.pk %}">Delete</a> 
+                        {% endif %} 
+                    </td>
+                </tr>
                 {% endif %}
-        
-                {% for num in page_obj.paginator.page_range %}
-                    {% if page_obj.number == num %}
-                        <li class="page-item active"><a class="page-link" href="?page={{ num }}&page_size={{ request.GET.page_size}}">{{ num }}</a></li>
-                    {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
-                        <li class="page-item"><a class="page-link" href="?page={{ num }}&page_size={{ request.GET.page_size}}">{{ num }}</a></li>
-                    {% endif %}
                 {% endfor %}
-        
-                {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&page_size={{ request.GET.page_size}}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&page_size={{ request.GET.page_size}}" aria-label="Last">
-                            <span aria-hidden="true">&raquo;&raquo;</span>
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
+            </tbody>
+        <table>
+
+        {% comment %} Pagination Controls {% endcomment %}
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Order List Pagination">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1&page_size={{ request.GET.page_size}}" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&page_size={{ request.GET.page_size}}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+            
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><a class="page-link" href="?page={{ num }}&page_size={{ request.GET.page_size}}">{{ num }}</a></li>
+                        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}&page_size={{ request.GET.page_size}}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+            
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}&page_size={{ request.GET.page_size}}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&page_size={{ request.GET.page_size}}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
     </div>
 {% endblock content %}

@@ -1,23 +1,69 @@
 {% load static %}
+{% load crispy_forms_tags %}
+{% load bootstrap5 %}
+{% load crispy_forms_field %}
 
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- Add your other CSS imports here -->
+</head>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+<style>
+    .centered-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 50vh; /* Adjust the height to center vertically */
+    }
+
+    .form-field {
+        margin-bottom: 10px;
+    }
+</style>
 
 <body>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
-    </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
-    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
-    </script>
+<form action="" method="post" class="bootstrap5">
+    {% csrf_token %}
+    <div class="centered-form">
+        <div class="row g-2 w-25 form-field">
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.username|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+        <div class="row g-2 w-25 form-field">
+            <div class="col-md">
+                <div class="form-floating">
+                    {{ form.password|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+        <div class="row g-2 w-25 form-field">
+            <div class="col-md">
+                <div class="form-floating">
+                    <button type="submit" class="btn btn-primary">Login</button>               
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+</form>
+
+<script src="{% static 'css/bootstrap.min.js' %}"></script>
+<!-- Add your other script imports here -->
+
 </body>
 
 </html>
+

@@ -6,158 +6,160 @@
 {% endblock head %}
 
 {% block content %}
-    {% comment %} Orders Per Page Form {% endcomment %}
-    <form id="pagination_form_orders" method="get" action="{% url 'orders:order-list' %}" class="mb-4">
-        {{ pagination_form_orders.page_size.label }}: {{ pagination_form_orders.page_size }}
+    <div style="height: 100vh; overflow-y: scroll;">
+        {% comment %} Orders Per Page Form {% endcomment %}
+        <form id="pagination_form_orders" method="get" action="{% url 'orders:order-list' %}" class="mb-4">
+            {{ pagination_form_orders.page_size.label }}: {{ pagination_form_orders.page_size }}
 
-        <!-- Hidden input fields for the current filters -->
-        {% for status in selected_statuses %}
-            <input type="hidden" name="order_status" value="{{ status }}">
-        {% endfor %}
-    </form>
-    <script>
-        document.getElementById('pagination_orders').addEventListener('change', function() {
-            document.getElementById('pagination_form_orders').submit();
-        });
-    </script>
-
-    <form method="get" action="{% url 'orders:order-list' %}">
-        <select class="js-status-select" name="order_status" multiple="multiple" style="width: 200px;">
-            {% for status_option in all_possible_statuses %}
-                <option value="{{status_option}}" {% if status_option in selected_statuses %}selected{% endif %}>
-                    {{status_option}}
-                </option>
+            <!-- Hidden input fields for the current filters -->
+            {% for status in selected_statuses %}
+                <input type="hidden" name="order_status" value="{{ status }}">
             {% endfor %}
-        </select>
-    </form>
-    <script>
-        $(document).ready(function() {
-            $('.js-status-select').select2({
-                placeholder: "Select order statuses",
-                allowClear: true
-            }).on('change', function() {
-                $(this).closest('form').submit();
+        </form>
+        <script>
+            document.getElementById('pagination_orders').addEventListener('change', function() {
+                document.getElementById('pagination_form_orders').submit();
             });
-        });
-    </script>
-    
-    <table class="table">
-        <thead>
-            <th scope="col">#</th>
-            <th scope="col">Order Picture</th>
-            <th scope="col">Client Name</th>
-            <th class="text-center" scope="col">Order Status</th>
-            <th scope="col">Order Type</th>
-            <th scope="col">Order Price</th>
-            <th scope="col">Actions</th>
-        </thead>
-        <tbody>
-            {% for order_list in order_list %}
-            {% if user.company == order_list.company %}
-            <tr style="vertical-align: middle">
-                <th scope="row">{{ forloop.counter }}</th>
+        </script>
 
-                <td>
-                    {% if order_list.order_photo %}
-                        <img class="rounded-image" src="{{ order_list.order_photo.url }}" alt="Order Photo" width="50" height="50">
-                    {% else %}
-                        No Photo
-                    {% endif %}
-                </td>
-
-                <td>{{ order_list.client.client_first_name }} {{ order_list.client.client_last_name }}</td>
-
-
-                <td class="text-center">
-                    {% if order_list.work_order_status == 'Cancelled' %}
-                        <div class="status-div status-cancelled">
-                            {{ order_list.work_order_status }}
-                        </div>
-                    {% endif %}
-                    {% if order_list.work_order_status == 'In Progress' %}
-                        <div class="status-div status-in-progress">
-                            {{ order_list.work_order_status }}
-                        </div>
-                    {% endif %}
-                    {% if order_list.work_order_status == 'Completed' %}
-                        <div class="status-div status-completed">
-                            {{ order_list.work_order_status }}
-                        </div>
-                    {% endif %}
-                </td>
-
-                <td>{{ order_list.work_order_type }}</td>
-                <td>{{ order_list.quoted_price }}</td>
-                <td>
-                    <a href="{% url 'orders:order-update' order_list.pk %}">Edit</a> |
-                    {% if user.is_owner or user.is_employee %}
-                    <a href="{% url 'orders:order-delete' order_list.pk %}">Delete</a>
-                    {% endif %}
-                </td>
-
-            </tr>
-            {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-
-    {% comment %} Pagination Controls {% endcomment %}
-    <div class="d-flex justify-content-center">
-        <nav aria-label="Order List Pagination">
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" 
-                            href="?page=1&page_size={{ orders_per_page }}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}" 
-                            aria-label="First">
-                            <span aria-hidden="true">&laquo;&laquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" 
-                            href="?page={{ page_obj.previous_page_number }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}"
-                            aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                {% endif %}
+        <form method="get" action="{% url 'orders:order-list' %}">
+            <select class="js-status-select" name="order_status" multiple="multiple" style="width: 200px;">
+                {% for status_option in all_possible_statuses %}
+                    <option value="{{status_option}}" {% if status_option in selected_statuses %}selected{% endif %}>
+                        {{status_option}}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+        <script>
+            $(document).ready(function() {
+                $('.js-status-select').select2({
+                    placeholder: "Select order statuses",
+                    allowClear: true
+                }).on('change', function() {
+                    $(this).closest('form').submit();
+                });
+            });
+        </script>
         
-                {% for num in page_obj.paginator.page_range %}
-                    {% if page_obj.number == num %}
-                        <li class="page-item active">
-                            <a class="page-link" 
-                                href="?page={{ num }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}"
-                                        >{{ num }}
-                            </a>
-                        </li>
-                    {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+        <table class="table">
+            <thead>
+                <th scope="col">#</th>
+                <th scope="col">Order Picture</th>
+                <th scope="col">Client Name</th>
+                <th class="text-center" scope="col">Order Status</th>
+                <th scope="col">Order Type</th>
+                <th scope="col">Order Price</th>
+                <th scope="col">Actions</th>
+            </thead>
+            <tbody>
+                {% for order_list in order_list %}
+                {% if user.company == order_list.company %}
+                <tr style="vertical-align: middle">
+                    <th scope="row">{{ forloop.counter }}</th>
+
+                    <td>
+                        {% if order_list.order_photo %}
+                            <img class="rounded-image" src="{{ order_list.order_photo.url }}" alt="Order Photo">
+                        {% else %}
+                            No Photo
+                        {% endif %}
+                    </td>
+
+                    <td>{{ order_list.client.client_first_name }} {{ order_list.client.client_last_name }}</td>
+
+
+                    <td class="text-center">
+                        {% if order_list.work_order_status == 'Cancelled' %}
+                            <div class="status-div status-cancelled">
+                                {{ order_list.work_order_status }}
+                            </div>
+                        {% endif %}
+                        {% if order_list.work_order_status == 'In Progress' %}
+                            <div class="status-div status-in-progress">
+                                {{ order_list.work_order_status }}
+                            </div>
+                        {% endif %}
+                        {% if order_list.work_order_status == 'Completed' %}
+                            <div class="status-div status-completed">
+                                {{ order_list.work_order_status }}
+                            </div>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ order_list.work_order_type }}</td>
+                    <td>{{ order_list.quoted_price }}</td>
+                    <td>
+                        <a href="{% url 'orders:order-update' order_list.pk %}">Edit</a> |
+                        {% if user.is_owner or user.is_employee %}
+                        <a href="{% url 'orders:order-delete' order_list.pk %}">Delete</a>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% comment %} Pagination Controls {% endcomment %}
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Order List Pagination">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
                         <li class="page-item">
                             <a class="page-link" 
-                                href="?page={{ num }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}"
-                                    >{{ num }}
+                                href="?page=1&page_size={{ orders_per_page }}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}" 
+                                aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" 
+                                href="?page={{ page_obj.previous_page_number }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
                     {% endif %}
-                {% endfor %}
-        
-                {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" 
-                            href="?page={{ page_obj.next_page_number }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}" 
-                            aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" 
-                            href="?page={{ page_obj.paginator.num_pages }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}" 
-                            aria-label="Last">
-                            <span aria-hidden="true">&raquo;&raquo;</span>
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
+            
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <a class="page-link" 
+                                    href="?page={{ num }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}"
+                                            >{{ num }}
+                                </a>
+                            </li>
+                        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                            <li class="page-item">
+                                <a class="page-link" 
+                                    href="?page={{ num }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}"
+                                        >{{ num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+            
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" 
+                                href="?page={{ page_obj.next_page_number }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}" 
+                                aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" 
+                                href="?page={{ page_obj.paginator.num_pages }}&page_size={{ orders_per_page}}{% for status in selected_statuses %}&order_status={{ status }}{% endfor %}" 
+                                aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
     </div>
 
 {% endblock content %}

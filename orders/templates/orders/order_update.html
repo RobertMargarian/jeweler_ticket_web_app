@@ -5,69 +5,71 @@
 {% load crispy_forms_field %}
 
 {% block content %}
+    <div style="height: 100vh; overflow-y: scroll;">
 
-    <form action="" method="post" class="bootstrap5" enctype="multipart/form-data">
-        {% csrf_token %}
+        <form action="" method="post" class="bootstrap5" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        <div class="row g-2">
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.client|as_crispy_field }}
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.client|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.work_order_type|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.work_order_due_date|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.work_order_status|as_crispy_field }}
+                    </div>
                 </div>
             </div>
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.work_order_type|as_crispy_field }}
-                </div>
-            </div>
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.work_order_due_date|as_crispy_field }}
-                </div>
-            </div>
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.work_order_status|as_crispy_field }}
-                </div>
-            </div>
-        </div>
 
-        
-        <div class="row g-2">
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.estimated_cost|as_crispy_field }}
+            
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.estimated_cost|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.quoted_price|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.security_deposit|as_crispy_field }}
+                    </div>
                 </div>
             </div>
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.quoted_price|as_crispy_field }}
+            
+            
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-group">
+                        {{ form.order_photo|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        {{ form.work_order_description|as_crispy_field }}
+                    </div>
                 </div>
             </div>
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.security_deposit|as_crispy_field }}
-                </div>
-            </div>
-        </div>
-        
-        
-        <div class="row g-2">
-            <div class="col-md">
-                <div class="form-group">
-                    {{ form.order_photo|as_crispy_field }}
-                </div>
-            </div>
-            <div class="col-md">
-                <div class="form-floating">
-                    {{ form.work_order_description|as_crispy_field }}
-                </div>
-            </div>
-        </div>
 
 
-        <button type="submit" class="btn btn-primary">Update</button>
-    </form>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+    </div>
 
 {% endblock content %}
 

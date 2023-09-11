@@ -29,6 +29,7 @@ class PaginationForm(forms.Form):
 
 class ClientCreateForm(forms.ModelForm):
     client_already_exists = forms.BooleanField(
+        label='Existing Client?', 
         required=False, 
         initial=False,
         widget=forms.Select(
@@ -40,11 +41,11 @@ class ClientCreateForm(forms.ModelForm):
         )
     )
 
-    client_first_name = forms.CharField(max_length=50, required=False, initial=None, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    client_last_name = forms.CharField(max_length=50, required=False, initial=None, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    client_email = forms.EmailField(max_length=254, required=False, initial=None, widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    client_phone = forms.CharField(max_length=20, required=False, initial=None, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    client_check_mobile_phone = forms.BooleanField(required=False, initial=False)
+    client_first_name = forms.CharField(label='Client First Name', max_length=50, required=False, initial=None, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    client_last_name = forms.CharField(label='Client Last Name', max_length=50, required=False, initial=None, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    client_email = forms.EmailField(label='Client Email Address', max_length=254, required=False, initial=None, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    client_phone = forms.CharField(label='Client Phone Number', max_length=20, required=False, initial=None, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    client_check_mobile_phone = forms.BooleanField(label='Is this mobile phone?', required=False, initial=False)
 
 
     class Meta:

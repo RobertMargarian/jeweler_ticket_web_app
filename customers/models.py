@@ -52,6 +52,7 @@ class User(AbstractUser):
     is_employee = models.BooleanField(default=False)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     # user_role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
+    
     user_phone = models.CharField(max_length=20)
     # deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

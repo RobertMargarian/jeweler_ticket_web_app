@@ -53,15 +53,15 @@ class OrderCreateForm(forms.ModelForm):
         ('Other', 'Other')
     ]
 
-    client = forms.ModelChoiceField(queryset=Client.objects.all(), required=False, initial=None, widget=forms.Select(attrs={'class': 'form-control'}))
-    estimated_cost = forms.DecimalField(min_value=0.00, max_digits=10, decimal_places=2, initial=0, required=True, widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    work_order_type = forms.ChoiceField(choices=order_type_choices, required=True, widget=forms.Select(attrs={'class': 'form-control'}))
-    work_order_status = forms.ChoiceField(choices=order_status_choices, initial='In Progress', required=True, widget=forms.Select(attrs={'class': 'form-control'}))
-    quoted_price = forms.DecimalField(min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=True, widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    security_deposit = forms.DecimalField(min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    work_order_due_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=True)
-    work_order_description = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}), required=False)
-    order_photo = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
+    client = forms.ModelChoiceField(label='Client', queryset=Client.objects.all(), required=False, initial=None, widget=forms.Select(attrs={'class': 'form-control'}))
+    estimated_cost = forms.DecimalField(label='Estimated Cost', min_value=0.00, max_digits=10, decimal_places=2, initial=0, required=True, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    work_order_type = forms.ChoiceField(label='Order Type', choices=order_type_choices, required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    work_order_status = forms.ChoiceField(label='Status', choices=order_status_choices, initial='In Progress', required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    quoted_price = forms.DecimalField(label='Quoted Price', min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=True, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    security_deposit = forms.DecimalField(label='Security Deposit', min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    work_order_due_date = forms.DateField(label='Due Date', widget=forms.DateInput(attrs={'type': 'date'}), required=True)
+    work_order_description = forms.CharField(label='Notes', widget=forms.Textarea(attrs={'rows': 2}), required=False)
+    order_photo = forms.ImageField(label='Add Picture', required=False, widget=forms.FileInput(attrs={'accept': 'image/*', 'capture': 'camera'}))
 
     
     class Meta:
