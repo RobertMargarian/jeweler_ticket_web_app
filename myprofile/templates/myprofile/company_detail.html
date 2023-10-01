@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load bootstrap5 %}
+{% load crispy_forms_field %}
+
+{% block content %}
+
+
+<div style="height: 100vh; overflow-y: scroll;">
+    <div class="container">
+        <div class="col-md-8">
+
+            {% comment %} <span class="d-block bg-white text-black w-50"> {{ form|crispy }} </span> {% endcomment %}
+
+            <p><strong>Name:</strong> {{ company.company_name }}</p>
+            <p><strong>Address:</strong> {{ company.company_address_lines }}</p>
+            <p><strong>City:</strong> {{ company.company_city }}</p>
+            <p><strong>State:</strong> {{ company.company_state }}</p>
+            <p><strong>Zip:</strong> {{ company.company_zip_code }}</p>
+            <p><strong>Country:</strong> {{ company.company_country }}</p>
+            <p><strong>Email:</strong> {{ company.company_email }}</p>
+            <p><strong>Phone:</strong> {{ company.company_phone }}</p>
+
+            <a href="{% url 'myprofile:myprofile' %}" class="btn btn-primary" type="submit"> Back to Profile </a>
+
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

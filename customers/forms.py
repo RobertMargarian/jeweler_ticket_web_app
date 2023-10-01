@@ -76,51 +76,6 @@ class ClientCreateForm(forms.ModelForm):
 
         return cleaned_data
     
-    
-# class CombinedCreateForm(forms.Form):
-#     def __init__(self, user, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         user = User.objects.get(username=user)
-#         self.fields['client_form'] = ClientCreateForm()
-#         self.fields['order_form'] = OrderCreateForm(user=user)
-
-
-
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-        
-    #     if 'client_already_exists' == True:
-    #         self.fields['client_first_name'].required = False
-    #         self.fields['client_last_name'].required = False
-    #         self.fields['client_email'].required = False
-    #         self.fields['client_phone'].required = False
-    #     else:
-    #         self.fields['client_first_name'].required = True
-    #         self.fields['client_last_name'].required = True
-    #         self.fields['client_email'].required = True
-    #         self.fields['client_phone'].required = True
-
-        # widgets = {
-        #     'client_first_name': forms.TextInput(attrs={'class': 'form-control'}),
-        #     'client_last_name': forms.TextInput(attrs={'class': 'form-control'}),
-        #     'client_email': forms.EmailInput(attrs={'class': 'form-control'}),
-        #     'client_phone': forms.TextInput(attrs={'class': 'form-control'}),
-        #     'client_check_mobile_phone': forms.CheckboxInput(attrs={'class': 'form-control'}),
-        # }
-
-        # field_classes = {
-        #     'client_already_exists': forms.BooleanField,
-        #     'client_first_name': forms.CharField,
-        #     'client_last_name': forms.CharField,
-        #     'client_email': forms.EmailField,
-        #     'client_phone': forms.CharField,
-        #     'client_check_mobile_phone': forms.BooleanField,
-        # }
-
-
-
-
 
 
 

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div style="height: 100vh; overflow-y: scroll;">
+        <table class="table">
+            <tbody>
+                {% if user.is_owner and user.company == company %}
+                <tr>
+                    <td> Company Information </td>
+                    <td> 
+                        <a href="{% url 'myprofile:company-detail' company.pk %}">
+                            <button class="btn btn-primary">View</button>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td> User Information </td>
+                    <td> 
+                        <a href="{% url 'myprofile:user-detail' user.pk %}">
+                            <button class="btn btn-primary">View</button>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Subscription and Payment Details </td>
+                    <td> 
+                        <a href="{% url 'myprofile:subscription-detail' company.pk %}">
+                            <button class="btn btn-primary">View</button>
+                        </a>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock content %}

@@ -12,6 +12,7 @@ urlpatterns = [
     # path('', include(('employees.urls', 'employees'), namespace="employees")),
     path('', include(('orders.urls', 'orders'), namespace="orders")),
     path('', include(('customers.urls', 'customers'), namespace="customers")),
+    path('', include(('myprofile.urls', 'myprofile'), namespace="myprofile")),
     path('signup/', SignupView.as_view(), name='signup'),
     path('password-reset/', PasswordResetView.as_view(), name='password-reset'),
     path('password-reset-done/', PasswordResetDoneView.as_view(), name='password_reset_done'),

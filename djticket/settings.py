@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'customers',
     'orders',
+    'myprofile',
     # 'employees',
     'bootstrap5',
     'crispy_forms',
