@@ -16,6 +16,7 @@ main {
   overflow-y: hidden;
 }
 
+
 .b-example-divider {
   flex-shrink: 0;
   width: 1.5rem;
@@ -103,4 +104,13 @@ main {
   .bd-placeholder-img-lg {
     font-size: 3.5rem;
   }
+  .sidebar-container {
+    width: 100%;
+  }
+}
+
+
+/* Sidebar */
+.sidebar-container {
+  width: 270px;
 }

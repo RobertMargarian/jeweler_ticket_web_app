@@ -61,7 +61,11 @@ class OrderCreateForm(forms.ModelForm):
     security_deposit = forms.DecimalField(label='Security Deposit', min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
     work_order_due_date = forms.DateField(label='Due Date', widget=forms.DateInput(attrs={'type': 'date'}), required=True)
     work_order_description = forms.CharField(label='Notes', widget=forms.Textarea(attrs={'rows': 2}), required=False)
-    order_photo = forms.ImageField(label='Add Picture', required=False, widget=forms.FileInput(attrs={'accept': 'image/*', 'capture': 'camera'}))
+    order_photo = forms.ImageField(
+        label='Add Picture', 
+        required=False, 
+        widget=forms.FileInput(attrs={'accept': 'image/*', 'capture': 'camera'})
+    )
 
     
     class Meta:
