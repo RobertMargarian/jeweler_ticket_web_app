@@ -49,6 +49,8 @@
                 <th scope="col">Client Name</th>
                 <th class="text-center" scope="col">Order Status</th>
                 <th scope="col">Order Type</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">Due Date</th>
                 <th scope="col">Order Price</th>
                 <th scope="col">Actions</th>
             </thead>
@@ -88,6 +90,8 @@
                     </td>
 
                     <td>{{ order_list.work_order_type }}</td>
+                    <td>{{ order_list.work_order_date }}</td>
+                    <td>{{ order_list.work_order_due_date }}</td>
                     <td>{{ order_list.quoted_price }}</td>
                     <td>
                         <a href="{% url 'orders:order-update' order_list.pk %}">Edit</a> |

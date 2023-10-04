@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 
 
@@ -113,8 +114,9 @@ class Order(models.Model):
     client = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.SET_NULL)
-    work_order_date = models.DateTimeField(auto_now_add=True)
-    work_order_due_date = models.DateTimeField(max_length=50, default=None, null=True, blank=True)
+    work_order_date = models.DateField(default=timezone.now)
+    work_order_due_date = models.DateField(default=timezone.now)
+
     estimated_cost = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     work_order_currency = models.CharField(choices=WORK_ORDER_CURRENCY_CHOICES, max_length=10)
     quoted_price = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)

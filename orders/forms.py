@@ -8,6 +8,8 @@ from django.forms.widgets import CheckboxSelectMultiple, Select
 from django.forms import ModelForm
 from django.core.validators import MinValueValidator
 from customers.models import Order, Company, Client, User
+from django.utils import timezone
+
 
 User = get_user_model()
 
@@ -59,7 +61,8 @@ class OrderCreateForm(forms.ModelForm):
     work_order_status = forms.ChoiceField(label='Status', choices=order_status_choices, initial='In Progress', required=True, widget=forms.Select(attrs={'class': 'form-control'}))
     quoted_price = forms.DecimalField(label='Quoted Price', min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=True, widget=forms.NumberInput(attrs={'class': 'form-control'}))
     security_deposit = forms.DecimalField(label='Security Deposit', min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    work_order_due_date = forms.DateField(label='Due Date', widget=forms.DateInput(attrs={'type': 'date'}), required=True)
+    work_order_date = forms.DateField(label='Start Date', widget=forms.DateInput(attrs={'type': 'date', 'format': '%d %b %Y'}), required=True, initial=timezone.now)
+    work_order_due_date = forms.DateField(label='Due Date', widget=forms.DateInput(attrs={'type': 'date', 'format': '%d %b %Y'}), required=True, initial=timezone.now)
     work_order_description = forms.CharField(label='Notes', widget=forms.Textarea(attrs={'rows': 2}), required=False)
     order_photo = forms.ImageField(
         label='Add Picture', 
@@ -77,6 +80,7 @@ class OrderCreateForm(forms.ModelForm):
             'estimated_cost', 
             'quoted_price', 
             'security_deposit', 
+            'work_order_date',
             'work_order_due_date',
             'work_order_description',
             'order_photo',
