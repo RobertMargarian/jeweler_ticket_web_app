@@ -127,7 +127,7 @@ class OrderCreateView(LoginRequiredMixin, FormView):
                     form.add_error('client', "Create a new client or check the box.")
 
 
-            if not form.is_valid() or not client_form.is_valid() or (not form.is_valid() and not client_form.is_valid()):
+            if not form.is_valid() or not client_form.is_valid():
                 return self.form_invalid(form)
         
             return redirect(self.get_success_url())
