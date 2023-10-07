@@ -35,7 +35,7 @@ class Company(models.Model):
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.company_name + " | " + self.company_email + " | " + self.company_phone
+        return self.company_name
 
 
 class User(AbstractUser):
