@@ -92,7 +92,7 @@ class OrderCreateView(LoginRequiredMixin, FormView):
             if client_already_exists == 'True':
                 if 'client' in form.cleaned_data and form.cleaned_data['client']:
                     order.client = form.cleaned_data['client']
-                    order.work_order_status = "In Progress"
+                    # order.work_order_status = "In Progress"
                     order.work_order_currency = "USD"
                     order.quoted_currency = "USD"
                     order.order_photo = self.request.FILES.get('order_photo')
@@ -117,7 +117,7 @@ class OrderCreateView(LoginRequiredMixin, FormView):
                     )
                     order.client = client
                     client.save()
-                    order.work_order_status = "In Progress"
+                    # order.work_order_status = "In Progress"
                     order.work_order_currency = "USD"
                     order.quoted_currency = "USD"
                     order.order_photo = self.request.FILES.get('order_photo')
