@@ -21,6 +21,7 @@ class SignupView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['second_form'] = self.second_form_class()
+        context['form_errors'] = self.get_form().errors
         return context
 
     def post(self, request, *args, **kwargs):
@@ -34,7 +35,7 @@ class SignupView(FormView):
 
     def form_valid(self, form, second_form):
         company = second_form.save(commit=False)
-        company.company_current_plan = Plan.objects.get(id=3)
+        company.company_current_plan = Plan.objects.get(plan_name = "Basic")
         company.company_subscription_status = "Active"
         company.save()  # Save Company form data
         user = form.save(commit=False)
@@ -47,6 +48,13 @@ class SignupView(FormView):
             company=company
         )
         return super().form_valid(form)
+    
+    def form_invalid(self, form, second_form):
+        context = self.get_context_data(form=form, second_form=second_form)
+        context['form_errors'] = form.errors
+        context['second_form_errors'] = second_form.errors
+        return self.render_to_response(context)
+        
     
 
 class LandingPageView(generic.TemplateView):

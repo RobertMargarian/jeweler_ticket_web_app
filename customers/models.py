@@ -13,8 +13,8 @@ class Company(models.Model):
 
     company_current_plan = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
     company_subscription_status = models.CharField(choices=COMPANY_SUBSCRIPTION_STATUS_CHOICES, max_length=30)
-    company_email = models.EmailField(max_length=254)
-    company_phone = models.CharField(max_length=20)
+    # company_email = models.EmailField(max_length=254)
+    # company_phone = models.CharField(max_length=20)
     company_name = models.CharField(max_length=50)
     company_can_contact = models.BooleanField(default=False)
     company_can_email = models.BooleanField(default=False)
