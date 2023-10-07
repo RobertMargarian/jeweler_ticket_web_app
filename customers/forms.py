@@ -118,8 +118,8 @@ class CompanyCreateForm(forms.ModelForm):
     company_state = forms.CharField(max_length=50, required=True)
     company_country = forms.CharField(max_length=50, required=True)
     company_zip_code = forms.CharField(max_length=50, required=True)
-    company_phone = forms.CharField(max_length=20, required=True)
-    company_email = forms.EmailField(max_length=254, required=True)
+    # company_phone = forms.CharField(max_length=20, required=True)
+    # company_email = forms.EmailField(max_length=254, required=True)
 
 
     class Meta:
@@ -131,8 +131,8 @@ class CompanyCreateForm(forms.ModelForm):
             'company_state',
             'company_country',
             'company_zip_code',
-            'company_phone',
-            'company_email',
+            # 'company_phone',
+            # 'company_email',
         )
         field_classes = {
             'company_name': forms.CharField,
@@ -141,6 +141,6 @@ class CompanyCreateForm(forms.ModelForm):
             'company_state': forms.CharField,
             'company_country': forms.CharField,
             'company_zip_code': forms.CharField,
-            'company_phone': forms.CharField,
-            'company_email': forms.EmailField,
+            # 'company_phone': forms.CharField,
+            # 'company_email': forms.EmailField,
         }
