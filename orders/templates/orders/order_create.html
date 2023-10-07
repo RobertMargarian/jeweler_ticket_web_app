@@ -115,25 +115,38 @@
             <script>
                 // Get the checkbox and the fields to be disabled
                 const select = document.querySelector('#id_client_already_exists');
-                const fieldsToDisable = [
+                const fieldsToDisableUser = [
                     document.querySelector('#id_client_first_name'),
                     document.querySelector('#id_client_last_name'),
                     document.querySelector('#id_client_email'),
                     document.querySelector('#id_client_phone'),
                 ];
+                const fieldsToDisableClient = [
+                    document.querySelector('#id_client'),
+                ];
             
                 // Function to toggle the disabled attribute on fields
                 function toggleFieldsDisabled() {
                     const isClientExists = select.value === 'True';
+                    const isClientDropdownDisabled = select.value === 'False';
             
-                    fieldsToDisable.forEach(field => {
+                    fieldsToDisableUser.forEach(field => {
                         field.disabled = isClientExists;
+                    });
+            
+                    fieldsToDisableClient.forEach(field => {
+                        if (field.id === 'id_client') {
+                            field.disabled = isClientDropdownDisabled;
+                        } else {
+                            field.disabled = isClientExists;
+                        }
                     });
                 }
             
                 // Initially set the field states and add an event listener
                 toggleFieldsDisabled();
                 select.addEventListener('change', toggleFieldsDisabled);
+                
             </script>
 
         </form>
