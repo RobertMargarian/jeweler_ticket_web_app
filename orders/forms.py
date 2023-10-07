@@ -61,7 +61,7 @@ class OrderCreateForm(forms.ModelForm):
     work_order_status = forms.ChoiceField(label='Status', choices=order_status_choices, initial='In Progress', required=True, widget=forms.Select(attrs={'class': 'form-control'}))
     quoted_price = forms.DecimalField(label='Quoted Price', min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=True, widget=forms.NumberInput(attrs={'class': 'form-control'}))
     security_deposit = forms.DecimalField(label='Security Deposit', min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    work_order_date = forms.DateField(label='Start Date', widget=forms.DateInput(attrs={'type': 'date', 'format': '%d %b %Y'}), required=True, initial=timezone.now)
+    work_order_date = forms.DateField(label='Order Date', widget=forms.DateInput(attrs={'type': 'date', 'format': '%d %b %Y'}), required=True, initial=timezone.now)
     work_order_due_date = forms.DateField(label='Due Date', widget=forms.DateInput(attrs={'type': 'date', 'format': '%d %b %Y'}), required=True, initial=timezone.now)
     work_order_description = forms.CharField(label='Notes', widget=forms.Textarea(attrs={'rows': 2}), required=False)
     order_photo = forms.ImageField(
@@ -103,6 +103,11 @@ class OrderCreateForm(forms.ModelForm):
         quoted_price = self.cleaned_data.get('quoted_price')
         estimated_cost = self.cleaned_data.get('estimated_cost')
         security_deposit = self.cleaned_data.get('security_deposit')
+        work_order_due_date = self.cleaned_data.get('work_order_due_date')
+        work_order_date = self.cleaned_data.get('work_order_date')
+
+        if work_order_due_date < work_order_date:
+            self.add_error('work_order_due_date', "Due date cannot be before order date")
         
         if quoted_price is not None and estimated_cost is not None and quoted_price < estimated_cost:
             self.add_error('quoted_price', "Quoted price cannot be less than estimated cost")
