@@ -123,7 +123,7 @@ class Order(models.Model):
     quoted_currency = models.CharField(choices=WORK_ORDER_CURRENCY_CHOICES, max_length=10)
     security_deposit = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     work_order_type = models.CharField(choices=WORK_ORDER_TYPE_CHOICES, max_length=30)
-    work_order_status = models.CharField(choices=WORK_ORDER_STATUS_CHOICES, max_length=30)
+    work_order_status = models.CharField(default="In Progress", choices=WORK_ORDER_STATUS_CHOICES, max_length=30)
     work_order_description = models.TextField(max_length=200, default=None, null=True, blank=True)
     order_photo = models.ImageField(upload_to='order_photos/', blank=True, null=True)
     deleted_flag = models.BooleanField(default=False)
