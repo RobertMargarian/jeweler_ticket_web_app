@@ -21,7 +21,7 @@ class Company(models.Model):
     company_address_lines = models.TextField(max_length=200)
     company_city = models.CharField(max_length=50)
     company_state = models.CharField(max_length=50)
-    company_country = models.CharField(max_length=50)
+    # company_country = models.CharField(max_length=50)
     company_zip_code = models.CharField(max_length=50)
     first_sign_up_date = models.DateTimeField(auto_now_add=True)
     last_sign_up_date = models.DateTimeField(auto_now_add=True)

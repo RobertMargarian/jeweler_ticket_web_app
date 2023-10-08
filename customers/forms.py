@@ -116,7 +116,7 @@ class CompanyCreateForm(forms.ModelForm):
     company_address_lines = forms.CharField(max_length=50, required=True)
     company_city = forms.CharField(max_length=50, required=True)
     company_state = forms.CharField(max_length=50, required=True)
-    company_country = forms.CharField(max_length=50, required=True)
+    # company_country = forms.CharField(max_length=50, required=True)
     company_zip_code = forms.CharField(max_length=50, required=True)
     # company_phone = forms.CharField(max_length=20, required=True)
     # company_email = forms.EmailField(max_length=254, required=True)
@@ -129,7 +129,7 @@ class CompanyCreateForm(forms.ModelForm):
             'company_address_lines',
             'company_city',
             'company_state',
-            'company_country',
+            # 'company_country',
             'company_zip_code',
             # 'company_phone',
             # 'company_email',
@@ -139,7 +139,7 @@ class CompanyCreateForm(forms.ModelForm):
             'company_address_lines': forms.CharField,
             'company_city': forms.CharField,
             'company_state': forms.CharField,
-            'company_country': forms.CharField,
+            # 'company_country': forms.CharField,
             'company_zip_code': forms.CharField,
             # 'company_phone': forms.CharField,
             # 'company_email': forms.EmailField,
