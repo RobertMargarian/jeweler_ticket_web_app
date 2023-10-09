@@ -1,4 +1,5 @@
 from typing import Any
+from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponseRedirect
@@ -10,7 +11,10 @@ from django.views.generic.edit import FormView
 from .forms import ClientCreateForm, CustomUserCreationForm, CompanyCreateForm, PaginationForm
 from .mixins import  CompanyOwnerRequiredMixin, EmployeeRequiredMixin 
 from django.db.models import Case, When, DecimalField
-# should use this mixin for all views that require login and role
+from populate_location.zip_code_data import parse_zipcode_data
+import json
+from django.http import JsonResponse
+
 
 class SignupView(FormView):
     template_name = 'registration/signup.html'
@@ -37,7 +41,18 @@ class SignupView(FormView):
         company = second_form.save(commit=False)
         company.company_current_plan = Plan.objects.get(plan_name = "Basic")
         company.company_subscription_status = "Active"
+
+        zip_code = second_form.cleaned_data.get('company_zip_code')
+        zip_code_data = parse_zipcode_data(settings.ZIPCODE_DATA_FILE)
+
+        if zip_code in zip_code_data:
+            city = zip_code_data[zip_code]['city']
+            state = zip_code_data[zip_code]['state']
+            company.company_city = city
+            company.company_state = state
+
         company.save()  # Save Company form data
+
         user = form.save(commit=False)
         user.is_owner = True
         user.is_employee = False
@@ -55,7 +70,27 @@ class SignupView(FormView):
         context['second_form_errors'] = second_form.errors
         return self.render_to_response(context)
         
+    def get(self, request, *args, **kwargs):
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            zip_code = request.GET.get('zip_code')
+            zip_code_data = parse_zipcode_data(settings.ZIPCODE_DATA_FILE)
+
+            if zip_code in zip_code_data:
+                city = zip_code_data[zip_code]['city']
+                state = zip_code_data[zip_code]['state']
+                data = {
+                    'city': city,
+                    'state': state
+                }
+            else:
+                data = {
+                    'city': '',
+                    'state': ''
+                }
+            return JsonResponse(data)
+        return super().get(request, *args, **kwargs)
     
+
 
 class LandingPageView(generic.TemplateView):
     template_name = "landing.html"

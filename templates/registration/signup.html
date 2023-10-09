@@ -12,6 +12,9 @@
     <title>Login</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <!-- Add your other CSS imports here -->
+
+
+
 </head>
 
 <style>
@@ -30,7 +33,7 @@
     }
 </style>
 
-<form action="" method="post" class="bootstrap5 form-field">
+<form action="{% url 'signup' %}" method="post" class="bootstrap5 form-field">
     {% csrf_token %}
 
     <h3>Company Information</h3>
@@ -125,9 +128,7 @@
 
 
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/zippopotam-us/2.4.0/zippopotam-us.min.js"></script>
-    <script>
-        // Function to populate City and State based on Zip Code
+    {% comment %} <script>
         function populateCityAndState(zipCode) {
             if (!zipCode) return; // Exit if no zip code provided
             
@@ -140,13 +141,12 @@
                 console.error(error);
             });
         }
-        
-        // Event listener for Zip Code input
+
         document.getElementById('id_company_zip_code').addEventListener('blur', function() {
             var zipCode = this.value;
             populateCityAndState(zipCode);
         });
-    </script>
+    </script> {% endcomment %}
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
     integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
@@ -154,6 +154,27 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
     integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
+    </script>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#id_company_zip_code').on('blur', function() {
+                var zipCode = $(this).val();
+                $.ajax({
+                    url: "{% url 'signup' %}",
+                    data: {'zip_code': zipCode},
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#id_company_city').val(data.city);
+                        $('#id_company_state').val(data.state);
+                    }
+                });
+            });
+        });
     </script>
 </body>
 

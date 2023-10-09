@@ -144,3 +144,9 @@ class CompanyCreateForm(forms.ModelForm):
             # 'company_phone': forms.CharField,
             # 'company_email': forms.EmailField,
         }
+
+    def __init__(self, *args, **kwargs):
+        super(CompanyCreateForm, self).__init__(*args, **kwargs)
+        self.fields['company_zip_code'].widget.attrs.update({'id': 'id_company_zip_code'})
+        # self.fields['company_state'].widget.attrs.update({'id': 'id_company_state'})
+        # self.fields['company_city'].widget.attrs.update({'id': 'id_company_city'})
