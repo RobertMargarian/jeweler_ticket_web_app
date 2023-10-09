@@ -36,40 +36,7 @@ class SignupView(FormView):
             return self.form_valid(form, second_form)
         else:
             return self.form_invalid(form, second_form)
-
-    def form_valid(self, form, second_form):
-        company = second_form.save(commit=False)
-        company.company_current_plan = Plan.objects.get(plan_name = "Basic")
-        company.company_subscription_status = "Active"
-
-        zip_code = second_form.cleaned_data.get('company_zip_code')
-        zip_code_data = parse_zipcode_data(settings.ZIPCODE_DATA_FILE)
-
-        if zip_code in zip_code_data:
-            city = zip_code_data[zip_code]['city']
-            state = zip_code_data[zip_code]['state']
-            company.company_city = city
-            company.company_state = state
-
-        company.save()  # Save Company form data
-
-        user = form.save(commit=False)
-        user.is_owner = True
-        user.is_employee = False
-        user.company = company
-        user.save()  # Save User form data
-        Owner.objects.create(
-            user=user,
-            company=company
-        )
-        return super().form_valid(form)
     
-    def form_invalid(self, form, second_form):
-        context = self.get_context_data(form=form, second_form=second_form)
-        context['form_errors'] = form.errors
-        context['second_form_errors'] = second_form.errors
-        return self.render_to_response(context)
-        
     def get(self, request, *args, **kwargs):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             zip_code = request.GET.get('zip_code')
@@ -89,6 +56,47 @@ class SignupView(FormView):
                 }
             return JsonResponse(data)
         return super().get(request, *args, **kwargs)
+
+    def form_valid(self, form, second_form):
+        company = second_form.save(commit=False)
+        company.company_current_plan = Plan.objects.get(plan_name = "Basic")
+        company.company_subscription_status = "Active"
+
+        zip_code = second_form.cleaned_data.get('company_zip_code')
+        zip_code_data = parse_zipcode_data(settings.ZIPCODE_DATA_FILE)
+
+        if zip_code in zip_code_data:
+            city = zip_code_data[zip_code]['city']
+            state = zip_code_data[zip_code]['state']
+            company.company_city = city
+            company.company_state = state
+        else:
+            second_form.add_error('company_zip_code', "Invalid Zip Code")
+            return self.form_invalid(form, second_form)
+            
+
+        company.save()  # Save Company form data
+
+        user = form.save(commit=False)
+        user.is_owner = True
+        user.is_employee = False
+        user.company = company
+
+        user.save()  # Save User form data
+
+        Owner.objects.create(
+            user=user,
+            company=company
+        )
+        return super().form_valid(form)
+    
+    def form_invalid(self, form, second_form):
+        context = self.get_context_data(form=form, second_form=second_form)
+        context['form_errors'] = form.errors
+        context['second_form_errors'] = second_form.errors
+        return self.render_to_response(context)
+        
+
     
 
 
