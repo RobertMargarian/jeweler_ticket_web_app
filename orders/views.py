@@ -2,7 +2,7 @@ from typing import Any, Dict
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import BaseModelForm
-from django.http import HttpResponse
+from django.http import HttpResponse, QueryDict
 from django.shortcuts import reverse, render, redirect
 from django.views import generic
 from django.views.generic.edit import FormView
@@ -34,13 +34,24 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         context['selected_statuses'] = self.request.GET.getlist('order_status')
         context['orders_per_page'] = self.request.user.pref_orders_per_page
         context['all_possible_statuses'] = ['Completed', 'Cancelled', 'In Progress']
+        context['sort_by'] = self.request.GET.get('sort_by', 'work_order_date')
+
+        query_dict = QueryDict(mutable=True)
+        query_dict.setlist('order_status', self.request.GET.getlist('order_status'))
+        context['order_status_query_string'] = query_dict.urlencode()
+        print(context['order_status_query_string'])
         return context
 
     
     def get_queryset(self):
         user = self.request.user
         statuses = self.request.GET.getlist('order_status')
+        sort_by = self.request.GET.get('sort_by', '-created_at')
 
+        if sort_by.lstrip('-') not in ['work_order_date', 'work_order_due_date']:
+            sort_by = '-created_at'
+
+        print(sort_by)
         if user.is_owner or user.is_employee:
             queryset = Order.objects \
                 .filter(company=user.company) \
@@ -50,7 +61,7 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
             if statuses:
                 queryset = queryset.filter(work_order_status__in = statuses)
 
-            queryset = queryset.order_by('-created_at')
+            queryset = queryset.order_by(sort_by)
         else:
             return KeyError("User does not have permission to view orders")
         return queryset
