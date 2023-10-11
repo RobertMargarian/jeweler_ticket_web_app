@@ -33,6 +33,7 @@
 <form action="" method="post" class="bootstrap5">
     {% csrf_token %}
     <div class="centered-form">
+
         <div class="row g-2 w-25 form-field">
             <div class="col-md">
                 <div class="form-floating">
@@ -58,6 +59,11 @@
             <div class="col-md">
                 <div class="form-floating">
                     <a href="{% url 'password-reset' %}" class="btn btn-primary">Forgot password?</a>             
+                </div>
+            </div>
+            <div class="col-md text-end">
+                <div class="form-floating">
+                    <a href="{% url 'landing-page' %}" class="btn btn-primary">Go Back</a>             
                 </div>
             </div>
         </div>
