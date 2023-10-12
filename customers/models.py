@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from PIL import Image
+from io import BytesIO
+import os
 
 
 
@@ -130,6 +133,33 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     ingestion_timestamp = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        super(Order, self).save(*args, **kwargs)
+
+        # Check if an image has been uploaded
+        if self.order_photo:
+            img = Image.open(self.order_photo.path)
+            
+            # Define the maximum file size you want in bytes (e.g., 300 KB)
+            max_file_size = 300 * 1024  # 300 KB in bytes
+
+            # Create a BytesIO buffer for image compression
+            img_io = BytesIO()
+
+            # Compress the image while it's larger than the desired file size
+            quality = 90  # Adjust this quality as needed (higher values result in lower quality)
+            img.save(img_io, format='JPEG', quality=quality)
+            while img_io.tell() > max_file_size and quality >= 10:
+                # Reduce image quality if it's larger than the desired file size
+                img_io.truncate(0)
+                img_io.seek(0)
+                quality -= 10
+                img.save(img_io, format='JPEG', quality=quality)
+
+            # Save the compressed image back to the same path
+            with open(self.order_photo.path, 'wb') as f:
+                f.write(img_io.getvalue())
 
     def __str__(self):
         return str(self.id) + " | " + self.company.company_name + " | " + self.work_order_status + " | " + self.work_order_type
