@@ -134,32 +134,51 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # Max compression gets a 518 KB from 6 MB image
         super(Order, self).save(*args, **kwargs)
 
         # Check if an image has been uploaded
         if self.order_photo:
             img = Image.open(self.order_photo.path)
-            
-            # Define the maximum file size you want in bytes (e.g., 300 KB)
-            max_file_size = 300 * 1024  # 300 KB in bytes
+
+            # Define the target file size in bytes (e.g., 300 KB)
+            target_size = 300 * 1024  # 300 KB in bytes
+
+            # Get the image format (e.g., JPEG, PNG)
+            format = img.format
 
             # Create a BytesIO buffer for image compression
             img_io = BytesIO()
 
-            # Compress the image while it's larger than the desired file size
-            quality = 90  # Adjust this quality as needed (higher values result in lower quality)
-            img.save(img_io, format='JPEG', quality=quality)
-            while img_io.tell() > max_file_size and quality >= 10:
-                # Reduce image quality if it's larger than the desired file size
-                img_io.truncate(0)
-                img_io.seek(0)
-                quality -= 10
-                img.save(img_io, format='JPEG', quality=quality)
+            # Define initial and final quality settings
+            initial_quality = 91  # Set it to a high value to allow more aggressive quality reduction
+            final_quality = 1
 
-            # Save the compressed image back to the same path
-            with open(self.order_photo.path, 'wb') as f:
+            while True:
+                img_io.truncate(0)  # Clear the buffer
+                img_io.seek(0)  # Reset the position to write new data from the beginning
+
+                # Attempt to compress the image with the current quality
+                img.save(img_io, format=format, quality=initial_quality)
+
+                # Check the size of the compressed image
+                current_size = img_io.tell()
+
+                if current_size <= target_size or initial_quality <= final_quality:
+                    # If the size is below the target or the quality can't be reduced further, exit the loop
+                    break
+
+                # Reduce the image quality
+                initial_quality -= 10  # Reduce by 1 (fine-grained control)
+
+            # Save the compressed image to a temporary location
+            temp_path = self.order_photo.path + '_temp'
+            with open(temp_path, 'wb') as f:
                 f.write(img_io.getvalue())
+
+            # Replace the original image with the compressed image
+            os.remove(self.order_photo.path)
+            os.rename(temp_path, self.order_photo.path)
 
     def __str__(self):
         return str(self.id) + " | " + self.company.company_name + " | " + self.work_order_status + " | " + self.work_order_type

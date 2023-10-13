@@ -99,6 +99,10 @@ class OrderCreateView(LoginRequiredMixin, FormView):
             order = form.save(commit=False)
             order.company = user.company
             order.user = user
+            order_photo = self.request.FILES.get('order_photo')
+            if order_photo and order_photo.size > (6 * 1024 * 1024):  # 6 MB
+                form.add_error('order_photo', "File size should not exceed 6 MB.")
+                return self.form_invalid(form)
 
             if client_already_exists == 'True':
                 if 'client' in form.cleaned_data and form.cleaned_data['client']:
@@ -106,13 +110,11 @@ class OrderCreateView(LoginRequiredMixin, FormView):
                     # order.work_order_status = "In Progress"
                     order.work_order_currency = "USD"
                     order.quoted_currency = "USD"
-                    order.order_photo = self.request.FILES.get('order_photo')
                     order.save() 
                 else:
                     form.add_error('client', "Client must be selected when Client Already Exists is checked.")
 
             elif client_already_exists == 'False':
-
                 if (client_form.cleaned_data.get('client_first_name') != ''
                     and client_form.cleaned_data.get('client_last_name') != ''
                     and client_form.cleaned_data.get('client_phone') != ''
@@ -131,7 +133,6 @@ class OrderCreateView(LoginRequiredMixin, FormView):
                     # order.work_order_status = "In Progress"
                     order.work_order_currency = "USD"
                     order.quoted_currency = "USD"
-                    order.order_photo = self.request.FILES.get('order_photo')
                     order.save()
 
                 else:
@@ -172,6 +173,10 @@ class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
 
     def form_valid(self, form):
         user = self.request.user
+        order_photo = self.request.FILES.get('order_photo')
+        if order_photo and order_photo.size > (6 * 1024 * 1024):  # 6 MB
+            form.add_error('order_photo', "File size should not exceed 6 MB.")
+            return self.form_invalid(form)
         return super().form_valid(form)
 
 class OrderDeleteView(LoginRequiredMixin, generic.DeleteView):
