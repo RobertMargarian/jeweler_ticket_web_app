@@ -39,7 +39,7 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         query_dict = QueryDict(mutable=True)
         query_dict.setlist('order_status', self.request.GET.getlist('order_status'))
         context['order_status_query_string'] = query_dict.urlencode()
-        print(context['order_status_query_string'])
+
         return context
 
     
@@ -51,7 +51,6 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         if sort_by.lstrip('-') not in ['work_order_date', 'work_order_due_date']:
             sort_by = '-created_at'
 
-        print(sort_by)
         if user.is_owner or user.is_employee:
             queryset = Order.objects \
                 .filter(company=user.company) \
