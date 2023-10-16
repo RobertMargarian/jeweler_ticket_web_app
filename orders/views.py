@@ -2,7 +2,7 @@ from typing import Any, Dict
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import BaseModelForm
-from django.http import HttpResponse, QueryDict
+from django.http import HttpResponse, QueryDict, JsonResponse
 from django.shortcuts import reverse, render, redirect
 from django.views import generic
 from django.views.generic.edit import FormView
@@ -14,8 +14,23 @@ from customers.mixins import  CompanyOwnerRequiredMixin, EmployeeRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db import IntegrityError
+from django.db.models import Q
 from django.db.transaction import atomic
 
+class Client_AutoComplete(LoginRequiredMixin, generic.View):
+    def get(self, request):
+        client_search_query = request.GET.get('term', '')
+        clients = Client.objects.filter(client_first_name__icontains=client_search_query)
+        results = [client.client_first_name+' '+client.client_last_name for client in clients]
+        print(results)
+        return JsonResponse(results, safe=False)
+
+# Function to find order by client name
+def find_order_by_client_name(qs, query_name):
+    for term in query_name.split():
+        qs = qs.filter( Q(client__client_first_name__icontains = term) | \
+                        Q(client__client_last_name__icontains = term))
+    return qs
 
 class OrderListView(LoginRequiredMixin, generic.ListView):
     template_name = "orders/order_list.html"
@@ -27,12 +42,14 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Initialize the form with the user's preference
-        context['pagination_form_orders'] = \
-            PaginationForm(initial={'page_size': self.request.user.pref_orders_per_page})
+
         
         context['filter_form'] = OrderStatusFilterForm(self.request.GET)
         context['selected_statuses'] = self.request.GET.getlist('order_status')
-        context['orders_per_page'] = self.request.user.pref_orders_per_page
+        page_size = self.request.GET.get('page_size', self.request.user.pref_orders_per_page)
+        context['orders_per_page'] = page_size
+        context['pagination_form_orders'] = \
+            PaginationForm(initial={'page_size': page_size})
         context['all_possible_statuses'] = ['Completed', 'Cancelled', 'In Progress']
         context['sort_by'] = self.request.GET.get('sort_by', 'work_order_date')
 
@@ -41,12 +58,12 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         context['order_status_query_string'] = query_dict.urlencode()
 
         return context
-
     
     def get_queryset(self):
         user = self.request.user
         statuses = self.request.GET.getlist('order_status')
         sort_by = self.request.GET.get('sort_by', '-created_at')
+        client_details = self.request.GET.get('client_details', None)
 
         if sort_by.lstrip('-') not in ['work_order_date', 'work_order_due_date']:
             sort_by = '-created_at'
@@ -60,12 +77,14 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
             if statuses:
                 queryset = queryset.filter(work_order_status__in = statuses)
 
+            if client_details:
+                queryset = find_order_by_client_name(queryset, client_details)
+
             queryset = queryset.order_by(sort_by)
         else:
             return KeyError("User does not have permission to view orders")
         return queryset
 
-    
     def get(self, request, *args, **kwargs):
         # Check if page_size is being updated
         if 'page_size' in request.GET:
@@ -77,9 +96,6 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
             except ValueError:
                 pass
         return super().get(request, *args, **kwargs)
-
-
-
 
 class OrderCreateView(LoginRequiredMixin, FormView):
     template_name = "orders/order_create.html"

@@ -38,9 +38,8 @@ class PaginationForm(forms.Form):
 
     page_size = forms.ChoiceField(
         choices=page_size_choices,
-        widget=forms.Select(attrs={'id': 'pagination_orders'}),
-        label="Orders per page"
-    )
+        widget=forms.Select(attrs={'id': 'pagination_form_orders'})
+ )
 
 class OrderCreateForm(forms.ModelForm):
     order_status_choices = [
