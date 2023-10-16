@@ -7,46 +7,90 @@
 {% endblock head %}
 
 {% block content %}
-    <div style="height: 100vh; overflow-y: scroll;">
-        {% comment %} Orders Per Page Form {% endcomment %}
-        <form id="pagination_form_orders" method="get" action="{% url 'orders:order-list' %}" class="mb-4">
-            {{ pagination_form_orders.page_size.label }}: {{ pagination_form_orders.page_size }}
+    <div class="container" style="height: 100vh; overflow-y: scroll;">
+    
 
-            <!-- Hidden input fields for the current filters -->
-            {% for status in selected_statuses %}
-                <input type="hidden" name="order_status" value="{{ status }}">
-            {% endfor %}
-        </form>
-        <script>
-            document.getElementById('pagination_orders').addEventListener('change', function() {
-                document.getElementById('pagination_form_orders').submit();
-            });
-        </script>
+        {% comment %} Header Filters div {% endcomment %}
+        <div class="row align-items-end mb-5">
+            <div class="col">
+                {% comment %} Order Status Filter {% endcomment %}
+                <form method="get" action="{% url 'orders:order-list' %}">
+                    <select class="form-select" id="multiple-select-field" name="order_status" multiple>
+                        {% for status_option in all_possible_statuses %}
+                            <option value="{{status_option}}" {% if status_option in selected_statuses %}selected{% endif %}>
+                                {{status_option}}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+                
+                <script>
+                    $(document).ready(function() {
+                        $('#multiple-select-field').select2({
+                            theme: "bootstrap-5",
+                            placeholder: "Select order statuses",
+                            allowClear: true,
+                        }).on('change', function() {
+                            $(this).closest('form').submit();
+                        });
+                    });
+                </script>
 
-        {% comment %} Order Status Filter {% endcomment %}
-        <form method="get" action="{% url 'orders:order-list' %}">
-            <select class="js-status-select" name="order_status" multiple="multiple" style="width: 200px;">
-                {% for status_option in all_possible_statuses %}
-                    <option value="{{status_option}}" {% if status_option in selected_statuses %}selected{% endif %}>
-                        {{status_option}}
-                    </option>
-                {% endfor %}
-            </select>
-        </form>
+            </div>
 
-        <a href="{% url 'orders:order-list' %}?{{ order_status_query_string }}">Reset Sorting</a>
-        
-        <script>
-            $(document).ready(function() {
-                $('.js-status-select').select2({
-                    placeholder: "Select order statuses",
-                    allowClear: true
-                }).on('change', function() {
-                    $(this).closest('form').submit();
-                });
-            });
-        </script>
-        
+            <div class="col">
+                {% comment %} Client Search Textbox with Autocomplete {% endcomment %}
+
+                <form>
+                    <input 
+                        class="form-control" 
+                        type="text" 
+                        name="client_details" 
+                        id="client_details_search" 
+                        placeholder="Search Clients">
+                </form>
+                <script>
+                    $(document).ready(function() {
+                        $("#client_details_search").autocomplete({
+                            source: '{% url 'orders:client-autocomplete' %}',
+                            minLength: 2
+                        });
+                    });
+                </script>
+            </div>
+
+            <div class="col-auto">
+                {% comment %} Reset Sorting Button {% endcomment %}
+                <a id="reset_sorting_btn" href="{% url 'orders:order-list' %}?{{ order_status_query_string }}" class="btn btn-secondary">
+                    Reset Sorting
+                </a>
+            </div>
+
+            {% comment %} Orders Per Page Form {% endcomment %}
+            <div class="col-auto align-self-top">
+                <form id="pagination_form_orders" method="get" action="{% url 'orders:order-list' %}">
+                    <label for="orders_per_page_selector"> Orders per Page </label>
+                    <select name="page_size" id="orders_per_page_selector" class="form-select">
+                        {% for choice in pagination_form_orders.page_size.field.choices %}
+                            <option value="{{ choice.1 }}" {% if choice.1 == orders_per_page or choice.0 == orders_per_page %} selected {% endif %}>
+                                {{ choice.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <!-- Preserve order status filter after orders per page change -->
+                    {% for status in selected_statuses %}
+                        <input type="hidden" name="order_status" value="{{ status }}">
+                    {% endfor %}
+                </form>
+                <script>
+                    document.getElementById('orders_per_page_selector').addEventListener('change', function() {
+                        document.getElementById('pagination_form_orders').submit();
+                    });
+                </script>
+            </div> 
+        </div>
+
+
         <table class="table">
             <thead>
                 <th scope="col">#</th>
