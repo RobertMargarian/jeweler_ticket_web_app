@@ -1,12 +1,13 @@
 from django.urls import path
 from .views import (
-    OrderListView, OrderUpdateView, OrderCreateView, OrderDeleteView, NoteDeleteView
+    OrderListView, OrderUpdateView, OrderCreateView, OrderDeleteView, Client_AutoComplete, NoteDeleteView
 )
 
 app_name = "orders"
 
 urlpatterns = [
     path('order_list/', OrderListView.as_view(), name='order-list'),
+    path('client-autocomplete/', Client_AutoComplete.as_view(), name='client-autocomplete'),
     path('order_create/', OrderCreateView.as_view(), name='order-create'),  
     path('<int:pk>/order_update/', OrderUpdateView.as_view(), name='order-update'),
     path('<int:pk>/order_delete/', OrderDeleteView.as_view(), name='order-delete'),  
