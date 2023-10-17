@@ -189,7 +189,8 @@ class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['notes'] = Note.objects.filter(order=self.object)
+        # Filter notes associated with the order, excluding deleted notes
+        context['notes'] = Note.objects.filter(order=self.object, deleted_flag=False)
         return context
 
     def get_success_url(self):
@@ -217,6 +218,7 @@ class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
         
         # Check for a new note in the request POST data
         note_content = self.request.POST.get('note_content')
+        # note_action = self.request.META.get('HTTP_X_NOTE_ACTION')
 
         if note_content:
             # Create a new note and associate it with the current order
@@ -234,9 +236,11 @@ class NoteDeleteView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         try:
             note_id = request.POST.get('note_id') 
+            print("Received note ID:", note_id)
+            note = Note.objects.get(pk=note_id)
             if note_id is not None:
                 note_id = int(note_id)
-                note = Note.objects.get(pk=note_id)
+                
 
                 # Soft delete the note by setting the `deleted_flag` to True
                 note.deleted_flag = True

@@ -100,23 +100,72 @@
         </div>
     </div>
     
-
+    
+    {% comment %} <script>
+        document.getElementById('add-note-button').addEventListener('click', function () {
+            const noteContent = document.getElementById('id_note_content').value;
+    
+            if (noteContent.trim() !== '') {
+                // Create a new FormData object
+                const formData = new FormData();
+                formData.append('note_content', noteContent); // Append the note content to the form data
+    
+                // Send an AJAX request to add the note
+                fetch(window.location.pathname, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                        "X-Note-Action": "create",  // Add a custom header to indicate note creation
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Construct the new note element and add it to the list
+                        const noteElement = document.createElement('li');
+                        noteElement.innerHTML = `
+                            <div class="note-content">${noteContent}</div>
+                            <div class="note-timestamp">${data.timestamp}</div>
+                            <button class="note-delete" data-note-id="{{ note.id }}" data-delete-url="{% url 'orders:note-delete' 0 %}">X</button>
+                        `;
+    
+                        const noteList = document.querySelector('.order-note-list');
+                        noteList.appendChild(noteElement);
+    
+                        // Clear the note content input field
+                        document.getElementById('id_note_content').value = '';
+                    } else {
+                        console.error("Error adding note:", data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error adding note:", error);
+                });
+            }
+        });
+    </script> {% endcomment %}
 
     <script>
-        // Add an event listener for the "X" buttons
         document.addEventListener('DOMContentLoaded', function () {
             // Add an event listener for the "X" buttons
             document.querySelectorAll('.note-delete').forEach(function (button) {
                 button.addEventListener('click', function () {
                     const noteId = button.getAttribute('data-note-id');
                     const deleteUrl = button.getAttribute('data-delete-url');
-        
-                    // Debugging: Log the URL to the console
-                    console.log(deleteUrl);
-        
-                    // Send an AJAX request to delete the note
+                    
+                    // Create a new FormData object
+                    const formData = new FormData();
+                    formData.append('note_id', noteId); // Append the note_id to the form data
+                    
+                    // Debugging: Log the URL and noteId to the console
+                    console.log('Delete URL:', deleteUrl);
+                    console.log('Note ID:', noteId);
+                    
+                    // Send an AJAX request to delete the note with the note_id
                     fetch(deleteUrl, {
                         method: "POST",
+                        body: formData, // Send the note_id in the request body
                         headers: {
                             "X-CSRFToken": getCookie("csrftoken")
                         }
@@ -137,6 +186,8 @@
             });
         });
     
+
+    
         // Function to get the CSRF token
         function getCookie(name) {
             let cookieValue = null;
@@ -153,8 +204,10 @@
             }
             return cookieValue;
         }
+        
     </script>
 
+    
     <style>
         .order-notes {
             padding: 10px;
