@@ -4,6 +4,7 @@ from django.utils import timezone
 from PIL import Image
 from io import BytesIO
 import os
+import json
 
 
 
@@ -39,24 +40,21 @@ class Company(models.Model):
 
     def __str__(self):
         return self.company_name
+    
+    def delete(self):
+        self.deleted_flag = True
+        self.save()
+
+        self.user_set.all().update(deleted_flag=True)
+        self.client_set.all().update(deleted_flag=True)
+        self.order_set.all().update(deleted_flag=True)
+        self.note_set.all().update(deleted_flag=True)
 
 
 class User(AbstractUser):
-    # is_owner = 1
-    # is_admin = 2
-    # is_employee = 3
-
-    # ROLE_CHOICES = (
-    #     (is_owner, 'is_owner'),
-    #     (is_admin, 'is_admin'),
-    #     (is_employee, 'is_employee'),
-    # )
-
     is_owner = models.BooleanField(default=True)
     is_employee = models.BooleanField(default=False)
-    company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
-    # user_role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
-    
+    company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)    
     user_phone = models.CharField(max_length=20)
     # deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -77,9 +75,12 @@ class Employee(models.Model):
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name + " | " + self.company.company_name
 
-    def delete(self, using=None, keep_parents=False):
+    def delete(self):
         self.user.is_active = False
         self.user.save()
+
+        self.user.order_set.all().update(deleted_flag=True)
+        self.user.note_set.all().update(deleted_flag=True)
 
 
 class Owner(models.Model):
@@ -92,6 +93,30 @@ class Owner(models.Model):
     def delete(self, using=None, keep_parents=False):
         self.user.is_active = False
         self.user.save()
+
+        self.user.employee_set.all().update(deleted_flag=True)
+        self.user.client_set.all().update(deleted_flag=True)
+        self.user.order_set.all().update(deleted_flag=True)
+        self.user.note_set.all().update(deleted_flag=True)
+
+
+class Note(models.Model):
+    order = models.ForeignKey("Order", on_delete=models.CASCADE)
+    company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    deleted_flag = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.content
+
+    def delete(self):
+        self.deleted_flag = True
+        self.save()
+
 
 
 class Order(models.Model):
@@ -127,7 +152,6 @@ class Order(models.Model):
     security_deposit = models.DecimalField(max_digits=1000000000, decimal_places=2, default=0.00)
     work_order_type = models.CharField(choices=WORK_ORDER_TYPE_CHOICES, max_length=30)
     work_order_status = models.CharField(default="In Progress", choices=WORK_ORDER_STATUS_CHOICES, max_length=30)
-    work_order_description = models.TextField(max_length=200, default=None, null=True, blank=True)
     order_photo = models.ImageField(upload_to='order_photos/', blank=True, null=True)
     deleted_flag = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -183,9 +207,11 @@ class Order(models.Model):
     def __str__(self):
         return str(self.id) + " | " + self.company.company_name + " | " + self.work_order_status + " | " + self.work_order_type
 
-    def delete(self, using=None, keep_parents=False):
+    def delete(self):
         self.deleted_flag = True
         self.save()
+
+        self.note_set.all().update(deleted_flag=True)
 
 
 class Client(models.Model):
@@ -211,6 +237,7 @@ class Client(models.Model):
         self.save()
 
         self.order_set.all().update(deleted_flag=True)
+        self.note_set.all().update(deleted_flag=True)
 
 
 # class UserActivityLog(models.Model):
@@ -291,21 +318,5 @@ class Plan(models.Model):
 
     def __str__(self):
         return self.plan_name
-
-
-# class SoftDeleteModel(models.Model):
-
-#     deleted_flag = models.BooleanField(default=False)
-
-#     def soft_delete(self):
-#         self.deleted_flag = True
-#         self.save()
-
-#     def restore(self):
-#         self.deleted_flag = False
-#         self.save()
-
-#     class Meta:
-#         abstract = True
 
 

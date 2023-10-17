@@ -59,7 +59,8 @@
                             </div>
                         </div>
                         
-                        
+                        <br>
+
                         <div class="row g-2">
                             <div class="col-md">
                                 <div class="form-group">
@@ -67,24 +68,127 @@
                                 </div>
                             </div>
                             <div class="col-md">
-                                <div class="form-floating">
-                                    {{ form.work_order_description|as_crispy_field }}
+                                <div class="form-group">
+                                    {{ form.note_content|as_crispy_field }}
+                                    <button type="button" id="add-note-button" class="btn btn-primary">Add Note</button>
                                 </div>
                             </div>
                         </div>
-                        {% comment %} <div class="row g-2">
-                            <div class="col-md">
-                                <!-- Image Display -->
-                                <img src="{{ order_update.order_photo.url }}" alt="Order Photo" class="img-fluid">
-                            </div>
-                        </div> {% endcomment %}
-
                         <button type="submit" class="btn btn-primary">Update</button>
                     </form>
                 </div>
+
+
+                <div class="col-md-4">
+                    <div class="order-notes text-center">
+                        <label>Notes Log</label>
+                        <ul class="order-note-list">
+                            {% for note in notes %}
+                                <li>
+                                    {% comment %} {{ note.content }} ({{ note.timestamp }}) {% endcomment %}
+                                    <div class="note-content">{{ note.content }}</div>
+                                    <div class="note-timestamp">{{ note.timestamp }}</div>
+                                    <button class="note-delete" data-note-id="{{ note.id }}" data-delete-url="{% url 'orders:note-delete' note.id %}">X</button>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+
             </div> 
         </div>
     </div>
+    
+
+
+    <script>
+        // Add an event listener for the "X" buttons
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add an event listener for the "X" buttons
+            document.querySelectorAll('.note-delete').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const noteId = button.getAttribute('data-note-id');
+                    const deleteUrl = button.getAttribute('data-delete-url');
+        
+                    // Debugging: Log the URL to the console
+                    console.log(deleteUrl);
+        
+                    // Send an AJAX request to delete the note
+                    fetch(deleteUrl, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": getCookie("csrftoken")
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Reload the page to reflect the soft deletion
+                            location.reload();
+                        } else {
+                            console.error("Error deleting note:", data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error deleting note:", error);
+                    });
+                });
+            });
+        });
+    
+        // Function to get the CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === name + "=") {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+
+    <style>
+        .order-notes {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dcdcdc;
+            padding-right: 20px;
+        }
+
+        .order-note-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .order-note-list li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #dcdcdc;
+            padding-bottom: 10px;
+        }
+
+        .note-content {
+            text-align: left;
+            width: 50%;
+            word-wrap: break-word;
+        }
+    
+        .note-timestamp {
+            text-align: right;
+            padding-right: 10px;
+            width: 50%; 
+            text-align: right; 
+        }
+    </style>
 
 {% endblock content %}
 

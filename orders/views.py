@@ -1,12 +1,13 @@
 from typing import Any, Dict
+import json
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse, QueryDict
 from django.shortcuts import reverse, render, redirect
-from django.views import generic
+from django.views import generic, View
 from django.views.generic.edit import FormView
-from customers.models import Order, Company, Client, User
+from customers.models import Order, Company, Client, User, Note
 from django.forms import modelformset_factory, formset_factory
 from .forms import OrderCreateForm, PaginationForm, OrderStatusFilterForm
 from customers.forms import ClientCreateForm
@@ -15,6 +16,10 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db import IntegrityError
 from django.db.transaction import atomic
+from django.http import JsonResponse
+
+
+
 
 
 class OrderListView(LoginRequiredMixin, generic.ListView):
@@ -102,7 +107,7 @@ class OrderCreateView(LoginRequiredMixin, FormView):
             if order_photo and order_photo.size > (6 * 1024 * 1024):  # 6 MB
                 form.add_error('order_photo', "File size should not exceed 6 MB.")
                 return self.form_invalid(form)
-
+            
             if client_already_exists == 'True':
                 if 'client' in form.cleaned_data and form.cleaned_data['client']:
                     order.client = form.cleaned_data['client']
@@ -137,6 +142,14 @@ class OrderCreateView(LoginRequiredMixin, FormView):
                 else:
                     form.add_error('client', "Create a new client or check the box.")
 
+            note_content = self.request.POST.get('note_content')
+
+            if note_content:
+                # Create a new note and associate it with the current order
+                note = Note.objects.create(order=order, content=note_content)
+                note.user = user
+                note.company = user.company
+                note.save()           
 
             if not form.is_valid() or not client_form.is_valid():
                 return self.form_invalid(form)
@@ -158,6 +171,11 @@ class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
     form_class = OrderCreateForm
     context_object_name = "order-update"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['notes'] = Note.objects.filter(order=self.object)
+        return context
+
     def get_success_url(self):
         return reverse("orders:order-list")
     
@@ -172,11 +190,48 @@ class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
 
     def form_valid(self, form):
         user = self.request.user
+        order = form.save(commit=False)
         order_photo = self.request.FILES.get('order_photo')
+
         if order_photo and order_photo.size > (6 * 1024 * 1024):  # 6 MB
             form.add_error('order_photo', "File size should not exceed 6 MB.")
             return self.form_invalid(form)
+        
+        order.save()
+        
+        # Check for a new note in the request POST data
+        note_content = self.request.POST.get('note_content')
+
+        if note_content:
+            # Create a new note and associate it with the current order
+            note = Note.objects.create(order=order, content=note_content)
+            note.user = user
+            note.company = user.company
+            note.save()
+        
         return super().form_valid(form)
+    
+    
+
+
+class NoteDeleteView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:
+            note_id = request.POST.get('note_id') 
+            if note_id is not None:
+                note_id = int(note_id)
+                note = Note.objects.get(pk=note_id)
+
+                # Soft delete the note by setting the `deleted_flag` to True
+                note.deleted_flag = True
+                note.save()
+
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'success': False, 'error': 'Note ID is missing or not valid'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+        
 
 class OrderDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = "orders/order_delete.html"

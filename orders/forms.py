@@ -7,7 +7,7 @@ from django.forms.utils import ErrorList
 from django.forms.widgets import CheckboxSelectMultiple, Select
 from django.forms import ModelForm
 from django.core.validators import MinValueValidator
-from customers.models import Order, Company, Client, User
+from customers.models import Order, Company, Client, User, Note
 from django.utils import timezone
 
 
@@ -42,6 +42,8 @@ class PaginationForm(forms.Form):
         label="Orders per page"
     )
 
+
+
 class OrderCreateForm(forms.ModelForm):
     order_status_choices = [
         ('Cancelled','Cancelled'),
@@ -63,13 +65,16 @@ class OrderCreateForm(forms.ModelForm):
     security_deposit = forms.DecimalField(label='Security Deposit', min_value=0.00, max_value=1000000, max_digits=10, decimal_places=2, initial=0, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
     work_order_date = forms.DateField(label='Order Date', widget=forms.DateInput(attrs={'type': 'date', 'format': '%d %b %Y'}), required=True, initial=timezone.now)
     work_order_due_date = forms.DateField(label='Due Date', widget=forms.DateInput(attrs={'type': 'date', 'format': '%d %b %Y'}), required=True, initial=timezone.now)
-    work_order_description = forms.CharField(label='Notes', widget=forms.Textarea(attrs={'rows': 2}), required=False)
+    note_content = forms.CharField(
+        label='Add Note', 
+        widget=forms.Textarea(attrs={'rows': 2}), 
+        required=False
+    )
     order_photo = forms.ImageField(
         label='Add Picture', 
         required=False, 
         widget=forms.FileInput(attrs={'accept': 'image/*', 'capture': 'camera'})
     )
-
     
     class Meta:
         model = Order
@@ -82,7 +87,7 @@ class OrderCreateForm(forms.ModelForm):
             'security_deposit', 
             'work_order_date',
             'work_order_due_date',
-            'work_order_description',
+            'note_content',
             'order_photo',
         )
 
@@ -96,7 +101,6 @@ class OrderCreateForm(forms.ModelForm):
         .filter(company=user.company) \
         .filter(deleted_flag=False)
         return self.fields['client'].queryset
-
 
     def clean(self):
         cleaned_data = super().clean()

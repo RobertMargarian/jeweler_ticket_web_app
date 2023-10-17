@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'customers',
     'orders',
     'myprofile',
+    'populate_location',
     # 'employees',
     'bootstrap5',
     'crispy_forms',
