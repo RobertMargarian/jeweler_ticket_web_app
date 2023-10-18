@@ -81,7 +81,7 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
                 queryset = queryset.filter(work_order_status__in = statuses)
 
             if client_details:
-                for term in client_details.split():
+                for term in client_details.replace('|', '').split():
                     queryset = queryset.filter( Q(client__client_first_name__icontains = term) | \
                                                 Q(client__client_last_name__icontains = term) | \
                                                 Q(client__client_email__icontains = term) | \
