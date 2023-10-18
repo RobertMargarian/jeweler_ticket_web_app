@@ -3,7 +3,7 @@
 
 
 {% block head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'css/lists.css' %}">
+    <link rel="stylesheet" href="{% static 'css/autocomplete.css' %}">
 {% endblock head %}
 
 {% block content %}
@@ -42,12 +42,14 @@
                 {% comment %} Client Search Textbox with Autocomplete {% endcomment %}
 
                 <form>
-                    <input 
-                        class="form-control" 
-                        type="text" 
-                        name="client_details" 
-                        id="client_details_search" 
-                        placeholder="Search Clients">
+                    <div class="form-group ui-widget">
+                        <input 
+                            class="form-control autocomplete" 
+                            type="text" 
+                            name="client_details" 
+                            id="client_details_search" 
+                            placeholder="Search Clients">
+                    </div>
                 </form>
                 <script>
                     $(document).ready(function() {
