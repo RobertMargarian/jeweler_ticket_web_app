@@ -19,23 +19,21 @@ from django.db.models import Q
 from django.db.transaction import atomic
 from django.http import JsonResponse
 
-
-
-
 class Client_AutoComplete(LoginRequiredMixin, generic.View):
     def get(self, request):
         client_search_query = request.GET.get('term', '')
-        clients = Client.objects.filter(client_first_name__icontains=client_search_query)
-        results = [client.client_first_name+' '+client.client_last_name for client in clients]
+        clients = Client.objects.all()
+        for term in client_search_query.split():
+            clients = clients.filter( Q(client_first_name__icontains = term) | \
+                                      Q(client_last_name__icontains = term) | \
+                                      Q(client_email__icontains = term) | \
+                                      Q(client_phone__icontains = term) \
+                                    )        
+        results = [client.client_first_name+' '+client.client_last_name+' | '+client.client_email + ' | '+client.client_phone for client in clients]
         print(results)
         return JsonResponse(results, safe=False)
 
-# Function to find order by client name
-def find_order_by_client_name(qs, query_name):
-    for term in query_name.split():
-        qs = qs.filter( Q(client__client_first_name__icontains = term) | \
-                        Q(client__client_last_name__icontains = term))
-    return qs
+
 
 class OrderListView(LoginRequiredMixin, generic.ListView):
     template_name = "orders/order_list.html"
@@ -83,8 +81,13 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
                 queryset = queryset.filter(work_order_status__in = statuses)
 
             if client_details:
-                queryset = find_order_by_client_name(queryset, client_details)
-
+                for term in client_details.split():
+                    queryset = queryset.filter( Q(client__client_first_name__icontains = term) | \
+                                                Q(client__client_last_name__icontains = term) | \
+                                                Q(client__client_email__icontains = term) | \
+                                                Q(client__client_phone__icontains = term) \
+                                                )
+                                            
             queryset = queryset.order_by(sort_by)
         else:
             return KeyError("User does not have permission to view orders")
