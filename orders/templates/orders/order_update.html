@@ -70,7 +70,7 @@
                             <div class="col-md">
                                 <div class="form-group">
                                     {{ form.note_content|as_crispy_field }}
-                                    <button type="button" id="add-note-button" class="btn btn-primary">Add Note</button>
+                                    <button type="button" id="add-note-button" class="btn btn-primary custom-add-note-button">Add Note</button>
                                 </div>
                             </div>
                         </div>
@@ -101,40 +101,47 @@
     </div>
     
     
-    {% comment %} <script>
+
+    <script>
         document.getElementById('add-note-button').addEventListener('click', function () {
+            console.log("Button clicked!");
             const noteContent = document.getElementById('id_note_content').value;
-    
+        
             if (noteContent.trim() !== '') {
                 // Create a new FormData object
                 const formData = new FormData();
                 formData.append('note_content', noteContent); // Append the note content to the form data
-    
+                console.log("FormData:", formData);
+        
                 // Send an AJAX request to add the note
-                fetch(window.location.pathname, {
+                fetch('{% url "orders:add-note" pk=object.pk %}', {
                     method: "POST",
                     body: formData,
                     headers: {
                         "X-CSRFToken": getCookie("csrftoken"),
-                        "X-Note-Action": "create",  // Add a custom header to indicate note creation
+                        "X-Note-Action": "create",
                     }
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log("Response data:", data);
                     if (data.success) {
                         // Construct the new note element and add it to the list
                         const noteElement = document.createElement('li');
                         noteElement.innerHTML = `
                             <div class="note-content">${noteContent}</div>
                             <div class="note-timestamp">${data.timestamp}</div>
-                            <button class="note-delete" data-note-id="{{ note.id }}" data-delete-url="{% url 'orders:note-delete' 0 %}">X</button>
+                            <button class="note-delete" data-note-id="${data.note_id}" data-delete-url="{% url 'orders:note-delete' 0 %}">X</button>
                         `;
-    
+
                         const noteList = document.querySelector('.order-note-list');
                         noteList.appendChild(noteElement);
-    
+
                         // Clear the note content input field
                         document.getElementById('id_note_content').value = '';
+
+                        // Reload the page to reflect the note addition
+                        location.reload();
                     } else {
                         console.error("Error adding note:", data.error);
                     }
@@ -144,9 +151,10 @@
                 });
             }
         });
-    </script> {% endcomment %}
 
-    <script>
+
+
+
         document.addEventListener('DOMContentLoaded', function () {
             // Add an event listener for the "X" buttons
             document.querySelectorAll('.note-delete').forEach(function (button) {
@@ -240,6 +248,21 @@
             padding-right: 10px;
             width: 50%; 
             text-align: right; 
+        }
+
+
+        
+        .custom-add-note-button {
+            background-color: #007bff; /* Change the button's background color */
+            color: #fff; /* Change the text color to white */
+            border: none; /* Remove the default button border */
+            border-radius: 5px; /* Add rounded corners */
+            padding: 10px 20px; /* Adjust padding for better button sizing */
+            cursor: pointer; /* Add a pointer cursor on hover */
+        }
+    
+        .custom-add-note-button:hover {
+            background-color: #0056b3; /* Change the background color on hover */
         }
     </style>
 

@@ -218,9 +218,9 @@ class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
         
         # Check for a new note in the request POST data
         note_content = self.request.POST.get('note_content')
-        # note_action = self.request.META.get('HTTP_X_NOTE_ACTION')
+        note_action = self.request.META.get('HTTP_X_NOTE_ACTION')
 
-        if note_content:
+        if note_content and note_action == 'create':
             # Create a new note and associate it with the current order
             note = Note.objects.create(order=order, content=note_content)
             note.user = user
@@ -231,6 +231,16 @@ class OrderUpdateView(LoginRequiredMixin, generic.UpdateView):
     
     
 
+class AddNoteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        note_content = request.POST.get('note_content')
+        if note_content:
+            # Create a new note and associate it with the order (pk)
+            note = Note.objects.create(order_id=pk, content=note_content, user=request.user, company=request.user.company)
+            return JsonResponse({'success': True, 'note_id': note.id, 'timestamp': note.timestamp})
+        else:
+            return JsonResponse({'success': False, 'error': 'Invalid note content.'})
+        
 
 class NoteDeleteView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
