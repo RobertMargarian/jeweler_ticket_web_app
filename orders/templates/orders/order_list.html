@@ -55,9 +55,13 @@
                     $(document).ready(function() {
                         $("#client_details_search").autocomplete({
                             source: '{% url 'orders:client-autocomplete' %}',
-                            minLength: 2
+                            minLength: 2,
+                            select: function(event, ui) {
+                                $(this).val(ui.item.label);
+                                $(this).closest('form').submit();
+                            }
+                            });
                         });
-                    });
                 </script>
             </div>
 
