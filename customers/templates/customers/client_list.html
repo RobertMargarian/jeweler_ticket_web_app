@@ -4,12 +4,35 @@
         {% comment %} Header Filters div {% endcomment %}
         <div class="row align-items-end mb-5">
 
+            {% comment %} Client Filter {% endcomment %}
             <div class="col">
-                {% comment %} Client Filter {% endcomment %}
+                <form>
+                    <div class="form-group ui-widget">
+                        <input 
+                            class="form-control autocomplete" 
+                            type="text" 
+                            name="client_details" 
+                            id="client_search_clients" 
+                            placeholder="Search Clients">
+                    </div>
+                </form>
+                <script>
+                    $(document).ready(function() {
+                        $("#client_search_clients").autocomplete({
+                            source: '{% url 'customers:client-autocomplete' %}',
+                            minLength: 2,
+                            select: function(event, ui) {
+                                $(this).val(ui.item.label);
+                                $(this).closest('form').submit();
+                            }
+                            });
+                        });
+                </script>
             </div>
 
+            
+            {% comment %} Clients Per Page Form {% endcomment %}
             <div class="col-auto">
-                {% comment %} Clients Per Page Form {% endcomment %}
                 <form id="pagination_form_clients" method="get" action="{% url 'customers:client-list' %}">
                     <label for="clients_per_page_selector"> Clients per Page</label>
                     <select name="page_size" id="clients_per_page_selector" class="form-select">

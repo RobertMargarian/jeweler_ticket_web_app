@@ -11,9 +11,92 @@ from django.views.generic.edit import FormView
 from .forms import ClientCreateForm, CustomUserCreationForm, CompanyCreateForm, PaginationForm
 from .mixins import  CompanyOwnerRequiredMixin, EmployeeRequiredMixin 
 from django.db.models import Case, When, DecimalField
+from django.db.models import Q
 from populate_location.zip_code_data import parse_zipcode_data
 import json
 from django.http import JsonResponse
+
+class Client_AutoComplete(LoginRequiredMixin, generic.View):
+    def get(self, request):
+        client_search_query = request.GET.get('term', '')
+        clients = Client.objects.all()
+        for term in client_search_query.split():
+            clients = clients.filter( Q(client_first_name__icontains = term) | \
+                                      Q(client_last_name__icontains = term) | \
+                                      Q(client_email__icontains = term) | \
+                                      Q(client_phone__icontains = term) \
+                                    )     
+        clients = clients.filter(deleted_flag=False)   
+        results = [client.client_first_name+' '+client.client_last_name+' | '+client.client_email + ' | '+client.client_phone for client in clients]
+        print(results)
+        return JsonResponse(results, safe=False)
+
+
+class ClientListView(LoginRequiredMixin, generic.ListView):
+    model = Client
+    template_name = "customers/client_list.html"
+    context_object_name = "client_list"
+
+    def get_paginate_by(self, queryset):
+        return self.request.user.pref_clients_per_page
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Initialize the form with the user's preference
+
+        page_size = self.request.GET.get('page_size', self.request.user.pref_clients_per_page)
+        context['clients_per_page'] = page_size
+        context['pagination_form_clients'] = \
+            PaginationForm(initial={'page_size': page_size})
+        return context
+
+
+    def get_queryset(self):
+        user = self.request.user
+        client_details = self.request.GET.get('client_details', None)
+
+        if user.is_owner or user.is_employee: 
+            queryset = Client.objects \
+                .filter(company=user.company) \
+                .filter(company=self.request.user.company) \
+                .filter(deleted_flag=False) \
+                .order_by('-created_at') \
+                .filter(company=self.request.user.company)
+            
+            if client_details:
+                for term in client_details.replace('|', '').split():
+                    queryset = queryset.filter( Q(client_first_name__icontains = term) | \
+                                                Q(client_last_name__icontains = term) | \
+                                                Q(client_email__icontains = term) | \
+                                                Q(client_phone__icontains = term) \
+                                            )
+            
+            queryset = queryset.annotate(
+                total_spent_column=Sum(
+                    Case(
+                        When(order__work_order_status__in=['Completed', 'In Progress'], 
+                             order__deleted_flag=False, 
+                             then='order__quoted_price'),
+                        default=0,
+                        output_field=DecimalField()
+                    )
+                )
+            )
+        else:
+            return KeyError("User does not have permission to view clients")
+        return queryset
+    
+    def get(self, request, *args, **kwargs):
+        # Check if page_size is being updated
+        if 'page_size' in request.GET:
+            try:
+                page_size = request.GET.get('page_size')
+                # Update the user's preference in the model
+                request.user.pref_clients_per_page = page_size
+                request.user.save()
+            except ValueError:
+                pass
+        return super().get(request, *args, **kwargs)
 
 
 class SignupView(FormView):
@@ -109,59 +192,6 @@ class LandingPageView(generic.TemplateView):
         return context
 
 
-class ClientListView(LoginRequiredMixin, generic.ListView):
-    model = Client
-    template_name = "customers/client_list.html"
-    context_object_name = "client_list"
-
-    def get_paginate_by(self, queryset):
-        return self.request.user.pref_clients_per_page
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Initialize the form with the user's preference
-
-        page_size = self.request.GET.get('page_size', self.request.user.pref_clients_per_page)
-        context['clients_per_page'] = page_size
-        context['pagination_form_clients'] = \
-            PaginationForm(initial={'page_size': page_size})
-        return context
-
-
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_owner or user.is_employee: 
-            queryset = Client.objects \
-                .filter(company=user.company) \
-                .filter(company=self.request.user.company) \
-                .filter(deleted_flag=False) \
-                .order_by('-created_at') \
-                .filter(company=self.request.user.company)
-            
-            queryset = queryset.annotate(
-                total_spent_column=Sum(
-                    Case(
-                        When(order__work_order_status__in=['Completed', 'In Progress'], order__deleted_flag=False, then='order__quoted_price'),
-                        default=0,
-                        output_field=DecimalField()
-                    )
-                )
-            )
-        else:
-            return KeyError("User does not have permission to view clients")
-        return queryset
-    
-    def get(self, request, *args, **kwargs):
-        # Check if page_size is being updated
-        if 'page_size' in request.GET:
-            try:
-                page_size = request.GET.get('page_size')
-                # Update the user's preference in the model
-                request.user.pref_clients_per_page = page_size
-                request.user.save()
-            except ValueError:
-                pass
-        return super().get(request, *args, **kwargs)
 
 # class ClientCreateView(LoginRequiredMixin, generic.CreateView):
 #     template_name = "customers/client_create.html"
