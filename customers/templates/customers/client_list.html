@@ -1,17 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
-    <div style="height: 100vh; overflow-y: scroll;">
-        {% comment %} Clients Per Page Form {% endcomment %}
-        <form id="pagination_form_clients" method="get" action="{% url 'customers:client-list' %}" class="mb-4">
-            <p>User preference from model: {{ request.user.pref_clients_per_page }}</p>
-            {{ pagination_form_clients.page_size.label }}: {{ pagination_form_clients.page_size }}
-            {% comment %} <input type="submit" value="Update"> {% endcomment %}
-        </form>
-        <script>
-            document.getElementById('pagination_clients').addEventListener('change', function() {
-                document.getElementById('pagination_form_clients').submit();
-            });
-        </script>
+    <div class="container" style="height: 100vh; overflow-y: scroll;">
+        {% comment %} Header Filters div {% endcomment %}
+        <div class="row align-items-end mb-5">
+
+            <div class="col">
+                {% comment %} Client Filter {% endcomment %}
+            </div>
+
+            <div class="col-auto">
+                {% comment %} Clients Per Page Form {% endcomment %}
+                <form id="pagination_form_clients" method="get" action="{% url 'customers:client-list' %}">
+                    <label for="clients_per_page_selector"> Clients per Page</label>
+                    <select name="page_size" id="clients_per_page_selector" class="form-select">
+                        {% for choice in pagination_form_clients.page_size.field.choices %}
+                            <option value="{{choice.1}}" {% if choice.1 == clients_per_page or choice.0 == clients_per_page %} selected {% endif %}>
+                                {{ choice.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+                <script>
+                    document.getElementById('clients_per_page_selector').addEventListener('change', function() {
+                        document.getElementById('pagination_form_clients').submit();
+                    });
+                </script>
+
+            </div>
+        </div>
 
 
         <table class="table">

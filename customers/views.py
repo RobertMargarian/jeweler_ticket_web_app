@@ -120,8 +120,11 @@ class ClientListView(LoginRequiredMixin, generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Initialize the form with the user's preference
+
+        page_size = self.request.GET.get('page_size', self.request.user.pref_clients_per_page)
+        context['clients_per_page'] = page_size
         context['pagination_form_clients'] = \
-            PaginationForm(initial={'page_size': self.request.user.pref_clients_per_page})
+            PaginationForm(initial={'page_size': page_size})
         return context
 
 
