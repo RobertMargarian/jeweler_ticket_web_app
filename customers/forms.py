@@ -22,8 +22,7 @@ class PaginationForm(forms.Form):
 
     page_size = forms.ChoiceField(
         choices=page_size_choices,
-        widget=forms.Select(attrs={'id': 'pagination_clients'}),
-        label="Clients per page"
+        widget=forms.Select(attrs={'id': 'pagination_form_clients'})
     )
 
 
