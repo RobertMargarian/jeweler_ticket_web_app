@@ -28,7 +28,8 @@ class Client_AutoComplete(LoginRequiredMixin, generic.View):
                                       Q(client_last_name__icontains = term) | \
                                       Q(client_email__icontains = term) | \
                                       Q(client_phone__icontains = term) \
-                                    )        
+                                    )     
+        clients = clients.filter(deleted_flag=False)   
         results = [client.client_first_name+' '+client.client_last_name+' | '+client.client_email + ' | '+client.client_phone for client in clients]
         print(results)
         return JsonResponse(results, safe=False)
