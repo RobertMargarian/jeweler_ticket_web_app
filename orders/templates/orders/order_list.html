@@ -12,8 +12,9 @@
 
         {% comment %} Header Filters div {% endcomment %}
         <div class="row align-items-end mb-5">
+
+            {% comment %} Order Status Filter {% endcomment %}
             <div class="col">
-                {% comment %} Order Status Filter {% endcomment %}
                 <form method="get" action="{% url 'orders:order-list' %}">
                     <select class="form-select" id="multiple-select-field" name="order_status" multiple>
                         {% for status_option in all_possible_statuses %}
@@ -37,27 +38,30 @@
                 </script>
 
             </div>
-
+            
+            {% comment %} Client Search Textbox with Autocomplete {% endcomment %}
             <div class="col">
-                {% comment %} Client Search Textbox with Autocomplete {% endcomment %}
-
                 <form>
                     <div class="form-group ui-widget">
                         <input 
                             class="form-control autocomplete" 
                             type="text" 
                             name="client_details" 
-                            id="client_details_search" 
+                            id="client_search_orders" 
                             placeholder="Search Clients">
                     </div>
                 </form>
                 <script>
                     $(document).ready(function() {
-                        $("#client_details_search").autocomplete({
+                        $("#client_search_orders").autocomplete({
                             source: '{% url 'orders:client-autocomplete' %}',
-                            minLength: 2
+                            minLength: 2,
+                            select: function(event, ui) {
+                                $(this).val(ui.item.label);
+                                $(this).closest('form').submit();
+                            }
+                            });
                         });
-                    });
                 </script>
             </div>
 

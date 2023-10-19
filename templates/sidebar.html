@@ -6,46 +6,27 @@
   <hr>
   <ul class="nav nav-pills flex-column mb-auto">
     <li>
-      <a href={% url 'orders:order-list'%} class="nav-link text-white">
+      <a 
+        href={% url 'orders:order-list'%} 
+        class="nav-link text-white {% if 'order' in request.resolver_match.url_name %} active {% endif %}">
         <svg class="bi me-2" width="16" height="16"><use xlink:href="#table"/></svg>
         Orders
       </a>
     </li>
     <li>
-      <a href="{% url 'customers:client-list'%}" class="nav-link text-white">
+      <a 
+        href="{% url 'customers:client-list'%}" 
+        class="nav-link text-white {% if 'client' in request.resolver_match.url_name %} active {% endif %}">
         <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
         Clients
       </a>
     </li>
-    {% comment %} {% if user.is_owner %}
     <li>
-      <a href="{% url 'employees:employee-list'%}" class="nav-link text-white">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#people-circle"/></svg>
-        Employees
-      </a>
-    </li>
-    {% endif %} {% endcomment %}
-    <li>
-      <a href={% url 'orders:order-create' %} class="nav-link active text-white">
+      <a href={% url 'orders:order-create' %} class="nav-link bg-light text-dark">
         <svg class="bi me-2" width="16" height="16"><use xlink:href="#plus-circle"/></svg>
         New Order
       </a>
     </li>
-    {% comment %} <li>
-      <a href={% url 'customers:client-create'%} class="nav-link active text-white">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#plus-circle"/></svg>
-        Create New Client
-      </a>
-    </li>
-    {% if user.is_owner %}
-    <li>
-      <a href={% url 'employees:employee-create'%} class="nav-link active text-white">
-        <svg class="bi me-2" width="16" height="16"><use xlink:href="#plus-circle"/></svg>
-        Create New Employee
-      </a>
-    </li>
-    {% endif %}
-  </ul> {% endcomment %}
   <hr>
   <div class="dropdown">
     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -53,7 +34,6 @@
       <strong>{{ user.first_name }}</strong>
     </a>
     <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-      {% comment %} <li><a class="dropdown-item" href="#">Settings</a></li> {% endcomment %}
       <li><a class="dropdown-item" href="{% url 'myprofile:myprofile' %}">My Profile</a></li>
       <li><hr class="dropdown-divider"></li>
       <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
