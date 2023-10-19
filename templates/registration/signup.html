@@ -61,11 +61,6 @@
                 {{ second_form.company_state|as_crispy_field }}
             </div>
         </div>
-        {% comment %} <div class="col-md">
-            <div class="form-floating">
-                {{ second_form.company_country|as_crispy_field }}
-            </div>
-        </div> {% endcomment %}
         <div class="col-md">
             <div class="form-floating">
                 {{ second_form.company_city|as_crispy_field }}
@@ -128,26 +123,6 @@
 
 
 <body>
-    {% comment %} <script>
-        function populateCityAndState(zipCode) {
-            if (!zipCode) return; // Exit if no zip code provided
-            
-            // Use the Zippopotam library to fetch location data
-            Zippopotam.get(zipCode).then(function(response) {
-                // Assuming you have fields with IDs 'id_company_city' and 'id_company_state'
-                document.getElementById('id_company_city').value = response.places[0]['place name'];
-                document.getElementById('id_company_state').value = response.places[0]['state'];
-            }).catch(function(error) {
-                console.error(error);
-            });
-        }
-
-        document.getElementById('id_company_zip_code').addEventListener('blur', function() {
-            var zipCode = this.value;
-            populateCityAndState(zipCode);
-        });
-    </script> {% endcomment %}
-
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
     integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
     </script>
