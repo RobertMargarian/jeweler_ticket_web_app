@@ -16,7 +16,11 @@
             {% comment %} Order Status Filter {% endcomment %}
             <div class="col">
                 <form method="get" action="{% url 'orders:order-list' %}">
-                    <select class="form-select" id="multiple-select-field" name="order_status" multiple>
+                    <select 
+                      class="form-select" 
+                      id="multiple-select-field" 
+                      name="order_status" 
+                      multiple>
                         {% for status_option in all_possible_statuses %}
                             <option value="{{status_option}}" {% if status_option in selected_statuses %}selected{% endif %}>
                                 {{status_option}}
@@ -39,35 +43,52 @@
 
             </div>
             
-            {% comment %} Client Search Textbox with Autocomplete {% endcomment %}
+            {% comment %} Client Search Textbox with Select2 {% endcomment %}
             <div class="col">
-                <form>
-                    <div class="form-group ui-widget">
-                        <input 
-                            class="form-control autocomplete" 
-                            type="text" 
-                            name="client_details" 
-                            id="client_search_orders" 
-                            placeholder="Search Clients">
-                    </div>
+                <form method="get" action="{% url "orders:order-list" %}">
+                    <select 
+                        class="form-select" 
+                        name="client_id" 
+                        id="client_search_orders" 
+                        placeholder="Search Clients"
+                        multiple>
+                        {% for client_info in selected_clients_info %}
+                        <option value="{{ client_info.0 }}" selected>
+                            {{ client_info.1 }} {{ client_info.2 }} | {{ client_info.3 }} | {{ client_info.4 }}
+                        </option>
+                        {% endfor %}
+                    </select>
                 </form>
                 <script>
                     $(document).ready(function() {
-                        $("#client_search_orders").autocomplete({
-                            source: '{% url 'orders:client-autocomplete' %}',
-                            minLength: 2,
-                            select: function(event, ui) {
-                                $(this).val(ui.item.label);
-                                $(this).closest('form').submit();
-                            }
-                            });
+                        $("#client_search_orders").select2({
+                            theme: "bootstrap-5",
+                            ajax: {
+                                url: '{% url 'orders:client-autocomplete' %}',
+                                dataType: 'json',
+                                delay: 250,
+                                data: function(params) {
+                                    return {
+                                        term: params.term // search term
+                                    };
+                                },
+                                processResults: function(data) {
+                                    return {
+                                        results: data
+                                    };
+                                }
+                            },
+                            placeholder: "Search Clients"
+                        }).on('change', function() {
+                            $(this).closest('form').submit();
                         });
+                    });
                 </script>
             </div>
 
             <div class="col-auto">
                 {% comment %} Reset Sorting Button {% endcomment %}
-                <a id="reset_sorting_btn" href="{% url 'orders:order-list' %}?{{ order_status_query_string }}" class="btn btn-secondary">
+                <a id="reset_sorting_btn" href="{% url 'orders:order-list' %}?{{ order_status_query_string }}{% if request.GET.client_details %}&client_details={{request.GET.client_details}}{% endif %}" class="btn btn-secondary">
                     Reset Sorting
                 </a>
             </div>
@@ -105,7 +126,7 @@
                 <th class="text-center" scope="col">Order Status</th>
                 <th scope="col">Order Type</th>
                 <th scope="col">
-                    <a href="?{{ order_status_query_string }}&{% if request.GET.sort_by == 'work_order_date' %}sort_by=-work_order_date {% else %}sort_by=work_order_date{% endif %}">
+                    <a href="?{{ order_status_query_string }}{% if request.GET.client_details %}&client_details={{request.GET.client_details}}{% endif %}{% if request.GET.sort_by == 'work_order_date' %}&sort_by=-work_order_date {% else %}&sort_by=work_order_date{% endif %}">
                         Order Date
                     </a>                
                     {% if request.GET.sort_by == "work_order_date" %}
@@ -115,7 +136,7 @@
                     {% endif %}
                 </th>
                 <th scope="col">
-                    <a href="?{{ order_status_query_string }}&{% if request.GET.sort_by == 'work_order_due_date' %}sort_by=-work_order_due_date{% else %}sort_by=work_order_due_date{% endif %}">
+                    <a href="?{{ order_status_query_string }}{% if request.GET.client_details %}&client_details={{request.GET.client_details}}{% endif %}{% if request.GET.sort_by == 'work_order_due_date' %}&sort_by=-work_order_due_date{% else %}&sort_by=work_order_due_date{% endif %}">
                         Due Date
                     </a>
                     {% if request.GET.sort_by == "work_order_due_date" %}

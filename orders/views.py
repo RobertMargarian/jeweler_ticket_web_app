@@ -22,16 +22,21 @@ from django.http import JsonResponse
 class Client_AutoComplete(LoginRequiredMixin, generic.View):
     def get(self, request):
         client_search_query = request.GET.get('term', '')
-        clients = Client.objects.all()
+        clients = Client.objects.filter(deleted_flag=False)
         for term in client_search_query.split():
-            clients = clients.filter( Q(client_first_name__icontains = term) | \
-                                      Q(client_last_name__icontains = term) | \
-                                      Q(client_email__icontains = term) | \
-                                      Q(client_phone__icontains = term) \
-                                    )     
-        clients = clients.filter(deleted_flag=False)   
-        results = [client.client_first_name+' '+client.client_last_name+' | '+client.client_email + ' | '+client.client_phone for client in clients]
-        print(results)
+            clients = clients.filter(Q(client_first_name__icontains=term) |
+                                     Q(client_last_name__icontains=term) |
+                                     Q(client_email__icontains=term) |
+                                     Q(client_phone__icontains=term))
+
+        # Creating a list of dictionaries where each dictionary contains id and text keys.
+        results = [
+            {
+                'id': client.id,  # Assuming each client has a unique id
+                'text': f"{client.client_first_name} {client.client_last_name} | {client.client_email} | {client.client_phone}"
+            }
+            for client in clients
+        ]
         return JsonResponse(results, safe=False)
 
 
@@ -45,21 +50,50 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Initialize the form with the user's preference
-
         
+        
+        # Initialize the form with the user's preference      
         context['filter_form'] = OrderStatusFilterForm(self.request.GET)
-        context['selected_statuses'] = self.request.GET.getlist('order_status')
+
+        # page size setup
         page_size = self.request.GET.get('page_size', self.request.user.pref_orders_per_page)
         context['orders_per_page'] = page_size
         context['pagination_form_orders'] = \
             PaginationForm(initial={'page_size': page_size})
+        
+        # Order status setup
         context['all_possible_statuses'] = ['Completed', 'Cancelled', 'In Progress']
-        context['sort_by'] = self.request.GET.get('sort_by', 'work_order_date')
+        context['selected_statuses'] = self.request.GET.getlist('order_status')
+
+        # Client search setup
+        all_client_ids = list(Client.objects\
+                                .filter(company=self.request.user.company, deleted_flag=False)\
+                                .values_list('id', flat=True)
+                                )
+        context['all_clients'] = [f'{i}' for i in all_client_ids]
+        context['selected_clients'] = self.request.GET.getlist('client_id')
+
+        context['selected_clients_info'] = Client.objects.filter(
+            id__in=context['selected_clients'],
+            company=self.request.user.company,
+            deleted_flag=False
+            ).values_list(
+                'id',
+                'client_first_name',
+                'client_last_name',
+                'client_email',
+                'client_phone'
+            )
+        
+
+
 
         query_dict = QueryDict(mutable=True)
         query_dict.setlist('order_status', self.request.GET.getlist('order_status'))
         context['order_status_query_string'] = query_dict.urlencode()
+
+        # Sort by setup
+        context['sort_by'] = self.request.GET.get('sort_by', 'work_order_date')
 
         return context
     
@@ -67,9 +101,9 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         user = self.request.user
         statuses = self.request.GET.getlist('order_status')
         sort_by = self.request.GET.get('sort_by', '-created_at')
-        client_details = self.request.GET.get('client_details', None)
+        client_ids = self.request.GET.get('client_id', None)
 
-        if sort_by.lstrip('-') not in ['work_order_date', 'work_order_due_date']:
+        if sort_by.replace('-', '') not in ['work_order_date', 'work_order_due_date']:
             sort_by = '-created_at'
 
         if user.is_owner or user.is_employee:
@@ -81,13 +115,8 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
             if statuses:
                 queryset = queryset.filter(work_order_status__in = statuses)
 
-            if client_details:
-                for term in client_details.replace('|', '').split():
-                    queryset = queryset.filter( Q(client__client_first_name__icontains = term) | \
-                                                Q(client__client_last_name__icontains = term) | \
-                                                Q(client__client_email__icontains = term) | \
-                                                Q(client__client_phone__icontains = term) \
-                                                )
+            if client_ids:
+                queryset = queryset.filter(client__id__in = client_ids.split(','))
                                             
             queryset = queryset.order_by(sort_by)
         else:
@@ -105,6 +134,9 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
             except ValueError:
                 pass
         return super().get(request, *args, **kwargs)
+
+
+
 
 class OrderCreateView(LoginRequiredMixin, FormView):
     template_name = "orders/order_create.html"
