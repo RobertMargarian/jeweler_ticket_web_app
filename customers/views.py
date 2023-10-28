@@ -22,9 +22,9 @@ class Client_AutoComplete(LoginRequiredMixin, generic.View):
         clients = Client.objects.all()
         for term in client_search_query.split():
             clients = clients.filter( Q(client_first_name__icontains = term) | \
-                                      Q(client_last_name__icontains = term) | \
-                                      Q(client_email__icontains = term) | \
-                                      Q(client_phone__icontains = term) \
+                                        Q(client_last_name__icontains = term) | \
+                                        Q(client_email__icontains = term) | \
+                                        Q(client_phone__icontains = term) \
                                     )     
         clients = clients.filter(deleted_flag=False)   
         results = [client.client_first_name+' '+client.client_last_name+' | '+client.client_email + ' | '+client.client_phone for client in clients]
@@ -142,7 +142,19 @@ class SignupView(FormView):
 
     def form_valid(self, form, second_form):
         company = second_form.save(commit=False)
-        company.company_current_plan = Plan.objects.get(plan_name = "Basic")
+
+        if Plan.objects.filter(plan_name = "Basic").exists():
+            company.company_current_plan = Plan.objects.get(plan_name = "Basic")
+        else:
+            Plan.objects.create(plan_name = "Basic",
+                                plan_frequency = "Monthly",
+                                plan_price = 200, 
+                                plan_currency = "USD",
+                                plan_trial_period = "No",
+                                )
+            company.company_current_plan = Plan.objects.get(plan_name = "Basic")
+        
+        # company.company_current_plan = Plan.objects.get(plan_name = "Basic")
         company.company_subscription_status = "Active"
 
         zip_code = second_form.cleaned_data.get('company_zip_code')
