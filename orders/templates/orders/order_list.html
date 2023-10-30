@@ -36,7 +36,21 @@
                             placeholder: "Select order statuses",
                             allowClear: true,
                         }).on('change', function() {
-                            $(this).closest('form').submit();
+                            var form = $(this).closest('form');
+                            // Add current URL parameters as hidden fields in the form
+                            window.location.search.substr(1).split("&").forEach(function (item) {
+                                var s = item.split("="),
+                                    k = s[0],
+                                    v = s[1];
+                                if (k !== 'order_status') {
+                                    $('<input>').attr({
+                                        type: 'hidden',
+                                        name: k,
+                                        value: v
+                                    }).appendTo(form);
+                                }
+                            });
+                            form.submit();
                         });
                     });
                 </script>
@@ -78,9 +92,25 @@
                                     };
                                 }
                             },
-                            placeholder: "Search Clients"
+                            placeholder: "Search Clients",
+                            allowClear: true
                         }).on('change', function() {
-                            $(this).closest('form').submit();
+                            var form = $(this).closest('form');
+                            // Add current URL parameters as hidden fields in the form
+                            window.location.search.substr(1).split("&").forEach(function (item) {
+                                var s = item.split("="),
+                                    k = s[0],
+                                    v = s[1].replace('+', ' ');
+                                    console.log(k, v);
+                                if (k !== 'client_id') {
+                                    $('<input>').attr({
+                                        type: 'hidden',
+                                        name: k,
+                                        value: v
+                                    }).appendTo(form);
+                                }
+                            });
+                            form.submit();
                         });
                     });
                 </script>
@@ -88,7 +118,7 @@
 
             <div class="col-auto">
                 {% comment %} Reset Sorting Button {% endcomment %}
-                <a id="reset_sorting_btn" href="{% url 'orders:order-list' %}?{{ order_status_query_string }}{% if request.GET.client_details %}&client_details={{request.GET.client_details}}{% endif %}" class="btn btn-secondary">
+                <a id="reset_sorting_btn" href="{% url 'orders:order-list' %}?{{ order_status_query_string }}&{{ client_ids_query_string }}{% if request.GET.client_details %}&client_details={{request.GET.client_details}}{% endif %}" class="btn btn-secondary">
                     Reset Sorting
                 </a>
             </div>
@@ -108,6 +138,10 @@
                     {% for status in selected_statuses %}
                         <input type="hidden" name="order_status" value="{{ status }}">
                     {% endfor %}
+                    <!-- Preserve clients filter after order per page change -->
+                    {% for client_info in selected_clients_info %}
+                    <input type="hidden" name="client_id" value="{{ client_info.0 }}">
+                    {% endfor %}
                 </form>
                 <script>
                     document.getElementById('orders_per_page_selector').addEventListener('change', function() {
@@ -126,7 +160,7 @@
                 <th class="text-center" scope="col">Order Status</th>
                 <th scope="col">Order Type</th>
                 <th scope="col">
-                    <a href="?{{ order_status_query_string }}{% if request.GET.client_details %}&client_details={{request.GET.client_details}}{% endif %}{% if request.GET.sort_by == 'work_order_date' %}&sort_by=-work_order_date {% else %}&sort_by=work_order_date{% endif %}">
+                    <a href="?{{ order_status_query_string }}&{{ client_ids_query_string }}{% if request.GET.sort_by == 'work_order_date' %}&sort_by=-work_order_date {% else %}&sort_by=work_order_date{% endif %}">
                         Order Date
                     </a>                
                     {% if request.GET.sort_by == "work_order_date" %}
@@ -136,7 +170,7 @@
                     {% endif %}
                 </th>
                 <th scope="col">
-                    <a href="?{{ order_status_query_string }}{% if request.GET.client_details %}&client_details={{request.GET.client_details}}{% endif %}{% if request.GET.sort_by == 'work_order_due_date' %}&sort_by=-work_order_due_date{% else %}&sort_by=work_order_due_date{% endif %}">
+                    <a href="?{{ order_status_query_string }}&{{ client_ids_query_string }}{% if request.GET.sort_by == 'work_order_due_date' %}&sort_by=-work_order_due_date{% else %}&sort_by=work_order_due_date{% endif %}">
                         Due Date
                     </a>
                     {% if request.GET.sort_by == "work_order_due_date" %}
@@ -246,14 +280,14 @@
                     {% if page_obj.has_previous %}
                         <li class="page-item">
                             <a class="page-link" 
-                                href="?{{ order_status_query_string }}&page=1&page_size={{ orders_per_page}}&sort_by={{sort_by}}" 
+                                href="?{{ order_status_query_string }}&{{ client_ids_query_string }}&page=1&page_size={{ orders_per_page}}&sort_by={{sort_by}}" 
                                 aria-label="First">
                                 <span aria-hidden="true">&laquo;&laquo;</span>
                             </a>
                         </li>
                         <li class="page-item">
                             <a class="page-link" 
-                                href="?{{ order_status_query_string }}&page={{ page_obj.previous_page_number }}&page_size={{ orders_per_page}}&sort_by={{sort_by}}"
+                                href="?{{ order_status_query_string }}&{{ client_ids_query_string }}&page={{ page_obj.previous_page_number }}&page_size={{ orders_per_page}}&sort_by={{sort_by}}"
                                 aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
@@ -264,14 +298,14 @@
                         {% if page_obj.number == num %}
                             <li class="page-item active">
                                 <a class="page-link" 
-                                    href="?{{ order_status_query_string }}&page={{ num }}&page_size={{ orders_per_page}}&sort_by={{sort_by}}"
+                                    href="?{{ order_status_query_string }}&{{ client_ids_query_string }}&page={{ num }}&page_size={{ orders_per_page}}&sort_by={{sort_by}}"
                                             >{{ num }}
                                 </a>
                             </li>
                         {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
                             <li class="page-item">
                                 <a class="page-link" 
-                                    href="?{{ order_status_query_string }}&page={{ num }}&page_size={{ orders_per_page}}&sort_by={{sort_by}}"
+                                    href="?{{ order_status_query_string }}&{{ client_ids_query_string }}&page={{ num }}&page_size={{ orders_per_page}}&sort_by={{sort_by}}"
                                         >{{ num }}
                                 </a>
                             </li>
@@ -281,14 +315,14 @@
                     {% if page_obj.has_next %}
                         <li class="page-item">
                             <a class="page-link" 
-                                href="?{{ order_status_query_string }}&page={{ page_obj.next_page_number }}&page_size={{ orders_per_page}}&sort_by={{sort_by}}" 
+                                href="?{{ order_status_query_string }}&{{ client_ids_query_string }}&page={{ page_obj.next_page_number }}&page_size={{ orders_per_page}}&sort_by={{sort_by}}" 
                                 aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
                         <li class="page-item">
                             <a class="page-link" 
-                                href="?page={{ page_obj.paginator.num_pages }}&page_size={{ orders_per_page}}&{{ order_status_query_string }}&sort_by={{sort_by}}" 
+                                href="?{{ order_status_query_string }}&{{ client_ids_query_string }}&page={{ page_obj.paginator.num_pages }}&page_size={{ orders_per_page}}&sort_by={{sort_by}}" 
                                 aria-label="Last">
                                 <span aria-hidden="true">&raquo;&raquo;</span>
                             </a>
