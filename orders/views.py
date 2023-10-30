@@ -113,11 +113,9 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
                 .filter(client__company=user.company)
             
             if statuses:
-                print(statuses)
                 queryset = queryset.filter(work_order_status__in = statuses)
 
             if client_ids:
-                print("Client IDs:", client_ids)
                 queryset = queryset.filter(client__id__in = client_ids)
                                             
             queryset = queryset.order_by(sort_by)
