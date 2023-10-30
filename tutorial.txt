@@ -96,9 +96,9 @@ REFERENCE FOR ADDING PICTURES IN THE FORM (1:00:00)
 
 ------------------------------------------------------------------------------------------------------------------------
 
-Install PostgreSQL:
+Install PostgreSQL 16:
 
-    pip install posgresql    (for installing posgresql)
+    https://www.postgresql.org/download/
 
     python.exe -m pip install --upgrade pip   (for updating pip)  
 
