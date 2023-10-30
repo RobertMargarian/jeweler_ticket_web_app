@@ -99,9 +99,9 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
     
     def get_queryset(self):
         user = self.request.user
-        statuses = self.request.GET.getlist('order_status')
+        statuses = self.request.GET.getlist('order_status', None)
         sort_by = self.request.GET.get('sort_by', '-created_at')
-        client_ids = self.request.GET.get('client_id', None)
+        client_ids = self.request.GET.getlist('client_id', None)
 
         if sort_by.replace('-', '') not in ['work_order_date', 'work_order_due_date']:
             sort_by = '-created_at'
@@ -113,10 +113,12 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
                 .filter(client__company=user.company)
             
             if statuses:
+                print(statuses)
                 queryset = queryset.filter(work_order_status__in = statuses)
 
             if client_ids:
-                queryset = queryset.filter(client__id__in = client_ids.split(','))
+                print("Client IDs:", client_ids)
+                queryset = queryset.filter(client__id__in = client_ids)
                                             
             queryset = queryset.order_by(sort_by)
         else:
