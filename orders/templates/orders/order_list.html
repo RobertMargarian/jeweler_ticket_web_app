@@ -36,7 +36,21 @@
                             placeholder: "Select order statuses",
                             allowClear: true,
                         }).on('change', function() {
-                            $(this).closest('form').submit();
+                            var form = $(this).closest('form');
+                            // Add current URL parameters as hidden fields in the form
+                            window.location.search.substr(1).split("&").forEach(function (item) {
+                                var s = item.split("="),
+                                    k = s[0],
+                                    v = s[1] && decodeURIComponent(s[1]);
+                                if (k !== 'order_status') {
+                                    $('<input>').attr({
+                                        type: 'hidden',
+                                        name: k,
+                                        value: v
+                                    }).appendTo(form);
+                                }
+                            });
+                            form.submit();
                         });
                     });
                 </script>
@@ -78,9 +92,24 @@
                                     };
                                 }
                             },
-                            placeholder: "Search Clients"
+                            placeholder: "Search Clients",
+                            allowClear: true
                         }).on('change', function() {
-                            $(this).closest('form').submit();
+                            var form = $(this).closest('form');
+                            // Add current URL parameters as hidden fields in the form
+                            window.location.search.substr(1).split("&").forEach(function (item) {
+                                var s = item.split("="),
+                                    k = s[0],
+                                    v = s[1] && decodeURIComponent(s[1]);
+                                if (k !== 'client_id') {
+                                    $('<input>').attr({
+                                        type: 'hidden',
+                                        name: k,
+                                        value: v
+                                    }).appendTo(form);
+                                }
+                            });
+                            form.submit();
                         });
                     });
                 </script>

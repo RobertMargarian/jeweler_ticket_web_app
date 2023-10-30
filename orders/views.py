@@ -100,8 +100,8 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         user = self.request.user
         statuses = self.request.GET.getlist('order_status', None)
-        sort_by = self.request.GET.get('sort_by', '-created_at')
         client_ids = self.request.GET.getlist('client_id', None)
+        sort_by = self.request.GET.get('sort_by', '-created_at')
 
         if sort_by.replace('-', '') not in ['work_order_date', 'work_order_due_date']:
             sort_by = '-created_at'
