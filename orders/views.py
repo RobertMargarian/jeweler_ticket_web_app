@@ -9,7 +9,7 @@ from django.views import generic, View
 from django.views.generic.edit import FormView
 from customers.models import Order, Company, Client, User, Note
 from django.forms import modelformset_factory, formset_factory
-from .forms import OrderCreateForm, PaginationForm, OrderStatusFilterForm
+from .forms import OrderCreateForm, PaginationForm
 from customers.forms import ClientCreateForm
 from customers.mixins import  CompanyOwnerRequiredMixin, EmployeeRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -50,10 +50,6 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        
-        # Initialize the form with the user's preference      
-        context['filter_form'] = OrderStatusFilterForm(self.request.GET)
 
         # page size setup
         page_size = self.request.GET.get('page_size', self.request.user.pref_orders_per_page)
@@ -65,14 +61,12 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
         context['all_possible_statuses'] = ['Completed', 'Cancelled', 'In Progress']
         context['selected_statuses'] = self.request.GET.getlist('order_status')
 
-        # Client search setup
-        all_client_ids = list(Client.objects\
-                                .filter(company=self.request.user.company, deleted_flag=False)\
-                                .values_list('id', flat=True)
-                                )
-        context['all_clients'] = [f'{i}' for i in all_client_ids]
-        context['selected_clients'] = self.request.GET.getlist('client_id')
+        ordert_statuses_query_dict = QueryDict(mutable=True)
+        ordert_statuses_query_dict.setlist('order_status', self.request.GET.getlist('order_status'))
+        context['order_status_query_string'] = ordert_statuses_query_dict.urlencode()
 
+        # Client search setup
+        context['selected_clients'] = self.request.GET.getlist('client_id')
         context['selected_clients_info'] = Client.objects.filter(
             id__in=context['selected_clients'],
             company=self.request.user.company,
@@ -85,12 +79,9 @@ class OrderListView(LoginRequiredMixin, generic.ListView):
                 'client_phone'
             )
         
-
-
-
-        query_dict = QueryDict(mutable=True)
-        query_dict.setlist('order_status', self.request.GET.getlist('order_status'))
-        context['order_status_query_string'] = query_dict.urlencode()
+        client_ids_query_dict = QueryDict(mutable=True)
+        client_ids_query_dict.setlist('client_id', self.request.GET.getlist('client_id'))
+        context['client_ids_query_string'] = client_ids_query_dict.urlencode()
 
         # Sort by setup
         context['sort_by'] = self.request.GET.get('sort_by', 'work_order_date')
@@ -163,7 +154,6 @@ class OrderCreateView(LoginRequiredMixin, FormView):
             if client_already_exists == 'True':
                 if 'client' in form.cleaned_data and form.cleaned_data['client']:
                     order.client = form.cleaned_data['client']
-                    # order.work_order_status = "In Progress"
                     order.work_order_currency = "USD"
                     order.quoted_currency = "USD"
                     order.save() 
