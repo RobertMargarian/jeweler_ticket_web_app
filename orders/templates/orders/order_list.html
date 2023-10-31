@@ -16,11 +16,7 @@
             {% comment %} Order Status Filter {% endcomment %}
             <div class="col">
                 <form method="get" action="{% url 'orders:order-list' %}">
-                    <select 
-                      class="form-select" 
-                      id="multiple-select-field" 
-                      name="order_status" 
-                      multiple>
+                    <select class="form-select" id="multiple-select-field" name="order_status" multiple>
                         {% for status_option in all_possible_statuses %}
                             <option value="{{status_option}}" {% if status_option in selected_statuses %}selected{% endif %}>
                                 {{status_option}}

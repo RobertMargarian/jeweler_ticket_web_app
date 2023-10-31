@@ -8,12 +8,10 @@
 <div style="height: 100vh; overflow-y: scroll;">
     <div class="container">
         <div class="col-md-8">
-            {% comment %} <span class="d-block bg-white text-black w-50"> {{ form|crispy }} </span> {% endcomment %}
             
             <p><strong>Current Plan:</strong> {{ company.company_current_plan }}</p>
             <p><strong>Subscription Status:</strong> {{ company.company_subscription_status }}</p>
-            {% comment %} <p><strong>First Subscription Date:</strong> {{ company.first_subscription_date }}</p>
-            <p><strong>Last Subscription Date:</strong> {{ company.last_subscription_date }}</p> {% endcomment %}
+
             
             <a href="{% url 'myprofile:myprofile' %}" class="btn btn-primary" type="submit"> Back to Profile </a>
         </div>

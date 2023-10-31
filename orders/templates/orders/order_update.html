@@ -85,7 +85,6 @@
                         <ul class="order-note-list">
                             {% for note in notes %}
                                 <li>
-                                    {% comment %} {{ note.content }} ({{ note.timestamp }}) {% endcomment %}
                                     <div class="note-content">{{ note.content }}</div>
                                     <div class="note-timestamp">{{ note.timestamp }}</div>
                                     <button class="note-delete" data-note-id="{{ note.id }}" data-delete-url="{% url 'orders:note-delete' note.id %}">X</button>

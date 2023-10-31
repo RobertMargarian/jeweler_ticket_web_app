@@ -1,12 +1,8 @@
-from typing import Any, Dict, Mapping, Optional, Type, Union
+from typing import Any, Dict
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UsernameField
-from django.core.files.base import File
-from django.db.models.base import Model
-from django.forms.utils import ErrorList
 from .models import Client, Company, User, Order
-from orders.forms import OrderCreateForm
 
 
 User = get_user_model()
@@ -117,10 +113,6 @@ class CompanyCreateForm(forms.ModelForm):
     company_state = forms.CharField(max_length=50, required=True)
     company_zip_code = forms.CharField(max_length=50, required=True)
 
-    # company_country = forms.CharField(max_length=50, required=True)
-    # company_phone = forms.CharField(max_length=20, required=True)
-    # company_email = forms.EmailField(max_length=254, required=True)
-
 
     class Meta:
         model = Company
@@ -130,10 +122,7 @@ class CompanyCreateForm(forms.ModelForm):
             'company_city',
             'company_state',
             'company_zip_code',
-            
-            # 'company_country',
-            # 'company_phone',
-            # 'company_email',
+
         )
         field_classes = {
             'company_name': forms.CharField,
@@ -141,8 +130,4 @@ class CompanyCreateForm(forms.ModelForm):
             'company_city': forms.CharField,
             'company_state': forms.CharField,
             'company_zip_code': forms.CharField,
-
-            # 'company_country': forms.CharField,
-            # 'company_phone': forms.CharField,
-            # 'company_email': forms.EmailField,
         }

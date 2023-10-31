@@ -54,6 +54,7 @@
 
 
         <table class="table">
+
             <thead>
                 <th scope="col">#</th>
                 <th scope="col">Client Name</th>
@@ -62,6 +63,7 @@
                 <th scope="col">Total Spent</th>
                 <th scope="col">Actions</th>
             </thead>
+
             <tbody>
                 {% for client_list in client_list %}
                 {% if user.company == client_list.company %}
@@ -81,6 +83,7 @@
                 {% endif %}
                 {% endfor %}
             </tbody>
+            
         <table>
 
         {% comment %} Pagination Controls {% endcomment %}

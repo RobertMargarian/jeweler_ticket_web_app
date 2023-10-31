@@ -25,9 +25,9 @@ class Client_AutoComplete(LoginRequiredMixin, generic.View):
         clients = Client.objects.filter(deleted_flag=False)
         for term in client_search_query.split():
             clients = clients.filter(Q(client_first_name__icontains=term) |
-                                     Q(client_last_name__icontains=term) |
-                                     Q(client_email__icontains=term) |
-                                     Q(client_phone__icontains=term))
+                                    Q(client_last_name__icontains=term) |
+                                    Q(client_email__icontains=term) |
+                                    Q(client_phone__icontains=term))
 
         # Creating a list of dictionaries where each dictionary contains id and text keys.
         results = [

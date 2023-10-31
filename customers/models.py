@@ -4,7 +4,6 @@ from django.utils import timezone
 from PIL import Image
 from io import BytesIO
 import os
-import json
 
 
 
@@ -24,6 +23,7 @@ class Company(models.Model):
     company_city = models.CharField(max_length=50)
     company_state = models.CharField(max_length=50)
     company_zip_code = models.CharField(max_length=50)
+    company_country = models.CharField(max_length=50)
     first_sign_up_date = models.DateTimeField(auto_now_add=True)
     last_sign_up_date = models.DateTimeField(auto_now_add=True)
     first_subscription_date = models.DateTimeField(auto_now_add=True)
@@ -41,7 +41,7 @@ class Company(models.Model):
     def delete(self):
         self.deleted_flag = True
         self.save()
-
+        # if company is deleted, all users, employees, clients, orders and notes are deleted as well
         self.user_set.all().update(deleted_flag=True)
         self.client_set.all().update(deleted_flag=True)
         self.order_set.all().update(deleted_flag=True)
@@ -63,7 +63,18 @@ class User(AbstractUser):
     def __str__(self):
         return self.first_name + " " + self.last_name + " | " + self.username
     
+    def delete(self):
+        self.is_active = False
+        self.save()
 
+        self.company_set.all().update(deleted_flag=True)
+        self.owner_set.all().update(deleted_flag=True)
+        self.employee_set.all().update(deleted_flag=True)
+        self.client_set.all().update(deleted_flag=True)
+        self.order_set.all().update(deleted_flag=True)
+        self.note_set.all().update(deleted_flag=True)
+
+# This model is not used yet
 class Employee(models.Model):
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
@@ -140,7 +151,6 @@ class Order(models.Model):
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.SET_NULL)
     work_order_date = models.DateField(default=timezone.now)
     work_order_due_date = models.DateField(default=timezone.now)
-
     estimated_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     work_order_currency = models.CharField(choices=WORK_ORDER_CURRENCY_CHOICES, max_length=10)
     quoted_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -154,6 +164,7 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     ingestion_timestamp = models.DateTimeField(auto_now=True)
 
+    # function to upload and compress image
     def save(self, *args, **kwargs):  # Max compression gets a 518 KB from 6 MB image
         super(Order, self).save(*args, **kwargs)
 
@@ -234,32 +245,6 @@ class Client(models.Model):
 
         self.order_set.all().update(deleted_flag=True)
         self.note_set.all().update(deleted_flag=True)
-
-
-# class UserActivityLog(models.Model):
-#     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
-#     user_action = models.ForeignKey(("User_Action"), null=True, blank=True, on_delete=models.CASCADE)
-#     work_order = models.ForeignKey(("Order"), null=True, blank=True, on_delete=models.CASCADE)
-#     client = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
-#     user_activity_time = models.DateTimeField(auto_now_add=True)
-#     deleted_flag = models.BooleanField(default=False)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-#     ingestion_timestamp = models.DateTimeField(auto_now=True)
-
-#     def __str__(self):
-#         return self.user + " " + self.user_action + " " + self.user_activity_time
-
-
-# class UserAction(models.Model):
-#     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
-#     action_name = models.CharField(max_length=50)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-#     ingestion_timestamp = models.DateTimeField(auto_now=True)
-
-#     def __str__(self):
-#         return self.user + " " + self.action_name
 
 
 class BillingLog(models.Model):

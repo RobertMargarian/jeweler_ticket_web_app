@@ -1,18 +1,12 @@
 from typing import Any, Dict
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.forms.models import BaseModelForm
-from django.http import HttpResponse
 from django.shortcuts import reverse, render, redirect
 from django.views import generic
-from django.views.generic.edit import FormView
-from customers.models import Order, Company, Client, User
+from customers.models import Company, User
 from django.forms import modelformset_factory, formset_factory
 from customers.forms import CompanyCreateForm, CustomUserCreationForm
-from customers.mixins import  CompanyOwnerRequiredMixin, EmployeeRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-from django.db import IntegrityError, models
 from django.db.transaction import atomic
 
 
