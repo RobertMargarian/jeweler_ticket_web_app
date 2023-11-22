@@ -92,11 +92,11 @@ WSGI_APPLICATION = 'djticket.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'db_djticket',
-        'USER' : 'rgts',
-        'PASSWORD' : 'GLaDOS44',
-        'HOST' : 'localhost',  # Use 'localhost' or the host where your PostgreSQL server runs
-        'PORT' : '',  # Leave it empty to use the default PostgreSQL port (5432)
+        'NAME': 'postgres',
+        'USER' : 'postgres',
+        'PASSWORD' : 'postgres',
+        'HOST' : 'db',  # Use 'localhost' or the host where your PostgreSQL server runs
+        'PORT' : 5432,  # Leave it empty to use the default PostgreSQL port (5432)
     }
 }
 

@@ -103,7 +103,6 @@
 
     <script>
         document.getElementById('add-note-button').addEventListener('click', function () {
-            console.log("Button clicked!");
             const noteContent = document.getElementById('id_note_content').value;
         
             if (noteContent.trim() !== '') {
@@ -123,7 +122,6 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Response data:", data);
                     if (data.success) {
                         // Construct the new note element and add it to the list
                         const noteElement = document.createElement('li');
@@ -132,7 +130,6 @@
                             <div class="note-timestamp">${data.timestamp}</div>
                             <button class="note-delete" data-note-id="${data.note_id}" data-delete-url="{% url 'orders:note-delete' 0 %}">X</button>
                         `;
-
                         const noteList = document.querySelector('.order-note-list');
                         noteList.appendChild(noteElement);
 

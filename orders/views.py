@@ -1,5 +1,5 @@
 from typing import Any, Dict
-import json
+import json, uuid
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms.models import BaseModelForm
@@ -18,6 +18,7 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.db.transaction import atomic
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 class Client_AutoComplete(LoginRequiredMixin, generic.View):
     def get(self, request):
@@ -268,26 +269,48 @@ class AddNoteView(LoginRequiredMixin, View):
             return JsonResponse({'success': False, 'error': 'Invalid note content.'})
         
 
+# class NoteDeleteView(LoginRequiredMixin, View):
+#     def post(self, request, *args, **kwargs):
+#         try:
+#             note_id = request.POST.get('note_id') 
+#             print("Received note ID:", note_id)
+#             note = Note.objects.get(pk=note_id)
+#             if note_id is not None:
+#                 note_id = int(note_id)
+                
+
+#                 # Soft delete the note by setting the `deleted_flag` to True
+#                 note.deleted_flag = True
+#                 note.save()
+
+#                 return JsonResponse({'success': True})
+#             else:
+#                 return JsonResponse({'success': False, 'error': 'Note ID is missing or not valid'})
+#         except Exception as e:
+#             return JsonResponse({'success': False, 'error': str(e)})
+        
 class NoteDeleteView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         try:
-            note_id = request.POST.get('note_id') 
-            print("Received note ID:", note_id)
-            note = Note.objects.get(pk=note_id)
-            if note_id is not None:
-                note_id = int(note_id)
-                
+            # Use self.kwargs to access URL parameters
+            note_id = self.kwargs.get('pk')
 
-                # Soft delete the note by setting the `deleted_flag` to True
-                note.deleted_flag = True
-                note.save()
+            # Check if note_id is a valid UUID
+            try:
+                uuid_obj = uuid.UUID(note_id)
+            except ValueError:
+                return JsonResponse({'success': False, 'error': 'Invalid note ID'})
+            
+            # Use get_object_or_404 to get the Note object or return a 404 response if not found
+            note = get_object_or_404(Note, pk=note_id)
 
-                return JsonResponse({'success': True})
-            else:
-                return JsonResponse({'success': False, 'error': 'Note ID is missing or not valid'})
+            # Soft delete the note by setting the `deleted_flag` to True
+            note.deleted_flag = True
+            note.save()
+
+            return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
-        
 
 class OrderDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = "orders/order_delete.html"

@@ -1,9 +1,12 @@
+import os
+import uuid
 from django.db import models
+from django.urls import reverse
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from PIL import Image
 from io import BytesIO
-import os
+
 
 
 
@@ -13,6 +16,9 @@ class Company(models.Model):
         ('Inactive','Inactive'),
         ('Cancelled', 'Cancelled'),
     )
+
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     company_current_plan = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
     company_subscription_status = models.CharField(choices=COMPANY_SUBSCRIPTION_STATUS_CHOICES, max_length=30)
@@ -49,6 +55,9 @@ class Company(models.Model):
 
 
 class User(AbstractUser):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     is_owner = models.BooleanField(default=True)
     is_employee = models.BooleanField(default=False)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)    
@@ -76,6 +85,9 @@ class User(AbstractUser):
 
 # This model is not used yet
 class Employee(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
 
@@ -91,6 +103,9 @@ class Employee(models.Model):
 
 
 class Owner(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     user = models.OneToOneField(("User"), null=True, blank=True, on_delete=models.CASCADE)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
 
@@ -108,6 +123,9 @@ class Owner(models.Model):
 
 
 class Note(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     order = models.ForeignKey("Order", on_delete=models.CASCADE)
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.CASCADE)
@@ -144,6 +162,9 @@ class Order(models.Model):
         ('EUR', 'EUR'),
         ('GBP', 'GBP'),
     )
+
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
 
     client = models.ForeignKey(("Client"), null=True, blank=True, on_delete=models.CASCADE)
@@ -222,6 +243,9 @@ class Order(models.Model):
 
 
 class Client(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     user = models.ForeignKey(("User"), null=True, blank=True, on_delete=models.SET_NULL)
     client_already_exists = models.BooleanField(default=False)
@@ -253,6 +277,8 @@ class BillingLog(models.Model):
         ('Unpaid','Unpaid'),
         ('Cancelled', 'Cancelled'),
     )
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     company = models.ForeignKey(("Company"), null=True, blank=True, on_delete=models.CASCADE)
     plan = models.ForeignKey(("Plan"), null=True, blank=True, on_delete=models.CASCADE)
@@ -286,6 +312,8 @@ class Plan(models.Model):
         ('Yes','Yes'),
         ('No','No'),
     )
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     plan_name = models.CharField(choices=PLAN_NAME_CHOICES, max_length=30)
     plan_frequency = models.CharField(max_length=50)
